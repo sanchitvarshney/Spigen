@@ -1,0 +1,55 @@
+import { StylesConfig } from "react-select";
+
+interface OptionType {
+    label: string;
+    value: string;
+  }
+  
+ export const customStyles: StylesConfig<OptionType, false> = {
+    control: (provided, state) => ({
+      ...provided,
+      borderRadius: "0",
+      border: "none",
+      borderBottom: "1px solid #475569",
+      borderColor: state.isFocused ? "blue" : "grey",
+      boxShadow: "none",
+      color:"#475569",
+      "&:hover": {
+        borderColor: "darkblue",
+      },
+      background: "transparent",
+      
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected ? "#0891b2" : state.isFocused ? "#0891b2" : "white",
+      color: state.isSelected ? "#fff" : state.isFocused ? "#ffff" : "#475569",
+      "&:hover": {
+        backgroundColor: "#0891b2",
+        color: "#fff",
+      },
+      
+      borderRadius:"5px",
+      transition:"all 0.1s"
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: "#475569",
+    }),
+    container:(provided)=>({
+      ...provided,
+      
+    }),
+    menu: (provided) => ({
+      ...provided,
+    }),
+    menuList: (provided) => ({
+      ...provided,
+     
+      padding:"10px"
+    }),
+    
+  };
+
+ 
+  
