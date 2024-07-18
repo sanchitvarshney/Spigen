@@ -8,7 +8,6 @@ import { MenuModule } from '@ag-grid-enterprise/menu';
 import { FiltersToolPanelModule } from "@ag-grid-enterprise/filter-tool-panel";
 import { SetFilterModule } from "@ag-grid-enterprise/set-filter";
 import { ColumnsToolPanelModule } from "@ag-grid-enterprise/column-tool-panel";
-import { LicenseManager } from 'ag-grid-enterprise';
 export function moduleregistri(){
   return  ModuleRegistry.registerModules([ColumnsToolPanelModule,SetFilterModule,FiltersToolPanelModule,ClientSideRowModelModule,MenuModule, RangeSelectionModule, StatusBarModule, ServerSideRowModelModule, ExcelExportModule]);
 } 

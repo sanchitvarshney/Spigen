@@ -20,6 +20,7 @@ import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import "./font.css";
 import Protected from "./components/Protected";
+import Custom404Page from "./pages/Custom404Page";
 
 // Define the authenticated routes
 const router = createBrowserRouter([
@@ -125,6 +126,12 @@ const router = createBrowserRouter([
     ),
     path: "/sales/order/register",
   },
+  {
+    path: "*",
+    element:<MainLayout>
+      <Custom404Page/>
+    </MainLayout>
+  }
 ]);
 
 // Define the unauthenticated routes
