@@ -8,7 +8,7 @@ const SOLayout = (props: { children: React.ReactNode }) => {
         <ul className="group flex items-center  h-[50px] ">
           <li className="h-[50px]">
             <NavLink
-              to={"/create-sales-order"}
+              to={"/sales/order/create"}
               className={({ isActive }) =>
                 `h-[50px] text-[14px] px-[20px] flex items-center text-center ${
                   isActive && "bg-cyan-50  border-b-[4px] border-cyan-400"
@@ -20,7 +20,7 @@ const SOLayout = (props: { children: React.ReactNode }) => {
           </li>
           <li className="h-[50px]">
             <NavLink
-              to={"/sales-order/register"}
+              to={"/sales/order/register"}
               className={({ isActive }) =>
                 `h-[50px] text-[14px] px-[20px] flex items-center text-center ${
                   isActive && "bg-cyan-50  border-b-[4px] border-cyan-400"
@@ -32,7 +32,7 @@ const SOLayout = (props: { children: React.ReactNode }) => {
           </li>
           <li className="h-[50px]">
             <NavLink
-              to={"/sales-order/shipment"}
+              to={"/sales/order/shipments"}
               className={({ isActive }) =>
                 `h-[50px] text-[14px] px-[20px] flex items-center text-center ${
                   isActive && "bg-cyan-50  border-b-[4px] border-cyan-400"
@@ -44,7 +44,7 @@ const SOLayout = (props: { children: React.ReactNode }) => {
           </li>
           <li className="h-[50px]">
             <NavLink
-              to={"/sales-order/invoice"}
+              to={"/sales/order/invoice"}
               className={({ isActive }) =>
                 `h-[50px] text-[14px] px-[20px] flex items-center text-center ${
                   isActive && "bg-cyan-50  border-b-[4px] border-cyan-400"
@@ -56,7 +56,7 @@ const SOLayout = (props: { children: React.ReactNode }) => {
           </li>
           <li className="h-[50px]">
             <NavLink
-              to={"/sales-order/allocated-invoice"}
+              to={"/sales/order/allocated"}
               className={({ isActive }) =>
                 `h-[50px] text-[14px] px-[20px] flex items-center text-center ${
                   isActive && "bg-cyan-50  border-b-[4px] border-cyan-400"
@@ -68,7 +68,7 @@ const SOLayout = (props: { children: React.ReactNode }) => {
           </li>
           <li className="h-[50px]">
             <NavLink
-              to={"/sales-order/e-transaction-register"}
+              to={"/sales/order/e-transaction-register"}
               className={({ isActive }) =>
                 `h-[50px] text-[14px] px-[20px] flex items-center text-center ${
                   isActive && "bg-cyan-50  border-b-[4px] border-cyan-400"

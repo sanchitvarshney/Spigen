@@ -30,7 +30,6 @@ export const menuresult = (params: GetContextMenuItemsParams) => {
           // Export data as Excel
           params.api.exportDataAsExcel(params2);
         } else {
-          console.warn("Target row not found");
         }
       },
       cssClasses: ["bg-[#217346]","bold","text-white","hover:bg-[#2e9c60]","text-[14px]","py-[5px]","mx-[5px]","rounded-full","max-w-max"],

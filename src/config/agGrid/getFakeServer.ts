@@ -4,9 +4,7 @@ import { IServerSideGetRowsRequest } from "@ag-grid-community/core";
 export const getFakeServer: (allData: any[]) => any = (allData: any[]) => {
     return {
       getResponse: (request: IServerSideGetRowsRequest) => {
-        console.log(
-          "asking for rows: " + request.startRow + " to " + request.endRow,
-        );
+       
         // take a slice of the total rows
         const rowsThisPage = allData.slice(request.startRow, request.endRow);
         // if on or after the last page, work out the last row.

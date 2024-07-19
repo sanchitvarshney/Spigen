@@ -1,4 +1,3 @@
-
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./App.css";
 import { Toaster } from "@/components/ui/toaster";
@@ -15,12 +14,17 @@ import LoginPage from "./pages/LoginPage";
 import AddPOPage from "./pages/AddPOPage";
 import ForgotPassword from "./pages/ForgotPassword";
 import RegisterSalesOrderPage from "./pages/salesModule/RegisterSalesOrderPage";
-
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import "./font.css";
 import Protected from "./components/Protected";
 import Custom404Page from "./pages/Custom404Page";
+import CreateSalesOrderPage from "./pages/salesModule/CreateSalesOrderPage";
+import SalesShipmentPage from "./pages/salesModule/SalesShipmentPage";
+import SalesInvoicePage from "./pages/salesModule/SalesInvoicePage";
+import AllocatedInvoicesPage from "./pages/salesModule/AllocatedInvoicesPage";
+import SalesETransactionRegisterPage from "./pages/salesModule/SalesETransactionRegisterPage";
+import GridExample from "./pages/GridExample";
 
 // Define the authenticated routes
 const router = createBrowserRouter([
@@ -119,6 +123,19 @@ const router = createBrowserRouter([
       <Protected authentication>
         <MainLayout>
           <SOLayout>
+            <CreateSalesOrderPage />
+          </SOLayout>
+        </MainLayout>
+      </Protected>
+    ),
+    path: "/sales/order/create",
+  },
+
+  {
+    element: (
+      <Protected authentication>
+        <MainLayout>
+          <SOLayout>
             <RegisterSalesOrderPage />
           </SOLayout>
         </MainLayout>
@@ -127,11 +144,72 @@ const router = createBrowserRouter([
     path: "/sales/order/register",
   },
   {
+    element: (
+      <Protected authentication>
+        <MainLayout>
+          <SOLayout>
+            <SalesShipmentPage />
+          </SOLayout>
+        </MainLayout>
+      </Protected>
+    ),
+    path: "/sales/order/shipments",
+  },
+  {
+    element: (
+      <Protected authentication>
+        <MainLayout>
+          <SOLayout>
+            <SalesInvoicePage />
+          </SOLayout>
+        </MainLayout>
+      </Protected>
+    ),
+    path: "/sales/order/invoice",
+  },
+  {
+    element: (
+      <Protected authentication>
+        <MainLayout>
+          <SOLayout>
+            <AllocatedInvoicesPage />
+          </SOLayout>
+        </MainLayout>
+      </Protected>
+    ),
+    path: "/sales/order/allocated",
+  },
+  {
+    element: (
+      <Protected authentication>
+        <MainLayout>
+          <SOLayout>
+            <SalesETransactionRegisterPage />
+          </SOLayout>
+        </MainLayout>
+      </Protected>
+    ),
+    path: "/sales/order/e-transaction-register",
+  },
+ 
+  {
+    element: (
+      <Protected authentication>
+        <MainLayout>
+          <GridExample />
+        </MainLayout>
+      </Protected>
+    ),
+    path: "/grid",
+  },
+  {
     path: "*",
-    element:<MainLayout>
-      <Custom404Page/>
-    </MainLayout>
-  }
+    element: (
+      <MainLayout>
+        <Custom404Page />
+      </MainLayout>
+    ),
+  },
 ]);
 
 // Define the unauthenticated routes
