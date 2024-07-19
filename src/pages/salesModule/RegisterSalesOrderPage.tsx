@@ -10,7 +10,6 @@ import styled from "styled-components";
 import { DatePicker, Space } from "antd";
 import {  RowData } from "@/types/SalesOrderRegisterType";
 import { columnDefs } from "@/config/agGrid/SalesOrderRegisterTableColumns";
-import { gridOptions } from "@/config/agGrid/ModuleRegistry";
 import CustomLoadingCellRenderer from "@/config/agGrid/CustomLoadingCellRenderer";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -33,7 +32,7 @@ const FormSchema = z.object({
 });
 
 const RegisterSalesOrderPage: React.FC = () => {
-  const [rowData, setRowData] = React.useState<RowData[] | null>(null);
+  const [rowData] = React.useState<RowData[] | null>(null);
   const [wise, setWise] = useState<string>("DATE");
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
