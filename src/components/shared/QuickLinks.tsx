@@ -29,7 +29,7 @@ const frameworks = [
     label: "Add PO",
   },
   {
-    value: "/sales/order/create-sales-order",
+    value: "/sales/order/create",
     label: "Create Sales Order",
   },
   {

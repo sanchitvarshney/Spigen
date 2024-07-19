@@ -65,7 +65,6 @@ const SalesETransactionRegisterPage: React.FC = () => {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("Submitted data:", data);
     toast({
       title: "You submitted the following values:",
       description: (

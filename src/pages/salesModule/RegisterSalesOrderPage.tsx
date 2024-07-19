@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -10,7 +10,6 @@ import styled from "styled-components";
 import { DatePicker, Space } from "antd";
 import {  RowData } from "@/types/SalesOrderRegisterType";
 import { columnDefs } from "@/config/agGrid/SalesOrderRegisterTableColumns";
-import { gridOptions } from "@/config/agGrid/ModuleRegistry";
 import CustomLoadingCellRenderer from "@/config/agGrid/CustomLoadingCellRenderer";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -33,7 +32,7 @@ const FormSchema = z.object({
 });
 
 const RegisterSalesOrderPage: React.FC = () => {
-  const [rowData] = useState<RowData[]>([]);
+  const [rowData] = React.useState<RowData[] | null>(null);
   const [wise, setWise] = useState<string>("DATE");
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -41,12 +40,11 @@ const RegisterSalesOrderPage: React.FC = () => {
 
   
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
-    
+    console.log(data)
   }
-
+  const loadingCellRenderer = useCallback(CustomLoadingCellRenderer, []);
   
-
+  
   return (
     <Wrapper className="h-[calc(100vh-100px)] grid grid-cols-[350px_1fr] ">
       <div className=" bg-[#fff]">
@@ -106,7 +104,7 @@ const RegisterSalesOrderPage: React.FC = () => {
         </Form>
       </div>
       <div className="ag-theme-quartz h-[calc(100vh-100px)]">
-        <AgGridReact gridOptions={gridOptions} rowData={ rowData} columnDefs={columnDefs} defaultColDef={{ filter: true, sortable: true }} pagination={true} paginationPageSize={10} paginationAutoPageSize={true} loadingCellRenderer={CustomLoadingCellRenderer} />
+        <AgGridReact   loadingCellRenderer={loadingCellRenderer} rowData={rowData}   columnDefs={columnDefs} defaultColDef={{ filter: true, sortable: true }} pagination={true} paginationPageSize={10} paginationAutoPageSize={true}/>
       </div>
     </Wrapper>
   );

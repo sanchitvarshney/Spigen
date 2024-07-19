@@ -34,7 +34,6 @@ const spigenAxios = axios.create({
 spigenAxios.interceptors.response.use(
   (response: AxiosResponse) => {
     if (response.data?.success !== undefined) {
-      console.log("this is the response from axios interceptor", response.data);
       return response;
     }
     return response;
@@ -51,7 +50,7 @@ spigenAxios.interceptors.response.use(
       }
 
       if (errorData.success !== undefined) {
-        console.log("this is the error response", error);
+      
         toast.error(errorData.message || "Error occurred.");
         return Promise.reject(errorData);
       }
@@ -70,7 +69,7 @@ spigenAxios.interceptors.response.use(
   }
 );
 
-console.log("this is the company branch", localStorage.getItem("otherData"));
+
 const branch: string = otherData?.company_branch ?? "BRMSC012";
 const session: string = otherData?.session ?? "24-25";
 

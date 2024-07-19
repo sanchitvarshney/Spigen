@@ -1,5 +1,4 @@
 import { Skeleton } from "@/components/ui/skeleton";
-
 export default () => {
   return (
     <div className="items-center ag-custom-loading-cell w-full flex flex-col gap-[20px] ">

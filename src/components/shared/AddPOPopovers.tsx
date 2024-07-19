@@ -17,7 +17,6 @@ const AddPOPopovers: React.FC<Props> = ({ uiState }) => {
     try {
       // Convert keys to camelCase
       const updatedData = data.map((d) => toCamelCase(d));
-      console.log(updatedData);
       // Validate each row
       updatedData.forEach((row) => {
         rowData2Schema.parse(row);
@@ -33,7 +32,6 @@ const AddPOPopovers: React.FC<Props> = ({ uiState }) => {
       });
     } catch (error) {
       if (error instanceof ZodError) {
-        console.log(error.errors);
         toast({
           variant: "destructive",
           title: "Uh oh! Something went wrong.",
@@ -47,7 +45,6 @@ const AddPOPopovers: React.FC<Props> = ({ uiState }) => {
           duration: 4000,
         });
       } else {
-        console.error("Unknown Error:", error);
       }
     }
     setExcelModel(false);

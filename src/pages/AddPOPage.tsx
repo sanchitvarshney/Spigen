@@ -51,22 +51,18 @@ const AddPOPage = () => {
       return row;
     });
     setRowData(updatedData);
-    console.log(updatedData);
   };
 
-  const viewRow = (data: RowData2) => {
-    console.log("View action", data);
+  const viewRow = () => {
     // Implement your view action here
   };
 
   const editRow = (data: RowData2) => {
-    console.log("Edit action", data);
     const updatedData = rowData.map((row) => (row.index === data.index ? { ...row, isNew: true } : row));
     setRowData(updatedData);
   };
 
   const deleteRow = (data: RowData2) => {
-    console.log("Delete action", data);
     setRowData(rowData.filter((row) => row.index !== data.index));
   };
   const columnDefs: ColDef[] = useMemo(() => tablecolumns(viewRow, editRow, deleteRow, saveRows), [rowData]);

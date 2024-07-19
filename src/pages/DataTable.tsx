@@ -38,22 +38,18 @@ const DataTable = () => {
         return row;
       });
       setRowData(updatedData);
-      console.log(updatedData);
     };
   
-    const viewRow = (data: RowData) => {
-      console.log("View action", data);
+    const viewRow = () => {
       // Implement your view action here
     };
   
     const editRow = (data: RowData) => {
-      console.log("Edit action", data);
       const updatedData = rowData.map((row) => (row.poId === data.poId ? { ...row, isNew: true } : row));
       setRowData(updatedData);
     };
   
     const deleteRow = (data: RowData) => {
-      console.log("Delete action", data);
       setRowData(rowData.filter((row) => row.poId !== data.poId));
     };
     const columnDefs: ColDef[] = useMemo(() => tablecolumns(viewRow, editRow, deleteRow, saveRows), [rowData]);
