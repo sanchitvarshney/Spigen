@@ -52,6 +52,10 @@ const frameworks = [
     value: "/sales/order/e-transaction-register",
     label: " E Transaction Register",
   }, 
+  {
+    value: "/master/product/sfg",
+    label: "Products",
+  }, 
 ];
 
 function QuickLinks() {
