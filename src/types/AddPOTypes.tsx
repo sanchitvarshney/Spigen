@@ -1,9 +1,9 @@
-import { RowData2 } from "@/data";
+import { RowData } from "@/config/agGrid/SalseOrderCreateTableColumns";
 import { Dispatch, SetStateAction } from "react";
 export interface AddPoUIStateType {
   excelModel: boolean;
   setExcelModel: Dispatch<SetStateAction<boolean>>;
-  setRowData: Dispatch<SetStateAction<RowData2[]>>;
+  setRowData: Dispatch<SetStateAction<RowData[]>>;
   backModel: boolean;
   setBackModel: Dispatch<SetStateAction<boolean>>;
   resetModel: boolean;

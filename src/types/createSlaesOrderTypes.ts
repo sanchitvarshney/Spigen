@@ -118,12 +118,27 @@ export interface ClientAddressDetail {
   
   export type ClientAddressDetailResponse = ClientAddressDetail[];
   
+  export interface ComponentDetail {
+    id: string;
+    text: string;
+    part_code: string;
+    uID: string;
+    newPart: string;
+    piaStatus: string;
+  }
+  
+  export interface ComponentDetailResponse {
+    success: boolean;
+    message: string | null;
+    data: ComponentDetail[];
+  }
   export interface ClientState {
     clientDetails: Client | null;
     billingAddress: BillingAddress | null;
     projectDescription:ProjectDescription | null ;
     billingAddressList: BillingAddressListItem[] | null;
     clientAddressDetail: ClientAddressDetail | null;
+    componentDetails:ComponentDetail[]| null,
     loading: boolean;
     error: string | null;
     countries: Country2[] | null;

@@ -1,7 +1,7 @@
 // clientSlice.ts
 
 import { spigenAxios } from "@/axiosIntercepter";
-import { BillingAddress, BillingAddressListItem, BillingAddressListResponse, BillingAddressResponse, Client, ClientAddressDetail, ClientAddressDetailResponse, ClientResponse, ClientState, Country2, CountryResponse, ProjectDescription, ProjectDescriptionResponse, State2, StateResponse } from "@/types/createSlaesOrderTypes";
+import { BillingAddress, BillingAddressListItem, BillingAddressListResponse, BillingAddressResponse, Client, ClientAddressDetail, ClientAddressDetailResponse, ClientResponse, ClientState, ComponentDetail, ComponentDetailResponse, Country2, CountryResponse, ProjectDescription, ProjectDescriptionResponse, State2, StateResponse } from "@/types/createSlaesOrderTypes";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState: ClientState = {
@@ -12,6 +12,7 @@ const initialState: ClientState = {
   states: null,
   billingAddressList: null,
   clientAddressDetail: null,
+  componentDetails:null,
   loading: false,
   error: null,
 };
@@ -117,6 +118,21 @@ export const fetchClientAddressDetail = createAsyncThunk<ClientAddressDetail, { 
       }
     }
   );
+  // Define the async thunk for fetching component details
+export const fetchComponentDetail = createAsyncThunk<ComponentDetail[], {search:string}>(
+  'client/fetchComponentDetail',
+  async ({ search }) => {
+    const response = await spigenAxios.post<ComponentDetailResponse>(`/backend/getComponentByNameAndNo`, {
+      params: { search }
+    });
+    if (response.data.success) {
+      return response.data.data;
+    } else {
+      // Redux Toolkit will automatically handle the error
+      throw new Error(response.data.message || 'Failed to fetch component details');
+    }
+  }
+);
 // Create the slice
 const clientSlice = createSlice({
   name: "client",
@@ -213,6 +229,19 @@ const clientSlice = createSlice({
       .addCase(fetchClientAddressDetail.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to fetch client address detail';
+      })
+       // Handling component detail actions
+       .addCase(fetchComponentDetail.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchComponentDetail.fulfilled, (state, action) => {
+        state.loading = false;
+        state.componentDetails = action.payload;
+      })
+      .addCase(fetchComponentDetail.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to fetch component details';
       });
   },
 });

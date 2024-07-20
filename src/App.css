@@ -48,8 +48,17 @@
       border: none;
       padding: 0;
       padding: 0 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
   }
   .ag-theme-quartz .ag-cell:focus{
     outline: none;
     border: none;
+  }
+  .centered-cell {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center;     /* Center vertically */
+    height: 100%;            /* Ensure full height for vertical centering */
   }
