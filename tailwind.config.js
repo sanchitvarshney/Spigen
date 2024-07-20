@@ -35,6 +35,7 @@ module.exports = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
       colors: {
+        hbg:"#e0f2f1",
         maincolor:"#1faaa8",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

@@ -11,7 +11,6 @@ import CompletedPOPage from "./pages/CompletedPOPage";
 import ApprovePOPage from "./pages/ApprovePOPage";
 import ManagePoPage from "./pages/ManagePoPage";
 import LoginPage from "./pages/LoginPage";
-import AddPOPage from "./pages/AddPOPage";
 import ForgotPassword from "./pages/ForgotPassword";
 import RegisterSalesOrderPage from "./pages/salesModule/RegisterSalesOrderPage";
 import "@ag-grid-community/styles/ag-grid.css";
@@ -25,6 +24,10 @@ import SalesInvoicePage from "./pages/salesModule/SalesInvoicePage";
 import AllocatedInvoicesPage from "./pages/salesModule/AllocatedInvoicesPage";
 import SalesETransactionRegisterPage from "./pages/salesModule/SalesETransactionRegisterPage";
 import GridExample from "./pages/GridExample";
+import AddSalesOrderPage from "./pages/salesModule/AddSalesOrderPage";
+import MasterProductLayout from "./layouts/MasterProductLayout";
+import MasterProductFgPage from "./pages/masterModule/MasterProductFgPage";
+import MasterProductSfgPage from "./pages/masterModule/MasterProductSfgPage";
 
 // Define the authenticated routes
 const router = createBrowserRouter([
@@ -70,18 +73,7 @@ const router = createBrowserRouter([
     ),
     path: "/create-po",
   },
-  {
-    element: (
-      <Protected authentication>
-        <MainLayout>
-          <POLayout>
-            <AddPOPage />
-          </POLayout>
-        </MainLayout>
-      </Protected>
-    ),
-    path: "/add-po",
-  },
+ 
   {
     element: (
       <Protected authentication>
@@ -129,6 +121,18 @@ const router = createBrowserRouter([
       </Protected>
     ),
     path: "/sales/order/create",
+  },
+  {
+    element: (
+      <Protected authentication>
+        <MainLayout>
+          <SOLayout>
+            <AddSalesOrderPage />
+          </SOLayout>
+        </MainLayout>
+      </Protected>
+    ),
+    path: "/sales/order/add",
   },
 
   {
@@ -192,6 +196,31 @@ const router = createBrowserRouter([
     path: "/sales/order/e-transaction-register",
   },
  
+  //master moduls
+  {
+    element: (
+      <Protected authentication>
+        <MainLayout>
+         <MasterProductLayout>
+          <MasterProductFgPage/>
+         </MasterProductLayout>
+        </MainLayout>
+      </Protected>
+    ),
+    path: "/master/product/fg",
+  },
+  {
+    element: (
+      <Protected authentication>
+        <MainLayout>
+         <MasterProductLayout>
+          <MasterProductSfgPage/>
+         </MasterProductLayout>
+        </MainLayout>
+      </Protected>
+    ),
+    path: "/master/product/sfg",
+  },
   {
     element: (
       <Protected authentication>
@@ -202,6 +231,7 @@ const router = createBrowserRouter([
     ),
     path: "/grid",
   },
+ 
   {
     path: "*",
     element: (

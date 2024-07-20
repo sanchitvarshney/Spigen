@@ -18,19 +18,21 @@ interface OptionType {
         borderColor: "darkblue",
       },
       background: "transparent",
-      
+            fontSize:"15px"
     }),
     option: (provided, state) => ({
       ...provided,
-      backgroundColor: state.isSelected ? "#0891b2" : state.isFocused ? "#0891b2" : "white",
-      color: state.isSelected ? "#fff" : state.isFocused ? "#ffff" : "#475569",
+      backgroundColor: state.isSelected ? "#0891b2" : state.isFocused ? "#fff" : "white",
+      color: state.isSelected ? "#fff" : state.isFocused ? "#475569" : "#475569",
       "&:hover": {
         backgroundColor: "#0891b2",
         color: "#fff",
       },
       
       borderRadius:"5px",
-      transition:"all 0.1s"
+      transition:"all 0.1s",
+      cursor: "pointer",
+      fontSize:"15px"
     }),
     singleValue: (provided) => ({
       ...provided,
@@ -38,15 +40,22 @@ interface OptionType {
     }),
     container:(provided)=>({
       ...provided,
+   
       
     }),
     menu: (provided) => ({
       ...provided,
+    
+      background:"#fff"
+      
     }),
     menuList: (provided) => ({
       ...provided,
-     
-      padding:"10px"
+     background:"#fff",
+      padding:"10px",
+      display:"flex",
+      flexDirection:"column",
+      gap:"5px"
     }),
     
   };
