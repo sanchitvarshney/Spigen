@@ -27,9 +27,9 @@ export const columnDefs: ColDef[] = [
   { 
     headerName: 'Actions', 
     field: 'actions', 
-    cellRenderer: (params:any) => (
+    cellRenderer: () => (
       <div>
-        {params.data.sku}
+       
        <ActionCellRender/>
       </div>
     ) 
