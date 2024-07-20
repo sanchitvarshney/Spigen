@@ -235,7 +235,7 @@ const CreateSalesOrderPage = () => {
         </div>
       </div>
       <div className="h-[50px] w-full flex justify-end items-center px-[20px] bg-white shadow-md border-t border-slate-300">
-        <Link to={"/add-po"} className="text-white py-[5px] flex gap-[10px] items-center bg-cyan-600 hover:bg-cyan-500 rounded shadow-md shadow-slate-500 px-[20px]">
+        <Link to={"/sales/order/add"} className="text-white py-[5px] flex gap-[10px] items-center bg-cyan-600 hover:bg-cyan-500 rounded shadow-md shadow-slate-500 px-[20px]">
           Next
           <FaArrowRightLong className="" />
         </Link>
