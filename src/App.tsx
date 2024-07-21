@@ -28,6 +28,7 @@ import AddSalesOrderPage from "./pages/salesModule/AddSalesOrderPage";
 import MasterProductLayout from "./layouts/MasterProductLayout";
 import MasterProductFgPage from "./pages/masterModule/MasterProductFgPage";
 import MasterProductSfgPage from "./pages/masterModule/MasterProductSfgPage";
+import BlockedPageRenderPage from "./pages/BlockedPageRenderPage";
 
 // Define the authenticated routes
 const router = createBrowserRouter([
@@ -231,7 +232,14 @@ const router = createBrowserRouter([
     ),
     path: "/grid",
   },
- 
+  {
+    path: "/warning",
+    element: (
+      <MainLayout>
+        <BlockedPageRenderPage/>
+      </MainLayout>
+    ),
+  },
   {
     path: "*",
     element: (
