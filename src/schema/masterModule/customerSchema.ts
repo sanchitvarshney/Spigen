@@ -11,7 +11,6 @@ export const clientFormSchema = z.object({
   website: z.string().url().optional(),
 });
 
-export type ClientFormSchema = z.infer<typeof clientFormSchema>;
 export const clientEditFormSchema = z.object({
   vendorName: z.string().min(1, "Vendor Name is required"),
   email: z.string().email("Invalid email address").optional(),
