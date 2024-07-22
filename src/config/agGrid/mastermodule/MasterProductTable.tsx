@@ -11,7 +11,7 @@ export const columnDefs: ColDef[] = [
     valueGetter: 'node.rowIndex + 1', 
     sortable: true, 
     filter: true,
-   
+   maxWidth:80
   },
   { headerName: 'Product Name', field: 'productName', sortable: true, filter: true },
   { headerName: 'SKU', field: 'sku', sortable: true, filter: true, cellRenderer: (params:any) => (
@@ -27,9 +27,9 @@ export const columnDefs: ColDef[] = [
   { 
     headerName: 'Actions', 
     field: 'actions', 
+    
     cellRenderer: () => (
       <div>
-       
        <ActionCellRender/>
       </div>
     ) 

@@ -49,6 +49,7 @@
       padding: 0;
       padding: 0 5px;
       display: flex;
+      justify-content: start;
       align-items: center;
   }
   .ag-theme-quartz .ag-cell:focus{

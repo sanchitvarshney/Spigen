@@ -46,8 +46,12 @@ interface OptionType {
     menu: (provided) => ({
       ...provided,
     
-      background:"#fff"
-      
+      background:"#fff",
+      borderRadius:"10px",
+      border:"none",
+      boxShadow: "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px",
+      msScrollbarTrackColor:"ButtonFace"
+     
     }),
     menuList: (provided) => ({
       ...provided,
@@ -55,7 +59,9 @@ interface OptionType {
       padding:"10px",
       display:"flex",
       flexDirection:"column",
-      gap:"5px"
+      gap:"5px",
+      borderRadius:"10px",
+      
     }),
     
   };

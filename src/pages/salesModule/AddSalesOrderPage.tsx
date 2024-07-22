@@ -17,15 +17,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
 import { fetchComponentDetail } from "@/features/salesmodule/createSalesOrderSlice";
 
-
 const AddSalesOrderPage = () => {
   const [rowData, setRowData] = useState<RowData[]>([]);
   const [excelModel, setExcelModel] = useState<boolean>(false);
   const [backModel, setBackModel] = useState<boolean>(false);
   const [resetModel, setResetModel] = useState<boolean>(false);
-const dispatch = useDispatch<AppDispatch>()
-const data = useSelector((state:RootState)=>state.createSalesOrder)
-console.log("//////////////",data)
+  const dispatch = useDispatch<AppDispatch>();
+  const data = useSelector((state: RootState) => state.createSalesOrder);
+  console.log("//////////////", data);
   const gridRef = useRef<AgGridReact<RowData>>(null);
   const uiState: AddPoUIStateType = {
     excelModel,
@@ -94,9 +93,9 @@ console.log("//////////////",data)
   useEffect(() => {
     addNewRow();
   }, []);
-useEffect(()=>{
-    dispatch(fetchComponentDetail({search:""}))
-},[])
+  useEffect(() => {
+    dispatch(fetchComponentDetail({ search: "" }));
+  }, []);
   return (
     <Wrapper>
       <AddPOPopovers uiState={uiState} />
@@ -181,7 +180,7 @@ useEffect(()=>{
               </Button>
             </div>
           </div>
-          <div className="ag-theme-quartz h-[calc(100vh-240px)] w-full">
+          <div className="ag-theme-quartz h-[calc(100vh-210px)] w-full">
             <AgGridReact
               ref={gridRef}
               rowData={rowData}
@@ -192,16 +191,20 @@ useEffect(()=>{
               pagination={true}
               paginationPageSize={10}
               animateRows={true}
-             gridOptions={commonAgGridConfig}
-             suppressCellFocus={false}
-             suppressRowClickSelection={false}
+              gridOptions={commonAgGridConfig}
+              suppressCellFocus={false}
+              suppressRowClickSelection={false}
             />
           </div>
         </div>
       </div>
       <div className="bg-white border-t shadow border-slate-300 h-[50px] flex items-center justify-end gap-[20px] px-[20px]">
-        <Button className="rounded-md shadow bg-red-700 hover:bg-red-600 shadow-slate-500 max-w-max px-[30px]" onClick={()=>setResetModel(true)}>Reset</Button>
-        <Button className="rounded-md shadow bg-cyan-700 hover:bg-cyan-600 shadow-slate-500 max-w-max px-[30px]" onClick={()=>setBackModel(true)}>Back</Button>
+        <Button className="rounded-md shadow bg-red-700 hover:bg-red-600 shadow-slate-500 max-w-max px-[30px]" onClick={() => setResetModel(true)}>
+          Reset
+        </Button>
+        <Button className="rounded-md shadow bg-cyan-700 hover:bg-cyan-600 shadow-slate-500 max-w-max px-[30px]" onClick={() => setBackModel(true)}>
+          Back
+        </Button>
         <Button className="rounded-md shadow bg-green-700 hover:bg-green-600 shadow-slate-500 max-w-max px-[30px]">Submit</Button>
       </div>
     </Wrapper>
@@ -212,6 +215,9 @@ const Wrapper = styled.div`
   .ag-theme-quartz .ag-root-wrapper {
     border-radius: 0;
     border: 0;
+  }
+  .ag-theme-quartz .ag-cell {
+    justify-content: center;
   }
 `;
 

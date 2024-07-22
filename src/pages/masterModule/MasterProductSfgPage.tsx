@@ -13,6 +13,7 @@ import Select from "react-select";
 
 import DropdownIndicator from "@/config/reactSelect/DropdownIndicator";
 import { customStyles } from "@/config/reactSelect/SelectColorConfig";
+import styled from "styled-components";
 const schema = z.object({
   productType: z.enum(["good", "service"]),
   productSku: z.string().min(2, {
@@ -52,7 +53,7 @@ const MasterProductSfgPage: React.FC = () => {
   }
 
   return (
-    <div className="h-[calc(100vh-100px)] bg-[#fff] grid grid-cols-[450px_1fr]">
+    <Wrapper className="h-[calc(100vh-100px)] bg-[#fff] grid grid-cols-[450px_1fr]">
       <div className="">
         <Card className="border-none shadow-none rounded-0">
           <CardHeader className="p-0 bg-hbg h-[49px] border-b border-slate-300 px-[10px] flex justify-center">
@@ -160,8 +161,20 @@ const MasterProductSfgPage: React.FC = () => {
           <AgGridReact rowData={rowData} columnDefs={columnDefs} rowSelection="single" />
         </div>
       </div>
-    </div>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled.div`
+     .ag-theme-quartz .ag-cell{
+      outline: none;
+      border: none;
+      padding: 0;
+      padding: 0 5px;
+      display: flex;
+      justify-content: start;
+      align-items: center;
+  }
+`
 
 export default MasterProductSfgPage;
