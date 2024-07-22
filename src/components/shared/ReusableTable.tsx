@@ -25,10 +25,10 @@ interface GridTableProps {
   query?:any
 }
 
-const ReusableTable: React.FC<GridTableProps> = ({ endpoint, columns, payload, transform, method, heigth, components,query }) => {
+const ReusableTable: React.FC<GridTableProps> = ({ endpoint, columns, payload, transform, method, heigth, components }) => {
   const [rowData, setRowData] = useState<any[] | null>(null);
   const dispatch = useDispatch<AppDispatch>();
-  const data = useSelector((state: RootState) => state.aggrid.data);
+
   const loading = useSelector((state: RootState) => state.aggrid.loading);
 
   const defaultColDef = useMemo<ColDef>(

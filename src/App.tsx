@@ -23,12 +23,10 @@ import SalesShipmentPage from "./pages/salesModule/SalesShipmentPage";
 import SalesInvoicePage from "./pages/salesModule/SalesInvoicePage";
 import AllocatedInvoicesPage from "./pages/salesModule/AllocatedInvoicesPage";
 import SalesETransactionRegisterPage from "./pages/salesModule/SalesETransactionRegisterPage";
-import GridExample from "./pages/GridExample";
 import AddSalesOrderPage from "./pages/salesModule/AddSalesOrderPage";
 import MasterProductLayout from "./layouts/MasterProductLayout";
 import MasterProductFgPage from "./pages/masterModule/MasterProductFgPage";
 import MasterProductSfgPage from "./pages/masterModule/MasterProductSfgPage";
-
 import MasterAddressLayout from "./layouts/MasterAddressLayout";
 import MasterBillingAddressPage from "./pages/masterModule/MasterBillingAddressPage";
 import MasterShippingAddressPage from "./pages/masterModule/MasterShippingAddressPage";
@@ -260,16 +258,7 @@ const router = createBrowserRouter([
     ),
     path: "/master/cutsomer",
   },
-  {
-    element: (
-      <Protected authentication>
-        <MainLayout>
-          <GridExample />
-        </MainLayout>
-      </Protected>
-    ),
-    path: "/grid",
-  },
+
   {
     path: "/warning",
     element: (
