@@ -23,16 +23,15 @@ import SalesShipmentPage from "./pages/salesModule/SalesShipmentPage";
 import SalesInvoicePage from "./pages/salesModule/SalesInvoicePage";
 import AllocatedInvoicesPage from "./pages/salesModule/AllocatedInvoicesPage";
 import SalesETransactionRegisterPage from "./pages/salesModule/SalesETransactionRegisterPage";
-import GridExample from "./pages/GridExample";
 import AddSalesOrderPage from "./pages/salesModule/AddSalesOrderPage";
 import MasterProductLayout from "./layouts/MasterProductLayout";
 import MasterProductFgPage from "./pages/masterModule/MasterProductFgPage";
 import MasterProductSfgPage from "./pages/masterModule/MasterProductSfgPage";
-
 import MasterAddressLayout from "./layouts/MasterAddressLayout";
 import MasterBillingAddressPage from "./pages/masterModule/MasterBillingAddressPage";
 import MasterShippingAddressPage from "./pages/masterModule/MasterShippingAddressPage";
 import BlockedPageRenderPage from "./pages/BlockedPageRenderPage";
+import MasterCustomerPage from "./pages/masterModule/MasterCustomerPage";
 // Define the authenticated routes
 const router = createBrowserRouter([
   {
@@ -77,7 +76,7 @@ const router = createBrowserRouter([
     ),
     path: "/create-po",
   },
- 
+
   {
     element: (
       <Protected authentication>
@@ -199,15 +198,15 @@ const router = createBrowserRouter([
     ),
     path: "/sales/order/e-transaction-register",
   },
- 
+
   //master moduls
   {
     element: (
       <Protected authentication>
         <MainLayout>
-         <MasterProductLayout>
-          <MasterProductFgPage/>
-         </MasterProductLayout>
+          <MasterProductLayout>
+            <MasterProductFgPage />
+          </MasterProductLayout>
         </MainLayout>
       </Protected>
     ),
@@ -217,9 +216,9 @@ const router = createBrowserRouter([
     element: (
       <Protected authentication>
         <MainLayout>
-         <MasterProductLayout>
-          <MasterProductSfgPage/>
-         </MasterProductLayout>
+          <MasterProductLayout>
+            <MasterProductSfgPage />
+          </MasterProductLayout>
         </MainLayout>
       </Protected>
     ),
@@ -229,9 +228,9 @@ const router = createBrowserRouter([
     element: (
       <Protected authentication>
         <MainLayout>
-        <MasterAddressLayout>
-          <MasterBillingAddressPage/>
-        </MasterAddressLayout>
+          <MasterAddressLayout>
+            <MasterBillingAddressPage />
+          </MasterAddressLayout>
         </MainLayout>
       </Protected>
     ),
@@ -241,9 +240,9 @@ const router = createBrowserRouter([
     element: (
       <Protected authentication>
         <MainLayout>
-        <MasterAddressLayout>
-          <MasterShippingAddressPage/>
-        </MasterAddressLayout>
+          <MasterAddressLayout>
+            <MasterShippingAddressPage />
+          </MasterAddressLayout>
         </MainLayout>
       </Protected>
     ),
@@ -253,17 +252,18 @@ const router = createBrowserRouter([
     element: (
       <Protected authentication>
         <MainLayout>
-          <GridExample />
+          <MasterCustomerPage />
         </MainLayout>
       </Protected>
     ),
-    path: "/grid",
+    path: "/master/cutsomer",
   },
+
   {
     path: "/warning",
     element: (
       <MainLayout>
-        <BlockedPageRenderPage/>
+        <BlockedPageRenderPage />
       </MainLayout>
     ),
   },

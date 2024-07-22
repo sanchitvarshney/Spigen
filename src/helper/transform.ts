@@ -8,7 +8,6 @@ export const transformCustomerData = (data: any[]) => {
 };
 
 export const transformOptionData = (data: any[]) => {
-
   return data.map((item) => ({
     label: item.text,
     value: item.id,
@@ -18,5 +17,12 @@ export const transformPlaceData = (data: any[]) => {
   return data.map((item) => ({
     label: item.name,
     value: item.code.toString(),
+  }));
+};
+
+export const transformClientTds = (data: any[]) => {
+  return data.map((item) => ({
+    label: item.tds_name,
+    value: item.tds_key,
   }));
 };
