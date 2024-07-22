@@ -27,7 +27,9 @@ const MainLayoutPopovers: React.FC<Props> = ({ uiState }) => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction className="bg-red-600 hover:bg-red-700" onClick={() => {dispatch(logout())}}>
+            <AlertDialogAction className="bg-red-600 hover:bg-red-700" onClick={() => {
+              dispatch(logout())
+            }}>
               Continue
             </AlertDialogAction>
           </AlertDialogFooter>

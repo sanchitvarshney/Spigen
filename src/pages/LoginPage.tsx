@@ -10,7 +10,7 @@ import { z } from "zod";
 import { Link } from "react-router-dom";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useToast } from "@/components/ui/use-toast";
-import { useEffect } from "react";
+
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -21,7 +21,7 @@ const formSchema = z.object({
   }),
 });
 const LoginPage: React.FC = () => {
-  const { toast } = useToast()
+  const { toast } = useToast();
   const dispatch = useDispatch<AppDispatch>();
   const data = useSelector((state: RootState) => state.auth);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -32,18 +32,16 @@ const LoginPage: React.FC = () => {
     },
   });
   function onSubmit(data: z.infer<typeof formSchema>) {
-    dispatch(loginUserAsync(data));
+    dispatch(loginUserAsync(data)).then((response: any) => {
+      if (response.payload.status === 200) {
+        toast({
+          title: "Welcome to Spigen IMS Portal",
+          description: "Now you start your work",
+          className: "bg-green-600 text-white items-center",
+        });
+      }
+    });
   }
-  useEffect(()=>{
-    if(data?.loading === "success"){
-      toast({
-        title: "Welcome to Spigen IMS Portal",
-        description: "Now you start your work",
-        className:"bg-green-600 text-white items-center",
-        
-      })
-    }
-  },[data])
   return (
     <div className="mx-auto grid w-[400px] gap-6 p-[20px] rounded-md bg-blue-50 shadow ">
       <div className="grid gap-2">
@@ -84,11 +82,15 @@ const LoginPage: React.FC = () => {
               </FormItem>
             )}
           />
-          <Button disabled={data.loading === "loading"? true : false} type="submit" className="w-full bg-cyan-700 hover:bg-cyan-600">
-            {
-              data.loading === "loading"? <><ReloadIcon className="h-[20px] w-[20px] animate-spin mr-[5px]"/>Wait...</> :  "Submit"
-            }
-           
+          <Button disabled={data.loading === "loading" ? true : false} type="submit" className="w-full bg-cyan-700 hover:bg-cyan-600">
+            {data.loading === "loading" ? (
+              <>
+                <ReloadIcon className="h-[20px] w-[20px] animate-spin mr-[5px]" />
+                Wait...
+              </>
+            ) : (
+              "Submit"
+            )}
           </Button>
         </form>
       </Form>

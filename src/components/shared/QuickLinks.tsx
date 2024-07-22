@@ -56,6 +56,14 @@ const frameworks = [
     value: "/master/product/sfg",
     label: "Products",
   }, 
+  {
+    value: "/master/billing-address",
+    label: "Billing Address",
+  }, 
+  {
+    value: "/master/shipping-address",
+    label: "Shipping Address",
+  }, 
 ];
 
 function QuickLinks() {

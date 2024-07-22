@@ -118,7 +118,7 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                             </Link>
                           </li>
                           <li className="w-full">
-                            <Link onClick={() => setSheetOpen(false)} to={"/master/product/sfg"} className="w-full hover:no-underline hover:bg-cyan-800 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link onClick={() => setSheetOpen(false)} to={"/master/product/fg"} className="w-full hover:no-underline hover:bg-cyan-800 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Products <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
@@ -138,12 +138,12 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                             </Link>
                           </li>
                           <li className="w-full">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-800 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/master/billing-address"} className="w-full hover:no-underline hover:bg-cyan-800 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Billing address <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
                           <li className="w-full">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-800 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/master/shipping-address"} className="w-full hover:no-underline hover:bg-cyan-800 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Shipping address <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
