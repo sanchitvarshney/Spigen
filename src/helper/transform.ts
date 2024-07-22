@@ -8,6 +8,7 @@ export const transformCustomerData = (data: any[]) => {
 };
 
 export const transformOptionData = (data: any[]) => {
+
   return data.map((item) => ({
     label: item.text,
     value: item.id,

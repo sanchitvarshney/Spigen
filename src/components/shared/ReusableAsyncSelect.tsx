@@ -12,7 +12,7 @@ interface ReusableAsyncSelectProps<T> {
   endpoint: string;
   transform: (data: T[]) => { label: string; value: string }[];
   onChange: (selectedOption: { label: string; value: string } | null) => void;
-  value: { label: string; value: string } | null; // Add value prop
+  value?: { label: string; value: string } | null; // Add value prop
   fetchOptionWith: "query" | "payload";
   placeholder:string
 }
@@ -37,7 +37,13 @@ const ReusableAsyncSelect = <T,>({ endpoint, transform, onChange, value, fetchOp
       dispatch(fetchData({ endpoint, payload: { search: inputValue } })).then((action) => {
         if (fetchData.fulfilled.match(action)) {
           const response = action.payload as ApiResponse<T[]>;
-          callback(transform(response.data));
+          if(Array.isArray(response)){
+            callback(transform(response));
+          }else{
+            callback(transform(response.data));
+          }
+        
+          
         } else {
           callback([]);
         }
