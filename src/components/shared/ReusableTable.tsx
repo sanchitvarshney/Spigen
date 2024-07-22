@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useState, useEffect } from "react";
+import React, { useMemo, useCallback, useState } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
 import { fetchTableData } from "@/features/agGrid/aggridSlice";
 import CustomLoadingCellRenderer from "@/config/agGrid/CustomLoadingCellRenderer";
-import { TransformFunction } from "@/helper/TableTransformation";
 
 interface Payload {
   wise: string;
@@ -17,50 +16,46 @@ interface Payload {
 interface GridTableProps {
   endpoint: string;
   columns: ColDef[];
-  payload: Payload;
-  transform: TransformFunction;
+  payload?: Payload;
+  transform: any;
+  method?: string;
+  heigth: string;
+  option?: any;
+  components?: any;
+  query?:any
 }
 
-const ReusableTable: React.FC<GridTableProps> = ({ endpoint, columns, payload, transform }) => {
+const ReusableTable: React.FC<GridTableProps> = ({ endpoint, columns, payload, transform, method, heigth, components,query }) => {
   const [rowData, setRowData] = useState<any[] | null>(null);
   const dispatch = useDispatch<AppDispatch>();
   const data = useSelector((state: RootState) => state.aggrid.data);
   const loading = useSelector((state: RootState) => state.aggrid.loading);
-  
+
   const defaultColDef = useMemo<ColDef>(
     () => ({
-      editable: true,
       flex: 1,
-      minWidth: 100,
+      minWidth: 200,
       filter: true,
     }),
     []
   );
 
-  const onGridReady = useCallback(
-    () => {
-      dispatch(fetchTableData({ endpoint, payload }));
-    },
-    [dispatch, endpoint, payload]
-  );
-
-  useEffect(() => {
-    if (loading) {
-      setRowData(null);
-    } else {
-      if (data) {
-        setRowData(transform(data));
+  const onGridReady = useCallback(() => {
+    dispatch(fetchTableData({ endpoint, payload, method })).then((response: any) => {
+      console.log(response);
+      if (loading) {
+        setRowData(null);
+      } else if (response.payload?.code === 200) {
+        setRowData(transform(response.payload?.data));
       }
-    }
-  }, [data, loading, transform]);
-
-  console.log(loading, rowData);
+    });
+  }, [dispatch, endpoint, payload]);
 
   return (
     <div>
-      <div className="w-full h-[500px] ag-theme-quartz">
+      <div className={`w-ful ag-theme-quartz ${heigth}`}>
         <AgGridReact
-          components={{ customLoadingCellRenderer: CustomLoadingCellRenderer }}
+          components={{ ...components, customLoadingCellRenderer: CustomLoadingCellRenderer }}
           columnDefs={columns}
           defaultColDef={defaultColDef}
           rowData={rowData}
@@ -68,6 +63,10 @@ const ReusableTable: React.FC<GridTableProps> = ({ endpoint, columns, payload, t
           loadingCellRendererParams={CustomLoadingCellRenderer}
           rowModelType="clientSide"
           onGridReady={onGridReady}
+          pagination={true}
+          paginationPageSize={20}
+          paginationPageSizeSelector={[10, 20, 30, 50, 100]}
+          suppressCellFocus={true}
         />
       </div>
     </div>

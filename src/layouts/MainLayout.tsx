@@ -104,7 +104,7 @@ function MainLayout(props: { children: React.ReactNode }) {
       <div>
         <nav className="flex items-center justify-between h-[50px] px-[20px] fixed top-0 left-[50px] w-[calc(100vw-50px)]  bg-neutral-300">
           <div className="flex gap-[20px] items-center">
-            <div className="text-slate-700 font-[600] logo">VanSElectronics</div>
+            <div className="text-slate-700 font-[600] logo">Spigen</div>
             <div className="date">
               <Select>
                 <SelectTrigger className="w-[180px] bg-white border-0 text-slate-700">

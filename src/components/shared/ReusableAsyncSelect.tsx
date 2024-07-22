@@ -14,10 +14,10 @@ interface ReusableAsyncSelectProps<T> {
   onChange: (selectedOption: { label: string; value: string } | null) => void;
   value?: { label: string; value: string } | null; // Add value prop
   fetchOptionWith: "query" | "payload";
-  placeholder:string
+  placeholder: string;
 }
 
-const ReusableAsyncSelect = <T,>({ endpoint, transform, onChange, value, fetchOptionWith ,placeholder}: ReusableAsyncSelectProps<T>) => {
+const ReusableAsyncSelect = <T,>({ endpoint, transform, onChange, value, fetchOptionWith, placeholder }: ReusableAsyncSelectProps<T>) => {
   const dispatch = useDispatch<AppDispatch>();
   const [isOpen, setIsOpen] = useState(false); // State to track if select is open
   const options = useSelector((state: RootState) => state.select[endpoint]?.options || []);
@@ -37,13 +37,11 @@ const ReusableAsyncSelect = <T,>({ endpoint, transform, onChange, value, fetchOp
       dispatch(fetchData({ endpoint, payload: { search: inputValue } })).then((action) => {
         if (fetchData.fulfilled.match(action)) {
           const response = action.payload as ApiResponse<T[]>;
-          if(Array.isArray(response)){
+          if (Array.isArray(response)) {
             callback(transform(response));
-          }else{
+          } else {
             callback(transform(response.data));
           }
-        
-          
         } else {
           callback([]);
         }
@@ -69,7 +67,7 @@ const ReusableAsyncSelect = <T,>({ endpoint, transform, onChange, value, fetchOp
   return (
     <AsyncSelect
       styles={customStyles}
-      components={{DropdownIndicator}}
+      components={{ DropdownIndicator }}
       cacheOptions
       loadOptions={loadOptions}
       defaultOptions={transform(options)}

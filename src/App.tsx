@@ -33,6 +33,7 @@ import MasterAddressLayout from "./layouts/MasterAddressLayout";
 import MasterBillingAddressPage from "./pages/masterModule/MasterBillingAddressPage";
 import MasterShippingAddressPage from "./pages/masterModule/MasterShippingAddressPage";
 import BlockedPageRenderPage from "./pages/BlockedPageRenderPage";
+import MasterCustomerPage from "./pages/masterModule/MasterCustomerPage";
 // Define the authenticated routes
 const router = createBrowserRouter([
   {
@@ -77,7 +78,7 @@ const router = createBrowserRouter([
     ),
     path: "/create-po",
   },
- 
+
   {
     element: (
       <Protected authentication>
@@ -199,15 +200,15 @@ const router = createBrowserRouter([
     ),
     path: "/sales/order/e-transaction-register",
   },
- 
+
   //master moduls
   {
     element: (
       <Protected authentication>
         <MainLayout>
-         <MasterProductLayout>
-          <MasterProductFgPage/>
-         </MasterProductLayout>
+          <MasterProductLayout>
+            <MasterProductFgPage />
+          </MasterProductLayout>
         </MainLayout>
       </Protected>
     ),
@@ -217,9 +218,9 @@ const router = createBrowserRouter([
     element: (
       <Protected authentication>
         <MainLayout>
-         <MasterProductLayout>
-          <MasterProductSfgPage/>
-         </MasterProductLayout>
+          <MasterProductLayout>
+            <MasterProductSfgPage />
+          </MasterProductLayout>
         </MainLayout>
       </Protected>
     ),
@@ -229,9 +230,9 @@ const router = createBrowserRouter([
     element: (
       <Protected authentication>
         <MainLayout>
-        <MasterAddressLayout>
-          <MasterBillingAddressPage/>
-        </MasterAddressLayout>
+          <MasterAddressLayout>
+            <MasterBillingAddressPage />
+          </MasterAddressLayout>
         </MainLayout>
       </Protected>
     ),
@@ -241,13 +242,23 @@ const router = createBrowserRouter([
     element: (
       <Protected authentication>
         <MainLayout>
-        <MasterAddressLayout>
-          <MasterShippingAddressPage/>
-        </MasterAddressLayout>
+          <MasterAddressLayout>
+            <MasterShippingAddressPage />
+          </MasterAddressLayout>
         </MainLayout>
       </Protected>
     ),
     path: "/master/shipping-address",
+  },
+  {
+    element: (
+      <Protected authentication>
+        <MainLayout>
+          <MasterCustomerPage />
+        </MainLayout>
+      </Protected>
+    ),
+    path: "/master/cutsomer",
   },
   {
     element: (
@@ -263,7 +274,7 @@ const router = createBrowserRouter([
     path: "/warning",
     element: (
       <MainLayout>
-        <BlockedPageRenderPage/>
+        <BlockedPageRenderPage />
       </MainLayout>
     ),
   },
