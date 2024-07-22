@@ -28,6 +28,9 @@ import AddSalesOrderPage from "./pages/salesModule/AddSalesOrderPage";
 import MasterProductLayout from "./layouts/MasterProductLayout";
 import MasterProductFgPage from "./pages/masterModule/MasterProductFgPage";
 import MasterProductSfgPage from "./pages/masterModule/MasterProductSfgPage";
+import MasterAddressLayout from "./layouts/MasterAddressLayout";
+import MasterBillingAddressPage from "./pages/masterModule/MasterBillingAddressPage";
+import MasterShippingAddressPage from "./pages/masterModule/MasterShippingAddressPage";
 
 // Define the authenticated routes
 const router = createBrowserRouter([
@@ -220,6 +223,30 @@ const router = createBrowserRouter([
       </Protected>
     ),
     path: "/master/product/sfg",
+  },
+  {
+    element: (
+      <Protected authentication>
+        <MainLayout>
+        <MasterAddressLayout>
+          <MasterBillingAddressPage/>
+        </MasterAddressLayout>
+        </MainLayout>
+      </Protected>
+    ),
+    path: "/master/billing-address",
+  },
+  {
+    element: (
+      <Protected authentication>
+        <MainLayout>
+        <MasterAddressLayout>
+          <MasterShippingAddressPage/>
+        </MasterAddressLayout>
+        </MainLayout>
+      </Protected>
+    ),
+    path: "/master/shipping-address",
   },
   {
     element: (
