@@ -82,7 +82,7 @@ const navigate = useNavigate()
         <Command>
           <CommandInput placeholder="Search framework..." />
           <CommandEmpty>No framework found.</CommandEmpty>
-          <CommandList className="max-h-[400px] overflow-y-auto">
+          <CommandList className="max-h-[400px] overflow-y-auto p-[10px]">
             {frameworks.map((framework) => (
               <CommandItem
                 key={framework.value}

@@ -28,7 +28,7 @@ const CreateSalesOrderPage = () => {
   const [options, setOptions] = useState<OptionType[]>([]);
   const dispatch = useDispatch<AppDispatch>();
   const data = useSelector((state: RootState) => state.createSalesOrder);
-  console.log("/////////////", data);
+  
   useEffect(() => {
     dispatch(fetchBillingAddress({ billing_code: "R26331LI" }));
 
