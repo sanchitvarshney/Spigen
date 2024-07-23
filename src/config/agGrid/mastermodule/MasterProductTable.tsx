@@ -1,39 +1,43 @@
-import { Button } from '@/components/ui/button';
-
-import ActionCellRender from './ActionCellRender';
-import { Copy } from 'lucide-react';
-import { ColDef } from '@ag-grid-community/core';
-
+import { Button } from "@/components/ui/button";
+import { Copy } from "lucide-react";
+import { ColDef } from "@ag-grid-community/core";
+import ProductActionCellRender from "./ProductActionCellRender";
 
 export const columnDefs: ColDef[] = [
-  { 
-    headerName: 'ID', 
-    field: 'id', 
-    valueGetter: 'node.rowIndex + 1', 
-    sortable: true, 
+  {
+    headerName: "#",
+    field: "id",
+    valueGetter: "node.rowIndex + 1",
+    sortable: true,
     filter: true,
-   maxWidth:80
+    minWidth: 100,
   },
-  { headerName: 'Product Name', field: 'productName', sortable: true, filter: true },
-  { headerName: 'SKU', field: 'sku', sortable: true, filter: true, cellRenderer: (params:any) => (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      {params.value}
-      <Button   className='p-[2px] bg-transparent border-none shadow-none text-cyan-700 hover:bg-transparent' style={{ marginLeft: '10px' }} onClick={() => handleCopy(params.value)}>
-        <Copy className='h-[20px] w-[20px] '/>
-      </Button>
-    </div>
-  )},
-  { headerName: 'Unit', field: 'unit', sortable: true, filter: true },
-  { headerName: 'Category', field: 'category', sortable: true, filter: true , cellRenderer:()=>"Good"},
-  { 
-    headerName: 'Actions', 
-    field: 'actions', 
+  { headerName: "Product Name", field: "productName", sortable: true, filter: true },
+  {
+    headerName: "SKU",
+    field: "sku",
+    sortable: true,
+    filter: true,
+    cellRenderer: (params: any) => (
+      <div style={{ display: "flex", alignItems: "center" }}>
+        {params.value}
+        <Button className="p-[2px] bg-transparent border-none shadow-none text-cyan-700 hover:bg-transparent" style={{ marginLeft: "10px" }} onClick={() => handleCopy(params.value)}>
+          <Copy className="h-[20px] w-[20px] " />
+        </Button>
+      </div>
+    ),
+  },
+  { headerName: "Unit", field: "unit", sortable: true, filter: true },
+  { headerName: "Category", field: "category", sortable: true, filter: true, cellRenderer: () => "Good" },
+  {
+    headerName: "Actions",
+    field: "actions",
     cellRenderer: () => (
       <div>
-       <ActionCellRender/>
+        <ProductActionCellRender />
       </div>
-    ) 
-  }
+    ),
+  },
 ];
 
 // Handle Copy Button
@@ -44,9 +48,9 @@ const handleCopy = (value: any) => {
 // Open Modal Function
 
 export interface RowData {
-    id: number;
-    productName: string;
-    sku: string;
-    unit: string;
-    category: string;
-  }
+  id: number;
+  productName: string;
+  sku: string;
+  unit: string;
+  category: string;
+}

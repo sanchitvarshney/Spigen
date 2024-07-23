@@ -17,6 +17,7 @@ import React, { useState } from "react";
 import { formSchema } from "@/schema/masterModule/ShippingAddress";
 import { transformOptionData } from "@/helper/transform";
 import ReusableAsyncSelect from "@/components/shared/ReusableAsyncSelect";
+import { InputStyle, LableStyle, modelFixFooterStyle, modelFixHeaderStyle } from "@/constants/themeContants";
 
 const MasterShippingAddressPage: React.FC = () => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -55,22 +56,23 @@ const MasterShippingAddressPage: React.FC = () => {
               </Button>
             </CustomTooltip>
           </SheetTrigger>
-          <SheetContent className="min-w-[50%]">
-            <SheetHeader>
+          <SheetContent className="min-w-[50%] p-0">
+            <SheetHeader className={modelFixHeaderStyle}>
               <SheetTitle className="text-slate-600">Add Shipping Address</SheetTitle>
             </SheetHeader>
             <div>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-[20px]">
-                  <div className="grid grid-cols-2 gap-[20px]">
+                <form onSubmit={form.handleSubmit(onSubmit)} className=" mt-[20px]">
+                 <div className="space-y-8 px-[10px]">
+                 <div className="grid grid-cols-2 gap-[20px]">
                     <FormField
                       control={form.control}
                       name="addressLabel"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-slate-600">Address label</FormLabel>
+                          <FormLabel className={LableStyle}>Address label</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter Address Lable" {...field} />
+                            <Input className={InputStyle} placeholder="Enter Address Lable" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -81,9 +83,9 @@ const MasterShippingAddressPage: React.FC = () => {
                       name="companyName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-slate-600">Company Name</FormLabel>
+                          <FormLabel  className={LableStyle}>Company Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter Company Name" {...field} />
+                            <Input className={InputStyle} placeholder="Enter Company Name" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -95,9 +97,9 @@ const MasterShippingAddressPage: React.FC = () => {
                       name="panNo"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-slate-600">Pan No.</FormLabel>
+                          <FormLabel className={LableStyle}>Pan No.</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter Pan Number" {...field} />
+                            <Input className={InputStyle} placeholder="Enter Pan Number" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -108,9 +110,9 @@ const MasterShippingAddressPage: React.FC = () => {
                       name="gstin"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-slate-600">GSTIN</FormLabel>
+                          <FormLabel  className={LableStyle}>GSTIN</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter GSTIN Number" {...field} />
+                            <Input className={InputStyle} placeholder="Enter GSTIN Number" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -121,7 +123,7 @@ const MasterShippingAddressPage: React.FC = () => {
                       name="state"
                       render={() => (
                         <FormItem>
-                          <FormLabel className="text-slate-600">State</FormLabel>
+                          <FormLabel className={LableStyle}>State</FormLabel>
                           <FormControl>
                             <ReusableAsyncSelect placeholder="Select State" endpoint="backend/stateList" transform={transformOptionData} onChange={(e: any) => form.setValue("state", e?.value)} fetchOptionWith="payload" />
                           </FormControl>
@@ -135,17 +137,20 @@ const MasterShippingAddressPage: React.FC = () => {
                     name="address"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-slate-600">Address</FormLabel>
+                        <FormLabel className={LableStyle}>Address</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter Complete Address" {...field} />
+                          <Textarea className={InputStyle} placeholder="Enter Complete Address" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" className="bg-cyan-700 hover:bg-cyan-600">
-                    Submit
-                  </Button>
+                 </div>
+                  <div className={modelFixFooterStyle}>
+                    <Button type="submit" className="bg-cyan-700 hover:bg-cyan-600">
+                      Submit
+                    </Button>
+                  </div>
                 </form>
               </Form>
             </div>

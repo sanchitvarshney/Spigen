@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {  useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { FaLightbulb } from "react-icons/fa";
 import { FaCircleUser } from "react-icons/fa6";
 import { FaStar } from "react-icons/fa6";
@@ -16,18 +16,20 @@ import ProfileSidebar from "@/components/shared/ProfileSidebar";
 import MainLayoutPopovers from "../components/shared/MainLayoutPopovers";
 import QuickLinks from "@/components/shared/QuickLinks";
 import DownloadIndecator from "@/components/shared/DownloadIndecator";
-
+import { BiSupport } from "react-icons/bi";
+import HelpAndSupportModel from "@/components/shared/HelpAndSupportModel";
 function MainLayout(props: { children: React.ReactNode }) {
   const [sheetOpen, setSheetOpen] = useState<boolean>(false);
   const [sheet2Open, setSheet2Open] = useState<boolean>(false);
   const [favoriteSheet, setFavoriteSheet] = useState<boolean>(false);
   const [logotAlert, setLogotAlert] = useState<boolean>(false);
+  const [helpModel, setHelpModel] = useState<boolean>(false);
   const [notificationSheet, setNotificationSheet] = useState<boolean>(false);
   const [favoriteLinkList, setFavoriteLinkList] = useState<FavoriteMenuLinkListType[]>([]);
   const modalRef = useRef<HTMLDivElement>(null);
   const sidebaref = useRef<HTMLDivElement>(null);
   const favoriteref = useRef<HTMLDivElement>(null);
- 
+
   const uiState: MainUIStateType = {
     sheetOpen,
     setSheetOpen,
@@ -44,54 +46,13 @@ function MainLayout(props: { children: React.ReactNode }) {
     setNotificationSheet,
     favoriteLinkList,
     setFavoriteLinkList,
+    helpModel,
+    setHelpModel,
   };
-  
-  
-  const handleSheetOpen = () => {
-    setSheetOpen((prevSheetOpen) => {
-      if (prevSheetOpen) {
-        setSheet2Open(false);
-      }
-      return !prevSheetOpen;
-    });
-  };
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-        setSheetOpen(false);
-      }
-      if (sidebaref.current && !sidebaref.current.contains(event.target as Node)) {
-        setSheet2Open(false);
-      }
-      if (favoriteref.current && !favoriteref.current.contains(event.target as Node)) {
-        setFavoriteSheet(false);
-      }
-    };
-  
-    const addListener = () => {
-      document.addEventListener("mousedown", handleClickOutside);
-    };
-  
-    const removeListener = () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  
-    // Add event listener if any of the sheets are open
-    if (sheetOpen || sheet2Open || favoriteSheet) {
-      addListener();
-    }
-  
-    // Remove event listener if none of the sheets are open
-    if (!sheetOpen && !sheet2Open && !favoriteSheet) {
-      removeListener();
-    }
-  
-    // Cleanup on unmount or when dependencies change
-    return removeListener;
-  }, [sheetOpen, sheet2Open, favoriteSheet]);
- 
+
   return (
     <Wrapper className="">
+      <HelpAndSupportModel uiState={uiState}/>
       {/* alert disalogs start=============== */}
       <MainLayoutPopovers uiState={uiState} />
       {/* alert disalogs start=============== */}
@@ -180,7 +141,14 @@ function MainLayout(props: { children: React.ReactNode }) {
           </div>
           <div className="flex flex-col gap-[30px]">
             <div className="line"></div>
-            <Button onClick={handleSheetOpen} className="btn rotate-[270deg] border-[3px] border-yellow-600 bg-transparent rounded-full max-w-max">
+            <Button
+              onClick={() => {
+                setSheet2Open(false);
+                setSheetOpen(!sheetOpen);
+                setFavoriteSheet(false);
+              }}
+              className="btn rotate-[270deg] border-[3px] border-yellow-600 bg-transparent rounded-full max-w-max"
+            >
               <span></span>
               All Modules
             </Button>
@@ -189,7 +157,17 @@ function MainLayout(props: { children: React.ReactNode }) {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
-                  <FaLightbulb className="h-[25px] w-[25px] text-white" />
+                  <BiSupport className="h-[25px] w-[25px] text-white" />
+                </TooltipTrigger>
+                <TooltipContent side="right" className="bg-cyan-700">
+                  <p>Help & Support</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <FaLightbulb className="h-[25px] w-[25px] text-white" onClick={() => setHelpModel(true)} />
                 </TooltipTrigger>
                 <TooltipContent side="right" className="bg-cyan-700">
                   <p>Explore All Features</p>
@@ -205,6 +183,7 @@ function MainLayout(props: { children: React.ReactNode }) {
                     onClick={() => {
                       setSheet2Open(!sheet2Open);
                       setSheetOpen(false);
+                      setFavoriteSheet(false);
                     }}
                   />
                 </TooltipTrigger>

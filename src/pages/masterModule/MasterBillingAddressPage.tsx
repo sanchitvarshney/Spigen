@@ -16,6 +16,7 @@ import React, { useState } from "react";
 import formSchema from "@/schema/masterModule/billingAddress";
 import { transformOptionData } from "@/helper/transform";
 import ReusableAsyncSelect from "@/components/shared/ReusableAsyncSelect";
+import { InputStyle, LableStyle, modelFixHeaderStyle, modelFixFooterStyle } from '@/constants/themeContants';
 
 const MasterBillingAddressPage: React.FC = () => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -51,22 +52,23 @@ const MasterBillingAddressPage: React.FC = () => {
               </Button>
             </CustomTooltip>
           </SheetTrigger>
-          <SheetContent className="min-w-[50%]">
-            <SheetHeader>
+          <SheetContent className="min-w-[50%] p-0">
+            <SheetHeader className={modelFixHeaderStyle}>
               <SheetTitle className="text-slate-600">Add Billing Address</SheetTitle>
             </SheetHeader>
             <div>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-[20px]">
-                  <div className="grid grid-cols-2 gap-[20px]">
+                 <div className="px-[10px]">
+                 <div className="grid grid-cols-2 gap-[20px]">
                     <FormField
                       control={form.control}
                       name="warehouseName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-slate-600">Warehouse Name</FormLabel>
+                          <FormLabel className={LableStyle}>Warehouse Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter Wearhouse Name" {...field} />
+                            <Input className={InputStyle} placeholder="Enter Wearhouse Name" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -77,9 +79,9 @@ const MasterBillingAddressPage: React.FC = () => {
                       name="companyName"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-slate-600">Company Name</FormLabel>
+                          <FormLabel className={LableStyle}>Company Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter Company Name" {...field} />
+                            <Input  className={InputStyle} placeholder="Enter Company Name" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -91,9 +93,9 @@ const MasterBillingAddressPage: React.FC = () => {
                       name="panNo"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-slate-600">Pan No.</FormLabel>
+                          <FormLabel className={LableStyle}>Pan No.</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter Pan Number" {...field} />
+                            <Input  className={InputStyle} placeholder="Enter Pan Number" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -104,9 +106,9 @@ const MasterBillingAddressPage: React.FC = () => {
                       name="gstNo"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-slate-600">GST No.</FormLabel>
+                          <FormLabel className={LableStyle}>GST No.</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter GST Number" {...field} />
+                            <Input  className={InputStyle} placeholder="Enter GST Number" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -117,9 +119,9 @@ const MasterBillingAddressPage: React.FC = () => {
                       name="cinNo"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-slate-600">CIN No</FormLabel>
+                          <FormLabel className={LableStyle}>CIN No</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter CIN Number" {...field} />
+                            <Input  className={InputStyle} placeholder="Enter CIN Number" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -130,7 +132,7 @@ const MasterBillingAddressPage: React.FC = () => {
                       name="selectCity"
                       render={() => (
                         <FormItem>
-                          <FormLabel className="text-slate-600">CIN No</FormLabel>
+                          <FormLabel className={LableStyle}>CIN No</FormLabel>
                           <FormControl>
                             <ReusableAsyncSelect placeholder="Select City" endpoint="backend/stateList" transform={transformOptionData} onChange={(e: any) => form.setValue("selectCity", e?.value)} fetchOptionWith="payload" />
                           </FormControl>
@@ -143,16 +145,19 @@ const MasterBillingAddressPage: React.FC = () => {
                     control={form.control}
                     name="selectAddress"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-slate-600">Select Address</FormLabel>
+                      <FormItem className="mt-[20px]">
+                        <FormLabel className={LableStyle}>Address</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter Complete Address" {...field} />
+                          <Textarea  className={InputStyle} placeholder="Enter Complete Address" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" className="bg-cyan-700 hover:bg-cyan-600">Submit</Button>
+                 </div>
+                 <div className={modelFixFooterStyle}>
+                 <Button type="submit" className="bg-cyan-700 hover:bg-cyan-600">Submit</Button>
+                 </div>
                 </form>
               </Form>
             </div>
