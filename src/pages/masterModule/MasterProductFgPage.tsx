@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { columnDefs, RowData } from "@/config/agGrid/mastermodule/MasterProductTable";
-import { AgGridReact } from "ag-grid-react";
+import { columnDefs } from "@/config/agGrid/mastermodule/MasterProductTable";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -41,11 +40,6 @@ const MasterProductFgPage: React.FC = () => {
       uom: "",
     },
   });
-  const [rowData] = useState<RowData[]>([
-    // Example data
-    { id: 1, productName: "Product A", sku: "SKU001", unit: "Unit A", category: "Category A" },
-    // Add more rows as needed
-  ]);
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof schema>) {
     // Do something with the form values.
@@ -158,7 +152,7 @@ const MasterProductFgPage: React.FC = () => {
       </div>
       <div>
         <div className="">
-          <ReusableTable  heigth="h-[calc(100vh-100px)]" endpoint="products" columns={columnDefs} transform={transformProductTable} method="get" />
+          <ReusableTable heigth="h-[calc(100vh-100px)]" endpoint="products" columns={columnDefs} transform={transformProductTable} method="get" />
         </div>
       </div>
     </div>
