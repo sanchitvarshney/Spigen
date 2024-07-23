@@ -32,6 +32,7 @@ import MasterBillingAddressPage from "./pages/masterModule/MasterBillingAddressP
 import MasterShippingAddressPage from "./pages/masterModule/MasterShippingAddressPage";
 import BlockedPageRenderPage from "./pages/BlockedPageRenderPage";
 import MasterCustomerPage from "./pages/masterModule/MasterCustomerPage";
+import NotPermissionPage from "./pages/NotPermissionPage";
 // Define the authenticated routes
 const router = createBrowserRouter([
   {
@@ -256,7 +257,17 @@ const router = createBrowserRouter([
         </MainLayout>
       </Protected>
     ),
-    path: "/master/cutsomer",
+    path: "/master/customer",
+  },
+  {
+    element: (
+      <Protected authentication>
+        <MainLayout>
+        <NotPermissionPage/>
+        </MainLayout>
+      </Protected>
+    ),
+    path: "/not-permission",
   },
 
   {

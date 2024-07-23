@@ -21,7 +21,6 @@ import { Props } from "@/types/MainLayout";
 import { CgArrowTopRight } from "react-icons/cg";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-
 const SidebarMenues: React.FC<Props> = ({ uiState }) => {
   const { sheetOpen, setSheetOpen, modalRef } = uiState;
   return (
@@ -75,7 +74,8 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                                   <ul className="mt-[10px] p-[10px] flex flex-col gap-[10px]">
                                     <li className="flex items-center w-full gap-[3px]">
                                       <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center gap-[10px]">
-                                        Material<CgArrowTopRight className="h-[20px] w-[20px] font-[600]"/>
+                                        Material
+                                        <CgArrowTopRight className="h-[20px] w-[20px] font-[600]" />
                                       </Link>
                                       <TooltipProvider>
                                         <Tooltip>
@@ -92,7 +92,7 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                                     </li>
                                     <li className="flex items-center w-full gap-[3px]">
                                       <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center gap-[10px]">
-                                        Service <CgArrowTopRight className="h-[20px] w-[20px] font-[600]"/>
+                                        Service <CgArrowTopRight className="h-[20px] w-[20px] font-[600]" />
                                       </Link>
                                       <TooltipProvider>
                                         <Tooltip>

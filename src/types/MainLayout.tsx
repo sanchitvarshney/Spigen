@@ -11,6 +11,8 @@ export interface MainUIStateType {
   setNotificationSheet: Dispatch<SetStateAction<boolean>>;
   logotAlert: boolean;
   setLogotAlert: Dispatch<SetStateAction<boolean>>;
+  helpModel:boolean;
+  setHelpModel:Dispatch<SetStateAction<boolean>>;
   favoriteLinkList:FavoriteMenuLinkListType[];
   setFavoriteLinkList: Dispatch<SetStateAction<FavoriteMenuLinkListType[]>>;
   modalRef: RefObject<HTMLDivElement>;
