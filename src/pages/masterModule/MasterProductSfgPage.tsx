@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { columnDefs, RowData } from "@/config/agGrid/mastermodule/MasterProductTable";
-import { AgGridReact } from "ag-grid-react";
+import { columnDefs } from "@/config/agGrid/mastermodule/MasterProductTable";
+
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -14,6 +14,8 @@ import Select from "react-select";
 import DropdownIndicator from "@/config/reactSelect/DropdownIndicator";
 import { customStyles } from "@/config/reactSelect/SelectColorConfig";
 import styled from "styled-components";
+import ReusableTable from "@/components/shared/ReusableTable";
+import { transformProductTable } from "@/helper/TableTransformation";
 const schema = z.object({
   productType: z.enum(["good", "service"]),
   productSku: z.string().min(2, {
@@ -40,11 +42,6 @@ const MasterProductSfgPage: React.FC = () => {
       uom: "",
     },
   });
-  const [rowData] = useState<RowData[]>([
-    // Example data
-    { id: 1, productName: "Product A", sku: "SKU001", unit: "Unit A", category: "Category A" },
-    // Add more rows as needed
-  ]);
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof schema>) {
     // Do something with the form values.
@@ -58,7 +55,6 @@ const MasterProductSfgPage: React.FC = () => {
         <Card className="border-none shadow-none rounded-0">
           <CardHeader className="p-0 bg-hbg h-[49px] border-b border-slate-300 px-[10px] flex justify-center">
             <CardTitle className="text-slate-600 font-[500]">Add New FG</CardTitle>
-
           </CardHeader>
           <CardContent>
             <div>
@@ -157,8 +153,8 @@ const MasterProductSfgPage: React.FC = () => {
         </Card>
       </div>
       <div>
-        <div className="ag-theme-quartz h-[calc(100vh-100px)]" >
-          <AgGridReact rowData={rowData} columnDefs={columnDefs} rowSelection="single" />
+        <div className="ag-theme-quartz h-[calc(100vh-100px)]">
+          <ReusableTable heigth="h-[calc(100vh-100px)]" endpoint="products" columns={columnDefs} transform={transformProductTable} method="get" />
         </div>
       </div>
     </Wrapper>
@@ -166,15 +162,15 @@ const MasterProductSfgPage: React.FC = () => {
 };
 
 const Wrapper = styled.div`
-     .ag-theme-quartz .ag-cell{
-      outline: none;
-      border: none;
-      padding: 0;
-      padding: 0 5px;
-      display: flex;
-      justify-content: start;
-      align-items: center;
+  .ag-theme-quartz .ag-cell {
+    outline: none;
+    border: none;
+    padding: 0;
+    padding: 0 5px;
+    display: flex;
+    justify-content: start;
+    align-items: center;
   }
-`
+`;
 
 export default MasterProductSfgPage;

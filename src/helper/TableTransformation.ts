@@ -45,4 +45,12 @@ export const transformEditViewTable = (data:any[])=>{
     pinCode:item.pinCode
   }))
 }
+export const transformProductTable = (data:any[])=>{
+  return data.map((item)=>({
+    productName:item.p_name,
+    sku:item.p_sku,
+    unit:item.units_name,
+    
+  }))
+}
 export type TransformFunction = (data: any[]) => TransformedDataItem[];

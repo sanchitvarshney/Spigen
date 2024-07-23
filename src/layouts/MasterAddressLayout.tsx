@@ -7,12 +7,12 @@ const MasterAddressLayout = (props: { children: React.ReactNode }) => {
       <div className="w-full bg-white tab h-[50px] shadow z-10 border-b border-slate-300">
         <ul className="group flex items-center  h-[50px] ">
           <li className="h-[50px]">
-            <NavLink to={"/master/billing-address"} className={({ isActive }) => `h-[50px] text-[14px] px-[20px] flex items-center text-center ${isActive && "bg-cyan-50  border-b-[4px] border-cyan-400"}    hover:bg-cyan-50  `}>
+            <NavLink to={"/master/billing-address"} className={({ isActive }) => `h-[50px] text-[14px] px-[20px] flex items-center text-center ${isActive && "bg-cyan-50  border-b-[4px] border-cyan-400"}hover:bg-cyan-50  `}>
               Billing Address
             </NavLink>
           </li>
           <li className="h-[50px]">
-            <NavLink to={"/master/shipping-address"} className={({ isActive }) => `h-[50px] text-[14px] px-[20px] flex items-center text-center ${isActive && "bg-cyan-50  border-b-[4px] border-cyan-400"}    hover:bg-cyan-50  `}>
+            <NavLink to={"/master/shipping-address"} className={({ isActive }) => `h-[50px] text-[14px] px-[20px] flex items-center text-center ${isActive && "bg-cyan-50  border-b-[4px] border-cyan-400"} hover:bg-hbg  `}>
               Shipping Address
             </NavLink>
           </li>

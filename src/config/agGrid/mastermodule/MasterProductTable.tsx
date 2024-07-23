@@ -1,7 +1,8 @@
 import { Button } from '@/components/ui/button';
-import { ColDef } from 'ag-grid-community';
+
 import ActionCellRender from './ActionCellRender';
 import { Copy } from 'lucide-react';
+import { ColDef } from '@ag-grid-community/core';
 
 
 export const columnDefs: ColDef[] = [
@@ -23,11 +24,10 @@ export const columnDefs: ColDef[] = [
     </div>
   )},
   { headerName: 'Unit', field: 'unit', sortable: true, filter: true },
-  { headerName: 'Category', field: 'category', sortable: true, filter: true },
+  { headerName: 'Category', field: 'category', sortable: true, filter: true , cellRenderer:()=>"Good"},
   { 
     headerName: 'Actions', 
     field: 'actions', 
-    
     cellRenderer: () => (
       <div>
        <ActionCellRender/>
