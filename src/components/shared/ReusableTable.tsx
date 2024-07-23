@@ -22,7 +22,7 @@ interface GridTableProps {
   heigth: string;
   option?: any;
   components?: any;
-  query?:any
+  query?: any;
 }
 
 const ReusableTable: React.FC<GridTableProps> = ({ endpoint, columns, payload, transform, method, heigth, components }) => {
@@ -42,14 +42,16 @@ const ReusableTable: React.FC<GridTableProps> = ({ endpoint, columns, payload, t
 
   const onGridReady = useCallback(() => {
     dispatch(fetchTableData({ endpoint, payload, method })).then((response: any) => {
-      console.log(response);
+      console.log("response", response);
       if (loading) {
         setRowData(null);
-      } else if (response.payload?.code === 200) {
+      } else if (response.payload?.code === 200 || response.payload.success === true) {
         setRowData(transform(response.payload?.data));
+      } else {
+        setRowData([]);
       }
     });
-  }, [dispatch, endpoint, payload]);
+  }, [dispatch, endpoint, payload, loading]);
 
   return (
     <div>

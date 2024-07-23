@@ -3,12 +3,12 @@ import { ColDef } from "@ag-grid-community/core";
 
 export const columnDefs: ColDef[] = [
   {
-    headerName: 'Actions',
+    headerName: '#',
     field: 'actions',
     cellRenderer: 'actionsCellRenderer', // Custom cell renderer for actions
     sortable: false,
     filter: false,
-    maxWidth:150
+    maxWidth:70
   },
   {
     headerName: 'Client ID',

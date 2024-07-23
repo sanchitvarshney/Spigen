@@ -10,7 +10,7 @@ export interface FetchDataArgs {
   endpoint: string;
   payload?: Payload;
   method?: string;
-  query?:string
+  query?: string;
 }
 export interface ApiResponse<T> {
   success: boolean;
@@ -22,16 +22,15 @@ export interface ApiResponse<T> {
 export const fetchTableData = createAsyncThunk<
   ApiResponse<any[]>, // Return type
   FetchDataArgs // Argument type
->("data/fetchData", async ({ endpoint, payload, method ,query}: FetchDataArgs) => {
+>("data/fetchData", async ({ endpoint, payload, method, query }: FetchDataArgs) => {
   if (method == "get") {
     if (payload) {
       const response = await spigenAxios.get(endpoint, payload);
       return response.data;
-    }else if(query){
+    } else if (query) {
       const response = await spigenAxios.get(`${endpoint}?${query}`);
       return response.data;
-    }
-     else {
+    } else {
       const response = await spigenAxios.get(endpoint);
       return response.data;
     }

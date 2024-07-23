@@ -13,6 +13,8 @@ import Select from "react-select";
 
 import DropdownIndicator from "@/config/reactSelect/DropdownIndicator";
 import { customStyles } from "@/config/reactSelect/SelectColorConfig";
+import ReusableTable from "@/components/shared/ReusableTable";
+import { transformProductTable } from "@/helper/TableTransformation";
 const schema = z.object({
   productType: z.enum(["good", "service"]),
   productSku: z.string().min(2, {
@@ -57,7 +59,6 @@ const MasterProductFgPage: React.FC = () => {
         <Card className="border-none shadow-none rounded-0">
           <CardHeader className="p-0 bg-hbg h-[49px] border-b border-slate-300 px-[10px] flex justify-center">
             <CardTitle className="text-slate-600 font-[500]">Add New FG</CardTitle>
-
           </CardHeader>
           <CardContent>
             <div>
@@ -156,8 +157,8 @@ const MasterProductFgPage: React.FC = () => {
         </Card>
       </div>
       <div>
-        <div className="ag-theme-quartz h-[calc(100vh-100px)]" >
-          <AgGridReact rowData={rowData} columnDefs={columnDefs} rowSelection="single" />
+        <div className="">
+          <ReusableTable  heigth="h-[calc(100vh-100px)]" endpoint="products" columns={columnDefs} transform={transformProductTable} method="get" />
         </div>
       </div>
     </div>
