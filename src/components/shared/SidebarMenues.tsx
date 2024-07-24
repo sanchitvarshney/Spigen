@@ -73,7 +73,7 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                                 <AccordionContent className="p-[0] border-l-2 rounded border-yellow-600  bg-cyan-800">
                                   <ul className="mt-[10px] p-[10px] flex flex-col gap-[10px]">
                                     <li className="flex items-center w-full gap-[3px]">
-                                      <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center gap-[10px]">
+                                      <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center gap-[10px]">
                                         Material
                                         <CgArrowTopRight className="h-[20px] w-[20px] font-[600]" />
                                       </Link>
@@ -91,7 +91,7 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                                       </TooltipProvider>
                                     </li>
                                     <li className="flex items-center w-full gap-[3px]">
-                                      <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center gap-[10px]">
+                                      <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center gap-[10px]">
                                         Service <CgArrowTopRight className="h-[20px] w-[20px] font-[600]" />
                                       </Link>
                                       <TooltipProvider>
@@ -113,7 +113,7 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                             </Accordion>
                           </li>
                           <li className="w-full ">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-800 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-800 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Component Map <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
@@ -123,17 +123,17 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                             </Link>
                           </li>
                           <li className="w-full">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-800 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-800 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               HSN map <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
                           <li className="w-full">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-800 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-800 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Groups <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
                           <li className="w-full">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-800 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-800 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Locations <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
@@ -154,12 +154,12 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                                 <AccordionContent className="p-[0] border-l-2 border-yellow-600 bg-cyan-800 rounded">
                                   <ul className="mt-[10px] p-[10px] flex flex-col gap-[10px]">
                                     <li className="w-full ">
-                                      <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                                      <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                                         Material <Star className="h-[20px] w-[20px]" />
                                       </Link>
                                     </li>
                                     <li className="w-full">
-                                      <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                                      <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                                         Service <Star className="h-[20px] w-[20px]" />
                                       </Link>
                                     </li>
@@ -175,12 +175,12 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                                 <AccordionContent className="p-[0]   border-l-2 border-yellow-600 bg-cyan-800 rounded">
                                   <ul className="mt-[10px] p-[10px] flex flex-col gap-[10px]">
                                     <li className="w-full ">
-                                      <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                                      <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                                         Material <Star className="h-[20px] w-[20px]" />
                                       </Link>
                                     </li>
                                     <li className="w-full">
-                                      <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                                      <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                                         Service <Star className="h-[20px] w-[20px]" />
                                       </Link>
                                     </li>
@@ -196,12 +196,12 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                                 <AccordionContent className="p-[0] border-l-2 border-yellow-600 bg-cyan-800 rounded">
                                   <ul className="mt-[10px] p-[10px] flex flex-col gap-[10px]">
                                     <li className="w-full ">
-                                      <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                                      <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                                         Material <Star className="h-[20px] w-[20px]" />
                                       </Link>
                                     </li>
                                     <li className="w-full">
-                                      <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                                      <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                                         Service <Star className="h-[20px] w-[20px]" />
                                       </Link>
                                     </li>
@@ -232,12 +232,12 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                             </Link>
                           </li>
                           <li className="w-full">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Manage PO <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
                           <li className="w-full">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Completed PO <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
@@ -264,28 +264,28 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                             </Link>
                           </li>
                           <li className="w-full">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Register
                               <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
                           <li className="w-full">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Shipment <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
                           <li className="w-full">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Invoice <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
                           <li className="w-full">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Allocated Invoices <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
                           <li className="w-full">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               E Transaction Invoices <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
@@ -306,27 +306,27 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                       <AccordionContent className=" p-[10px] mt-[10px] border-l-2 border-yellow-600 bg-cyan-800 rounded">
                         <ul className="flex flex-col ">
                           <li className="w-full ">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               MR Approval <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
                           <li className="w-full">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Inward <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
                           <li className="w-full">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Transfer <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
                           <li className="w-full">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Pic Slip <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
                           <li className="w-full">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Batch Allocation <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
@@ -347,12 +347,12 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                       <AccordionContent className=" p-[10px] mt-[10px] border-l-2 border-yellow-600 bg-cyan-800 rounded">
                         <ul className="flex flex-col ">
                           <li className="w-full ">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Pending FG(s) <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
                           <li className="w-full">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Complete FG(s) <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
@@ -373,12 +373,12 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                       <AccordionContent className=" p-[10px] mt-[10px] border-l-2 border-yellow-600 bg-cyan-800 rounded">
                         <ul className="flex flex-col ">
                           <li className="w-full ">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Create FG(s) OUT <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
                           <li className="w-full">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               View FG(s) OUT <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
@@ -399,7 +399,7 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                       <AccordionContent className=" p-[10px] mt-[10px] border-l-2 border-yellow-600 bg-cyan-800 rounded">
                         <ul className="flex flex-col ">
                           <li className="w-full ">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               PPC
                               <Star className="h-[20px] w-[20px]" />
                             </Link>
@@ -421,13 +421,13 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                       <AccordionContent className=" p-[10px] mt-[10px] border-l-2 border-yellow-600 bg-cyan-800 rounded">
                         <ul className="flex flex-col ">
                           <li className="w-full ">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Inventory report
                               <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
                           <li className="w-full ">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Printing
                               <Star className="h-[20px] w-[20px]" />
                             </Link>
@@ -449,7 +449,7 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                       <AccordionContent className=" p-[10px] mt-[10px] border-l-2 border-yellow-600 bg-cyan-800 rounded">
                         <ul className="flex flex-col ">
                           <li className="w-full ">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Q1-Q2
                               <Star className="h-[20px] w-[20px]" />
                             </Link>
@@ -471,13 +471,13 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                       <AccordionContent className=" p-[10px] mt-[10px] border-l-2 border-yellow-600 bg-cyan-800 rounded">
                         <ul className="flex flex-col ">
                           <li className="w-full ">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               Create Physical Stock
                               <Star className="h-[20px] w-[20px]" />
                             </Link>
                           </li>
                           <li className="w-full ">
-                            <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                            <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                               View Physical Stock
                               <Star className="h-[20px] w-[20px]" />
                             </Link>
@@ -514,7 +514,7 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
               <hr className="my-[10px]" />
               <ul className="p-[10px] overflow-y-auto h-[500px] scrollbar-thin scrollbar-thumb-cyan-800 scrollbar-track-gray-300">
                 <li className="w-full ">
-                  <Link to={"#"} className="w-full hover:no-underline hover:bg-cyan-800 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                  <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-800 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
                     Customer Enquiry
                     <Star className="h-[20px] w-[20px]" />
                   </Link>
