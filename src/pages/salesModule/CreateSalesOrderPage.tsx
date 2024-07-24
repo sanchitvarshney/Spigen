@@ -15,6 +15,7 @@ import { fetchBillingAddress, fetchClientAddressDetail, fetchClientDetails, fetc
 import { fetchBillingAddressList } from "../../features/salesmodule/createSalesOrderSlice";
 import { transformCustomerData, transformOptionData, transformPlaceData } from "@/helper/transform";
 import ReusableAsyncSelect from "@/components/shared/ReusableAsyncSelect";
+import FullPageLoading from "@/components/shared/FullPageLoading";
 
 interface OptionType {
   value: string;
@@ -28,10 +29,8 @@ const CreateSalesOrderPage = () => {
   const [options, setOptions] = useState<OptionType[]>([]);
   const dispatch = useDispatch<AppDispatch>();
   const data = useSelector((state: RootState) => state.createSalesOrder);
-  
   useEffect(() => {
     dispatch(fetchBillingAddress({ billing_code: "R26331LI" }));
-
     dispatch(fetchBillingAddressList({ search: "" }));
     dispatch(fetchCountries());
     dispatch(fetchStates());
@@ -53,8 +52,10 @@ const CreateSalesOrderPage = () => {
     setSelectedProjectId(e);
     dispatch(fetchProjectDescription({ project_name: e.value }));
   };
+
   return (
     <div className="h-[calc(100vh-150px)]">
+      {data.loading && <FullPageLoading />}
       <div className="rounded p-[30px] shadow bg-[#fff] max-h-[calc(100vh-150px)] overflow-y-auto">
         <div className="grid grid-cols-2 gap-[30px]">
           <Card className="rounded shadow bg-[#fff]">

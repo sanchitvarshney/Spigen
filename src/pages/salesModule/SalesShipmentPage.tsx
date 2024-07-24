@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
@@ -17,6 +17,7 @@ import { RowData } from "@/types/SalesOrderShippingType";
 import { columnDefs } from "@/config/agGrid/SalesOrderShippingTableColumn";
 import { DatePicker, Space } from "antd";
 import { gridOptions } from "@/config/agGrid/ModuleRegistry";
+import ShipMentsActionCellRender from "@/config/agGrid/cellRenders.tsx/ShipMentsActionCellRender";
 
 const { RangePicker } = DatePicker;
 const dateFormat = "YYYY/MM/DD";
@@ -79,6 +80,9 @@ const SalesShipmentPage: React.FC = () => {
       ),
     });
   }
+  const components = useMemo(()=>({
+    shipmentsActionRenderer:ShipMentsActionCellRender
+  }),[])
   return (
     <Wrapper className="h-[calc(100vh-100px)] grid grid-cols-[350px_1fr] ">
       <div className=" bg-[#fff]">
@@ -170,6 +174,7 @@ const SalesShipmentPage: React.FC = () => {
           paginationPageSize={10}
           paginationAutoPageSize={true}
           gridOptions={gridOptions}
+          components={components}
         />
       </div>
     </Wrapper>
