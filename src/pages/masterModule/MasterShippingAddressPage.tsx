@@ -10,35 +10,109 @@ import { Textarea } from "@/components/ui/textarea";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { AgGridReact } from "ag-grid-react";
 import { Download, Plus } from "lucide-react";
 
 import React, { useState } from "react";
-import { formSchema } from "@/schema/masterModule/ShippingAddress";
-import { transformOptionData } from "@/helper/transform";
-import ReusableAsyncSelect from "@/components/shared/ReusableAsyncSelect";
+
+import ReusableTable from "@/components/shared/ReusableTable";
+import { transformBillingTable } from "@/helper/TableTransformation";
+import { useToast } from "@/components/ui/use-toast";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store";
+import { createShippingAddress } from "@/features/shippingAddress/shippingAdressSlice";
+
+
+const schema = z.object({
+ 
+  label: z.string().min(2, {
+    message: "Label is required",
+  }),
+  company: z.string().min(2, {
+    message: "Company is required",
+  }),
+  pan: z.string().min(2, {
+    message: "Pan is required",
+  }),
+  state: z.string().min(2, {
+    message: "State is required",
+  }),
+  gstin:z.string().min(2, {
+    message: "Pan is required",
+  }),
+  address:z.string().min(2, {
+    message: "Address is required",
+  }),
+  addressLine1:z.string().min(2, {
+    message: "Address is required",
+  }),
+  addressLine2:z.string().min(2, {
+    message: "Address is required",
+  }),
+ 
+
+  
+  
+});
 
 const MasterShippingAddressPage: React.FC = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const { toast } = useToast();
+  const dispatch=useDispatch<AppDispatch>();
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+    defaultValues:{
+      label:"",
+      company:"",
+      pan:"",
+      state:"",
+      gstin:"",
+      address:"",
+      addressLine1:"",
+      addressLine2:"",
+     
+
+
+    }
   });
-  const [rowData] = useState<RowData[]>([
-    // Example row data
-    {
-      label: "Sample Label",
-      company: "Sample Company",
-      state: "Sample State",
-      panNo: "ABCP1234E",
-      gst: "123456",
-      srno: 0,
-    },
-    // Add more rows as needed
-  ]);
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+
+  const onSubmit = async (values: z.infer<typeof schema>) => {
+    try {
+      const resultAction = await dispatch(
+        createShippingAddress({
+          endpoint: "/shippingAddress/saveShippingAddress",
+          payload: {
+            label:values.label,
+            company:values.company,
+            pan:values.pan,
+            state:values.state,
+            gstin:values.gstin,
+            address:values.address,
+            addressLine1:values.addressLine1,
+            addressLine2:values.addressLine2,
+           
+          },
+        })
+      ).unwrap();
+
+      if (resultAction.success) {
+        toast({
+          title: "Shipping Address created successfully",
+          className: "bg-green-600 text-white items-center",
+        });
+     
+       
+      } else {
+        toast({
+          title: resultAction.message || "Failed to Create Product",
+          className: "bg-red-600 text-white items-center",
+        });
+       
+      
+      }
+    } catch (error) {
+
+      console.error("An error occurred:", error);
+    }
+  };
   return (
     <div className="h-[calc(100vh-100px)]">
       <div className="h-[50px] flex items-center justify-end px-[10px] bg-white gap-[10px]">
@@ -65,7 +139,7 @@ const MasterShippingAddressPage: React.FC = () => {
                   <div className="grid grid-cols-2 gap-[20px]">
                     <FormField
                       control={form.control}
-                      name="addressLabel"
+                      name="label"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-slate-600">Address label</FormLabel>
@@ -78,7 +152,7 @@ const MasterShippingAddressPage: React.FC = () => {
                     />
                     <FormField
                       control={form.control}
-                      name="companyName"
+                      name="company"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-slate-600">Company Name</FormLabel>
@@ -92,7 +166,7 @@ const MasterShippingAddressPage: React.FC = () => {
 
                     <FormField
                       control={form.control}
-                      name="panNo"
+                      name="pan"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-slate-600">Pan No.</FormLabel>
@@ -119,11 +193,11 @@ const MasterShippingAddressPage: React.FC = () => {
                     <FormField
                       control={form.control}
                       name="state"
-                      render={() => (
+                      render={({field}) => (
                         <FormItem>
                           <FormLabel className="text-slate-600">State</FormLabel>
                           <FormControl>
-                            <ReusableAsyncSelect placeholder="Select State" endpoint="backend/stateList" transform={transformOptionData} onChange={(e: any) => form.setValue("state", e?.value)} fetchOptionWith="payload" />
+                          <Input placeholder="Enter State" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -143,6 +217,33 @@ const MasterShippingAddressPage: React.FC = () => {
                       </FormItem>
                     )}
                   />
+                   <FormField
+                    control={form.control}
+                    name="addressLine1"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-slate-600">Address Line 1</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="Enter Complete Address" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                 <FormField
+                    control={form.control}
+                    name="addressLine2"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-slate-600">Address Line 2</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="Enter Complete Address" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   <Button type="submit" className="bg-cyan-700 hover:bg-cyan-600">
                     Submit
                   </Button>
@@ -153,16 +254,12 @@ const MasterShippingAddressPage: React.FC = () => {
         </Sheet>
       </div>
       <div className="ag-theme-quartz h-[calc(100vh-150px)]">
-        <AgGridReact
-          rowData={rowData}
-          columnDefs={columnDefs}
-          defaultColDef={{
-            flex: 1,
-            minWidth: 150,
-            sortable: true,
-            filter: true,
-            resizable: true,
-          }}
+      <ReusableTable
+          heigth="h-[calc(100vh-100px)]"
+          endpoint="/shippingAddress/getAll"
+          columns={columnDefs}
+          transform={transformBillingTable}
+          method="get"
         />
       </div>
     </div>

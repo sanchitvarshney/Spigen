@@ -3,13 +3,20 @@ import authReducer from "../features/auth/authSlice";
 import selectReducer from "../features/reactSelect/RectSelectSlice";
 import gridReducer from "../features/agGrid/aggridSlice";
 import createSalesOrderReducer from "../features/salesmodule/createSalesOrderSlice";
+import productSlice from "@/features/product/productSlice";
+import billingAdressSlice from "@/features/billingAddress/billingAdressSlice";
+import shippingAdressSlice from "@/features/shippingAddress/shippingAdressSlice";
+
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     select: selectReducer,
     aggrid:gridReducer,
-    createSalesOrder:createSalesOrderReducer
+    createSalesOrder:createSalesOrderReducer,
+    prod:productSlice,
+    billing:billingAdressSlice,
+    shipping:shippingAdressSlice,
   },
 });
 export type RootState = ReturnType<typeof store.getState>;
