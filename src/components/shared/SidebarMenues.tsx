@@ -189,26 +189,10 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                               </AccordionItem>
                             </Accordion>
                           </li>
-                          <li>
-                            <Accordion type="single" collapsible>
-                              <AccordionItem value="inner-item-1" className="border-0">
-                                <AccordionTrigger className="hover:no-underline hover:bg-cyan-800 p-[10px] rounded-md cursor-pointer ">Customer / Client</AccordionTrigger>
-                                <AccordionContent className="p-[0] border-l-2 border-yellow-600 bg-cyan-800 rounded">
-                                  <ul className="mt-[10px] p-[10px] flex flex-col gap-[10px]">
-                                    <li className="w-full ">
-                                      <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
-                                        Material <Star className="h-[20px] w-[20px]" />
-                                      </Link>
-                                    </li>
-                                    <li className="w-full">
-                                      <Link to={"/not-permission"} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
-                                        Service <Star className="h-[20px] w-[20px]" />
-                                      </Link>
-                                    </li>
-                                  </ul>
-                                </AccordionContent>
-                              </AccordionItem>
-                            </Accordion>
+                          <li className="w-full">
+                            <Link to={"/master/customer"} className="w-full hover:no-underline hover:bg-cyan-800 p-[10px] rounded-md cursor-pointer flex items-center justify-between">
+                             Client / Customer<Star className="h-[20px] w-[20px]" />
+                            </Link>
                           </li>
                         </ul>
                       </AccordionContent>
