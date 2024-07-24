@@ -1,7 +1,10 @@
-import { RowData } from "@/types/SalesOrderShippingType";
+
 import { ColDef } from "ag-grid-community";
-export const columnDefs: ColDef<RowData>[] = [
-    { headerName: 'ID', field: 'id', filter: 'agNumberColumnFilter' },
+export const columnDefs: ColDef[] = [
+    { headerName: '', field: 'action',maxWidth:50 ,
+      cellRenderer: 'shipmentsActionRenderer',
+    },
+    { headerName: 'ID', field: 'id', filter: 'agNumberColumnFilter', maxWidth:100 },
     { headerName: 'Shipment ID', field: 'shipmentId', filter: 'agTextColumnFilter' },
     { headerName: 'SO ID', field: 'soId', filter: 'agTextColumnFilter' },
     { headerName: 'Item Part Code', field: 'itemPartCode', filter: 'agTextColumnFilter' },
