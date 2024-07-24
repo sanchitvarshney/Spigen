@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 
-import ActionCellRender from './ActionCellRender';
+// import ActionCellRender from './ActionCellRender';
+import ClientActionCellRender from './ClientActionCellRender';
 import { Copy } from 'lucide-react';
 import { ColDef } from '@ag-grid-community/core';
 
@@ -36,7 +37,7 @@ export const columnDefs: ColDef[] = [
     field: 'actions', 
     cellRenderer: () => (
       <div>
-       <ActionCellRender/>
+       <ClientActionCellRender/>
       </div>
     ) 
   }
