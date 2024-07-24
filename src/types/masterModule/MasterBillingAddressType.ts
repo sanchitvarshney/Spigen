@@ -2,9 +2,9 @@ export interface RowData {
     label: string;
     company: string;
     state: string;
-    panNo: string;
-    gsn: string;
+    pan: string;
+    gstin: string;
     cin: string;
-    registerDate: string; // or Date if you are using date objects
+    registerDate: string; 
   }
   

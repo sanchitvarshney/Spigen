@@ -1,4 +1,6 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "@/store"; // Import the type for your AppDispatch
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { columnDefs } from "@/config/agGrid/mastermodule/MasterProductTable";
 import { z } from "zod";
@@ -7,13 +9,14 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
 import Select from "react-select";
-
 import DropdownIndicator from "@/config/reactSelect/DropdownIndicator";
 import { customStyles } from "@/config/reactSelect/SelectColorConfig";
 import ReusableTable from "@/components/shared/ReusableTable";
 import { transformProductTable } from "@/helper/TableTransformation";
+import { createProduct } from "@/features/product/productSlice";
+import { useToast } from "@/components/ui/use-toast";
+
 const schema = z.object({
   productType: z.enum(["good", "service"]),
   productSku: z.string().min(2, {
@@ -21,16 +24,20 @@ const schema = z.object({
   }),
   uom: z.string().min(2, {
     message: "UOM is required",
-  }), // You can replace z.string() with a more specific validation if needed
+  }),
   productName: z.string().min(2, {
     message: "Product Name is required",
   }),
 });
+
 const languages = [
   { label: "Good", value: "good" },
   { label: "Service", value: "service" },
 ] as const;
+
 const MasterProductFgPage: React.FC = () => {
+  const { toast } = useToast();
+  const dispatch = useDispatch<AppDispatch>(); 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -40,16 +47,44 @@ const MasterProductFgPage: React.FC = () => {
       uom: "",
     },
   });
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof schema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+
+  const onSubmit = async (values: z.infer<typeof schema>) => {
+    try {
+      const resultAction = await dispatch(
+        createProduct({
+          endpoint: "/products/insertProduct",
+          payload: {
+            p_name: values.productName,
+            p_sku: values.productSku,
+            units_id: values.uom,
+          },
+        })
+      ).unwrap();
+
+      if (resultAction.success) {
+        toast({
+          title: "Product created successfully",
+          className: "bg-green-600 text-white items-center",
+        });
+     
+       
+      } else {
+        toast({
+          title: resultAction.message || "Failed to Create Product",
+          className: "bg-red-600 text-white items-center",
+        });
+       
+      
+      }
+    } catch (error) {
+
+      console.error("An error occurred:", error);
+    }
+  };
 
   return (
     <div className="h-[calc(100vh-100px)] bg-[#fff] grid grid-cols-[450px_1fr]">
-      <div className="">
+      <div>
         <Card className="border-none shadow-none rounded-0">
           <CardHeader className="p-0 bg-hbg h-[49px] border-b border-slate-300 px-[10px] flex justify-center">
             <CardTitle className="text-slate-600 font-[500]">Add New FG</CardTitle>
@@ -71,14 +106,10 @@ const MasterProductFgPage: React.FC = () => {
                             classNamePrefix="select border-0"
                             components={{ DropdownIndicator }}
                             isDisabled={false}
-                            isLoading={true}
+                            isLoading={false}
                             isClearable={true}
                             isSearchable={true}
-                            name="color"
-                            options={[
-                              { label: "Good", value: "good" },
-                              { label: "Service", value: "service" },
-                            ]}
+                            options={languages}
                             onChange={(value: any) => form.setValue("productType", value!.value)}
                             defaultValue={{ label: "Good", value: "good" }}
                           />
@@ -94,9 +125,12 @@ const MasterProductFgPage: React.FC = () => {
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Input placeholder="shadcn" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                            <Input
+                              placeholder="SKU"
+                              {...field}
+                              className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0"
+                            />
                           </FormControl>
-
                           <FormMessage />
                         </FormItem>
                       )}
@@ -114,10 +148,9 @@ const MasterProductFgPage: React.FC = () => {
                               classNamePrefix="select border-0"
                               components={{ DropdownIndicator }}
                               isDisabled={false}
-                              isLoading={true}
+                              isLoading={false}
                               isClearable={true}
                               isSearchable={true}
-                              name="color"
                               options={languages}
                               onChange={(value: any) => form.setValue("uom", value!.value)}
                             />
@@ -133,7 +166,11 @@ const MasterProductFgPage: React.FC = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
-                          <Input placeholder="shadcn" {...field} className="placeholder:text-neutral-500 text-[15px] border-0 border-b rounded-none shadow-none border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                          <Input
+                            placeholder="Product Name"
+                            {...field}
+                            className="placeholder:text-neutral-500 text-[15px] border-0 border-b rounded-none shadow-none border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -150,10 +187,14 @@ const MasterProductFgPage: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-      <div>
-        <div className="">
-          <ReusableTable heigth="h-[calc(100vh-100px)]" endpoint="products" columns={columnDefs} transform={transformProductTable} method="get" />
-        </div>
+      <div className="h-[calc(100vh-100px)]">
+        <ReusableTable
+          heigth="h-[calc(100vh-100px)]"
+          endpoint="products"
+          columns={columnDefs}
+          transform={transformProductTable}
+          method="get"
+        />
       </div>
     </div>
   );

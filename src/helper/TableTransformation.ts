@@ -24,6 +24,24 @@ export const transformSalesOrderRegisterData = (data: any[]) => {
     status: string;
     createdBy: string;
   }
+
+  export const transformBillingTable = (data:any[])=>{
+    return data.map((item)=>({
+      label:item.label,
+      company:item.company,
+      pan:item.pan,
+      state:item.state,
+      gst:item.gst,
+      address:item.address,
+      addressLine1:item.addressLine1,
+      addressLine2:item.addressLine2,
+      cin:item.cin,
+      insert_dt:item.insert_dt
+      
+    }))
+  }
+
+ 
 export const transformCustomerTableData = (data:any[])=>{
 
   return data.map((item)=>({
@@ -35,6 +53,7 @@ export const transformCustomerTableData = (data:any[])=>{
     status:item.status
   }))
 }
+
 export const transformEditViewTable = (data:any[])=>{
   return data.map((item)=>({
     addressId:item.addressID,
@@ -54,3 +73,4 @@ export const transformProductTable = (data:any[])=>{
   }))
 }
 export type TransformFunction = (data: any[]) => TransformedDataItem[];
+

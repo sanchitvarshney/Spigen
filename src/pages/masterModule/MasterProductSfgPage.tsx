@@ -16,6 +16,12 @@ import { customStyles } from "@/config/reactSelect/SelectColorConfig";
 import styled from "styled-components";
 import ReusableTable from "@/components/shared/ReusableTable";
 import { transformProductTable } from "@/helper/TableTransformation";
+import { createProduct } from "@/features/product/semiProductSlice";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "@/store";
+import { useToast } from "@/components/ui/use-toast";
+
+
 const schema = z.object({
   productType: z.enum(["good", "service"]),
   productSku: z.string().min(2, {
@@ -33,6 +39,9 @@ const languages = [
   { label: "Service", value: "service" },
 ] as const;
 const MasterProductSfgPage: React.FC = () => {
+  const { toast } = useToast();
+
+  const dispatch = useDispatch<AppDispatch>(); 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -43,11 +52,39 @@ const MasterProductSfgPage: React.FC = () => {
     },
   });
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof schema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+  const onSubmit = async (values: z.infer<typeof schema>) => {
+    try {
+      const resultAction = await dispatch(
+        createProduct({
+          endpoint: "/products/insertSemi",
+          payload: {
+            p_name: values.productName,
+            p_sku: values.productSku,
+            units_id: values.uom,
+          },
+        })
+      ).unwrap();
+
+      if (resultAction.success) {
+        toast({
+          title: "Product created successfully",
+          className: "bg-green-600 text-white items-center",
+        });
+     
+       
+      } else {
+        toast({
+          title: resultAction.message || "Failed to Create Product",
+          className: "bg-red-600 text-white items-center",
+        });
+       
+      
+      }
+    } catch (error) {
+
+      console.error("An error occurred:", error);
+    }
+  };
 
   return (
     <Wrapper className="h-[calc(100vh-100px)] bg-[#fff] grid grid-cols-[450px_1fr]">
@@ -154,7 +191,7 @@ const MasterProductSfgPage: React.FC = () => {
       </div>
       <div>
         <div className="ag-theme-quartz h-[calc(100vh-100px)]">
-          <ReusableTable heigth="h-[calc(100vh-100px)]" endpoint="products" columns={columnDefs} transform={transformProductTable} method="get" />
+          <ReusableTable heigth="h-[calc(100vh-100px)]" endpoint="/products/semiProducts" columns={columnDefs} transform={transformProductTable} method="get" />
         </div>
       </div>
     </Wrapper>

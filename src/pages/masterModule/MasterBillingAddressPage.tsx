@@ -1,8 +1,6 @@
 import CustomTooltip from "@/components/shared/CustomTooltip";
 import { Button } from "@/components/ui/button";
 import { columnDefs } from "@/config/agGrid/mastermodule/BillingAddressTable";
-import { RowData } from "@/types/masterModule/MasterBillingAddressType";
-import { AgGridReact } from "ag-grid-react";
 import { Plus } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,34 +10,108 @@ import { Textarea } from "@/components/ui/textarea";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import React, { useState } from "react";
-import formSchema from "@/schema/masterModule/billingAddress";
-import { transformOptionData } from "@/helper/transform";
-import ReusableAsyncSelect from "@/components/shared/ReusableAsyncSelect";
-import { InputStyle, LableStyle, modelFixHeaderStyle, modelFixFooterStyle } from '@/constants/themeContants';
+import React from "react";
+import { createBillingAddress } from "@/features/billingAddress/billingAdressSlice";
+import { useDispatch } from "react-redux";
+import { useToast } from "@/components/ui/use-toast";
+import { AppDispatch } from "@/store";
+import ReusableTable from "@/components/shared/ReusableTable";
+import { transformBillingTable } from "@/helper/TableTransformation";
+
+const schema = z.object({
+ 
+  label: z.string().min(2, {
+    message: "Label is required",
+  }),
+  company: z.string().min(2, {
+    message: "Company is required",
+  }),
+  pan: z.string().min(2, {
+    message: "Pan is required",
+  }),
+  state: z.string().min(2, {
+    message: "State is required",
+  }),
+  gstin:z.string().min(2, {
+    message: "Pan is required",
+  }),
+  address:z.string().min(2, {
+    message: "Address is required",
+  }),
+  addressLine1:z.string().min(2, {
+    message: "Address is required",
+  }),
+  addressLine2:z.string().min(2, {
+    message: "Address is required",
+  }),
+  cin:z.string().min(2, {
+    message: "Cin no is required",
+  }),
+
+  
+  
+});
+
 
 const MasterBillingAddressPage: React.FC = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const { toast } = useToast();
+  const dispatch=useDispatch<AppDispatch>();
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+    defaultValues:{
+      label:"",
+      company:"",
+      pan:"",
+      state:"",
+      gstin:"",
+      address:"",
+      addressLine1:"",
+      addressLine2:"",
+      cin:"",
+
+
+    }
   });
-  const [rowData] = useState<RowData[]>([
-    // Example row data
-    {
-      label: "Sample Label",
-      company: "Sample Company",
-      state: "Sample State",
-      panNo: "ABCP1234E",
-      gsn: "123456",
-      cin: "L12345MH123456789",
-      registerDate: "2023-01-01",
-    },
-    // Add more rows as needed
-  ]);
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+
+  const onSubmit = async (values: z.infer<typeof schema>) => {
+    try {
+      const resultAction = await dispatch(
+        createBillingAddress({
+          endpoint: "/billingAddress/saveBillingAddress",
+          payload: {
+            label:values.label,
+            company:values.company,
+            pan:values.pan,
+            state:values.state,
+            gstin:values.gstin,
+            address:values.address,
+            addressLine1:values.addressLine1,
+            addressLine2:values.addressLine2,
+            cin:values.cin
+          },
+        })
+      ).unwrap();
+
+      if (resultAction.success) {
+        toast({
+          title: "Billing Address created successfully",
+          className: "bg-green-600 text-white items-center",
+        });
+     
+       
+      } else {
+        toast({
+          title: resultAction.message || "Failed to Create Product",
+          className: "bg-red-600 text-white items-center",
+        });
+       
+      
+      }
+    } catch (error) {
+
+      console.error("An error occurred:", error);
+    }
+  };
 
   return (
     <div className="h-[calc(100vh-100px)]">
@@ -52,23 +124,22 @@ const MasterBillingAddressPage: React.FC = () => {
               </Button>
             </CustomTooltip>
           </SheetTrigger>
-          <SheetContent className="min-w-[50%] p-0">
-            <SheetHeader className={modelFixHeaderStyle}>
+          <SheetContent className="min-w-[50%]">
+            <SheetHeader>
               <SheetTitle className="text-slate-600">Add Billing Address</SheetTitle>
             </SheetHeader>
             <div>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-[20px]">
-                 <div className="px-[10px]">
-                 <div className="grid grid-cols-2 gap-[20px]">
+                  <div className="grid grid-cols-2 gap-[20px]">
                     <FormField
                       control={form.control}
-                      name="warehouseName"
+                      name="label"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className={LableStyle}>Warehouse Name</FormLabel>
+                          <FormLabel className="text-slate-600">Label</FormLabel>
                           <FormControl>
-                            <Input className={InputStyle} placeholder="Enter Wearhouse Name" {...field} />
+                            <Input placeholder="Enter Label" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -76,12 +147,12 @@ const MasterBillingAddressPage: React.FC = () => {
                     />
                     <FormField
                       control={form.control}
-                      name="companyName"
+                      name="company"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className={LableStyle}>Company Name</FormLabel>
+                          <FormLabel className="text-slate-600">Company Name</FormLabel>
                           <FormControl>
-                            <Input  className={InputStyle} placeholder="Enter Company Name" {...field} />
+                            <Input placeholder="Enter Company Name" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -90,12 +161,12 @@ const MasterBillingAddressPage: React.FC = () => {
 
                     <FormField
                       control={form.control}
-                      name="panNo"
+                      name="pan"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className={LableStyle}>Pan No.</FormLabel>
+                          <FormLabel className="text-slate-600">Pan No.</FormLabel>
                           <FormControl>
-                            <Input  className={InputStyle} placeholder="Enter Pan Number" {...field} />
+                            <Input placeholder="Enter Pan Number" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -103,12 +174,25 @@ const MasterBillingAddressPage: React.FC = () => {
                     />
                     <FormField
                       control={form.control}
-                      name="gstNo"
+                      name="gstin"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className={LableStyle}>GST No.</FormLabel>
+                          <FormLabel className="text-slate-600">GST No.</FormLabel>
                           <FormControl>
-                            <Input  className={InputStyle} placeholder="Enter GST Number" {...field} />
+                            <Input placeholder="Enter GST Number" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                     <FormField
+                      control={form.control}
+                      name="cin"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-slate-600">Cin No.</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter CIN Number" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -116,12 +200,12 @@ const MasterBillingAddressPage: React.FC = () => {
                     />
                     <FormField
                       control={form.control}
-                      name="cinNo"
+                      name="state"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className={LableStyle}>CIN No</FormLabel>
+                          <FormLabel className="text-slate-600">State</FormLabel>
                           <FormControl>
-                            <Input  className={InputStyle} placeholder="Enter CIN Number" {...field} />
+                            <Input placeholder="Enter State" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -129,12 +213,25 @@ const MasterBillingAddressPage: React.FC = () => {
                     />
                     <FormField
                       control={form.control}
-                      name="selectCity"
-                      render={() => (
+                      name="address"
+                      render={({ field }) => (
                         <FormItem>
-                          <FormLabel className={LableStyle}>CIN No</FormLabel>
+                          <FormLabel className="text-slate-600">Address</FormLabel>
                           <FormControl>
-                            <ReusableAsyncSelect placeholder="Select City" endpoint="backend/stateList" transform={transformOptionData} onChange={(e: any) => form.setValue("selectCity", e?.value)} fetchOptionWith="payload" />
+                            <Input placeholder="Enter Address" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="addressLine1"
+                      render={({field}) => (
+                        <FormItem>
+                          <FormLabel className="text-slate-600">Address Line 1</FormLabel>
+                          <FormControl>
+                          <Input placeholder="Enter Address" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -143,21 +240,18 @@ const MasterBillingAddressPage: React.FC = () => {
                   </div>
                   <FormField
                     control={form.control}
-                    name="selectAddress"
+                    name="addressLine2"
                     render={({ field }) => (
-                      <FormItem className="mt-[20px]">
-                        <FormLabel className={LableStyle}>Address</FormLabel>
+                      <FormItem>
+                        <FormLabel className="text-slate-600">Address Line 2</FormLabel>
                         <FormControl>
-                          <Textarea  className={InputStyle} placeholder="Enter Complete Address" {...field} />
+                          <Textarea placeholder="Enter Address " {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                 </div>
-                 <div className={modelFixFooterStyle}>
-                 <Button type="submit" className="bg-cyan-700 hover:bg-cyan-600">Submit</Button>
-                 </div>
+                  <Button type="submit" className="bg-cyan-700 hover:bg-cyan-600">Submit</Button>
                 </form>
               </Form>
             </div>
@@ -165,16 +259,12 @@ const MasterBillingAddressPage: React.FC = () => {
         </Sheet>
       </div>
       <div className="ag-theme-quartz h-[calc(100vh-150px)]">
-        <AgGridReact
-          rowData={rowData}
-          columnDefs={columnDefs}
-          defaultColDef={{
-            flex: 1,
-            minWidth: 150,
-            sortable: true,
-            filter: true,
-            resizable: true,
-          }}
+        <ReusableTable
+          heigth="h-[calc(100vh-100px)]"
+          endpoint="/billingAddress/getAll"
+          columns={columnDefs}
+          transform={transformBillingTable}
+          method="get"
         />
       </div>
     </div>
