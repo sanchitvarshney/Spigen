@@ -22,14 +22,20 @@ export const clientEditFormSchema = z.object({
 });
 
 export const branchAddressSchema = z.object({
+ 
   country: z.string().min(1, "Country is required"),
   state: z.string().min(1, "State is required"),
   city: z.string().min(1, "City is required"),
-  zipCode: z.string().min(1, "ZIP Code is required"),
-  phoneNumber: z.string().min(1, "Phone Number is required"),
-  gstNumber: z.string().min(1, "GST Number is required"),
-  address: z.string().min(1, "Address is required"),
+  pinCode: z.string().min(1, "Pin Code is required"),
+  address:z.string().min(1, "Address is required"),
+  addressLine1:z.string().min(1, "Address is required"),
+  addressLine2:z.string().min(1, "Address is required"),
+  phoneNo: z.string().min(1, "Phone Number is required"),
+  gst: z.string().min(1, "GST Number is required"),
+
 });
+
+
 
 export const updateBranchSchema = z.object({
   country: z.string().min(1, "Country is required"),
