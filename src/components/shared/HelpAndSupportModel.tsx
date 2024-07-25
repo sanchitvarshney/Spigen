@@ -12,38 +12,42 @@ import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogOverlay } from "@/components/ui/dialog";
 
-
-
 const HelpAndSupportModel: React.FC<Props> = ({ uiState }) => {
   const { helpModel, setHelpModel } = uiState;
   const [model, setModel] = useState<boolean>(false);
   return (
     <>
-    
-      <Dialog open={model} onOpenChange={setModel}>
-        <DialogOverlay/>
-        <DialogContent className="min-w-[60%]">
-            <DialogHeader>
-              <DialogTitle className="text-slate-600">Desktop</DialogTitle>
-
-            </DialogHeader>
-            <div className="h-[400px] border border-dashed border-slate-400 flex justify-center items-center rounded-md">
-                <div className="flex flex-col gap-[10px] items-center">
-                    <p className="text-slate-600 text-[18px] font-[600]">Drag & Drop files here</p>
-                    <p>or</p>
-                    <input type="file" className="hidden" id="file"/>
-                    <Label htmlFor="file" className={`${primartButtonStyle} cursor-pointer text-white rounded-md py-[10px] px-[20px]`}>Choose files to upload</Label>
-                </div>
+      <Dialog open={model} onOpenChange={setModel} >
+        <DialogOverlay />
+        <DialogContent className="min-w-[60%] animate-shake"   onInteractOutside={(e:any) => {
+          e.preventDefault();
+        }}>
+          <DialogHeader>
+            <DialogTitle className="text-slate-600">Desktop</DialogTitle>
+          </DialogHeader>
+          <div className="h-[400px] border border-dashed border-slate-400 flex justify-center items-center rounded-md">
+            <div className="flex flex-col gap-[10px] items-center">
+              <p className="text-slate-600 text-[18px] font-[600]">Drag & Drop files here</p>
+              <p>or</p>
+              <input type="file" className="hidden" id="file" />
+              <Label htmlFor="file" className={`${primartButtonStyle} cursor-pointer text-white rounded-md py-[10px] px-[20px]`}>
+                Choose files to upload
+              </Label>
             </div>
-            <div className="flex gap-[10px]">
-                <Button className={primartButtonStyle}>Attach</Button>
-                <Button onClick={()=>setModel(false)} variant={"outline"} className="shadow shadow-slate-300">Cancle</Button>
-            </div>
-          </DialogContent>
+          </div>
+          <div className="flex gap-[10px]">
+            <Button className={primartButtonStyle}>Attach</Button>
+            <Button onClick={() => setModel(false)} variant={"outline"} className="shadow shadow-slate-300">
+              Cancle
+            </Button>
+          </div>
+        </DialogContent>
       </Dialog>
 
       <Sheet open={helpModel} onOpenChange={setHelpModel}>
-        <SheetContent className="min-w-[35%] p-0">
+        <SheetContent className="min-w-[35%] p-0"  onInteractOutside={(e:any) => {
+          e.preventDefault();
+        }}>
           <Tabs defaultValue="resources">
             <SheetHeader className="h-[50px] flex justify-end bg-white shadow shadow-slate-300 p-0">
               <TabsList className="justify-start p-0 bg-white">
@@ -126,8 +130,8 @@ const HelpAndSupportModel: React.FC<Props> = ({ uiState }) => {
                   <h2 className="h-[20px] text-slate-700 mt-[20px] font-[600] text-[17px]">Write to us</h2>
                   <p className="text-slate-600 text-[13px] mt-[5px]">Provide a brief desciption of your issue or any feedback that you have</p>
                   <div className="flex flex-col gap-[20px] mt-[30px]">
-                    <Input className={"border-slate-400 focus-visible:ring-0"} placeholder="Email Address" />
-                    <Input className={"border-slate-400 focus-visible:ring-0"} placeholder="Subject" />
+                    <Input className={"border-slate-400 focus-visible:ring-0 h-[50px]"} placeholder="Email Address" />
+                    <Input className={"border-slate-400 focus-visible:ring-0 h-[50px]"} placeholder="Subject" />
                     <Textarea className={"border-slate-400 focus-visible:ring-0 h-[150px] resize-none"} placeholder="Description" />
                     <Label onClick={() => setModel(true)} className="cursor-pointer flex gap-[10px] items-center text-cyan-600 text-[15px]">
                       <GrAttachment className="h-[20px] w-[20px] " />

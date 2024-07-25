@@ -36,7 +36,7 @@ const LoginPage: React.FC = () => {
       if (response.payload.status === 200) {
         toast({
           title: "Welcome to Spigen IMS Portal",
-          description: "Now you start your work",
+          description: "Now you can start your work",
           className: "bg-green-600 text-white items-center",
         });
       }
