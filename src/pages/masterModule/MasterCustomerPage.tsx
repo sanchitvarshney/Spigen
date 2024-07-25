@@ -5,21 +5,71 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem,  FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { clientFormSchema } from "@/schema/masterModule/customerSchema";
+import {  clientFormSchema } from "@/schema/masterModule/customerSchema";
 import ReusableTable from "@/components/shared/ReusableTable";
 import columnDefs from "@/config/agGrid/mastermodule/CustomerTable";
 import { transformCustomerTableData } from "@/helper/TableTransformation";
 import ClientActionCellRender from "@/config/agGrid/mastermodule/ClientActionCellRender";
 import { Badge } from "@/components/ui/badge";
+import { useDispatch } from "react-redux";
+import { useToast } from "@/components/ui/use-toast";
+import { AppDispatch } from "@/store";
+import { createClient } from "@/features/client/clientSlice";
+
+
 const MasterCustomerPage: React.FC = () => {
+  const { toast } = useToast();
+  const dispatch=useDispatch<AppDispatch>();
   const form = useForm<z.infer<typeof clientFormSchema>>({
     resolver: zodResolver(clientFormSchema),
+    defaultValues:{
+      clientName:"",
+      panNo:"",
+      mobileNo:"",
+      email:"",
+      website:"",
+      salesPersonName:"",
+     
+
+    }
   });
-  function onSubmit(values: z.infer<typeof clientFormSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
+  const onSubmit = async (values: z.infer<typeof clientFormSchema>) => {
+    try {
+      const resultAction = await dispatch(
+        createClient({
+          endpoint: "/client/add",
+          payload: {
+            clientName: values.clientName,
+            panNo: values.panNo,
+            mobileNo: values.mobileNo,
+            email: values.email || '', 
+            website: values.website || '',
+            salesPersonName: values.salesPersonName || '', 
+          },
+        })
+    ).unwrap();
+
+      if (resultAction.success) {
+        toast({
+          title: "Client created successfully",
+          className: "bg-green-600 text-white items-center",
+        });
+     
+       
+      } else {
+        toast({
+          title: resultAction.message || "Failed to Create Product",
+          className: "bg-red-600 text-white items-center",
+        });
+       
+      
+      }
+    } catch (error) {
+
+      console.error("An error occurred:", error);
+    }
+  };
+
   const components = useMemo(
     () => ({
         actionsCellRenderer: ClientActionCellRender,
@@ -60,22 +110,11 @@ const MasterCustomerPage: React.FC = () => {
                 </FormItem>
               )}
             />
-            <div className="grid grid-cols-2 gap-[10px]">
+            <div className="grid grid-cols-1 gap-[10px]">
+              
               <FormField
                 control={form.control}
-                name="gstNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input placeholder="Enter GST Number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="panNumber"
+                name="panNo"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -98,22 +137,11 @@ const MasterCustomerPage: React.FC = () => {
                 </FormItem>
               )}
             />
-            <div className="grid grid-cols-2 gap-[10px]">
+            <div className="grid grid-cols-1 gap-[10px]">
+             
               <FormField
                 control={form.control}
-                name="phoneNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input type="number" placeholder="Enter Phone Number" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="mobileNumber"
+                name="mobileNo"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
