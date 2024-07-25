@@ -11,21 +11,66 @@ import { transformPlaceData } from "@/helper/transform";
 import { Props } from "@/types/masterModule/masterCustomerTypes";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Textarea } from "../ui/textarea";
+import { useDispatch } from "react-redux";
+import { useToast } from "@/components/ui/use-toast";
+import { AppDispatch } from "@/store";
+import { createBranch } from "@/features/client/branchSlice";
 
 const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
-  const { clientBranch, setClientBranch } = uiState;
+  const { clientBranch, setClientBranch, params } = uiState;
+  const clientId = params?.data?.clientID; 
+  
+  const { toast } = useToast();
+  const dispatch = useDispatch<AppDispatch>();
   const form = useForm<z.infer<typeof branchAddressSchema>>({
     resolver: zodResolver(branchAddressSchema),
+    defaultValues: {
+      state: "",
+      country: "",
+      address: "",
+      addressLine1: "",
+      addressLine2: "",
+      city: "",
+      pinCode: "",
+      phoneNo: "",
+      gst: "",
+    
+    }
   });
 
-  const onSubmit = (value: any) => {
-    console.log(value)
+  const onSubmit = async (values: z.infer<typeof branchAddressSchema>) => {
+    try {
+      const resultAction = await dispatch(
+        createBranch({
+          endpoint: "/client/addBranch",
+          payload: {
+            ...values,
+            clientCode: clientId 
+          },
+        })
+      ).unwrap();
+
+      if (resultAction.success) {
+        toast({
+          title: "Branch created successfully",
+          className: "bg-green-600 text-white items-center",
+        });
+      } else {
+        toast({
+          title: resultAction.message || "Failed to Create Branch",
+          className: "bg-red-600 text-white items-center",
+        });
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
+    }
   };
+
   return (
     <Sheet open={clientBranch} onOpenChange={setClientBranch}>
       <SheetContent className="min-w-[50%]">
         <SheetHeader>
-          <SheetTitle className="text-slate-600">Western Solar Systems (CUS0001)</SheetTitle>
+          <SheetTitle className="text-slate-600">Western Solar Systems {clientId}</SheetTitle>
         </SheetHeader>
         <div className="my-[20px]">
           <h3 className="text-[17px] text-slate-600 font-[600]">Branch Address Information</h3>
@@ -76,7 +121,7 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                 />
                 <FormField
                   control={form.control}
-                  name="zipCode"
+                  name="pinCode"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-slate-600">ZIP Code</FormLabel>
@@ -89,7 +134,7 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                 />
                 <FormField
                   control={form.control}
-                  name="phoneNumber"
+                  name="phoneNo"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-slate-600">Phone Number</FormLabel>
@@ -102,7 +147,7 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                 />
                 <FormField
                   control={form.control}
-                  name="gstNumber"
+                  name="gst"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-slate-600">GST Number</FormLabel>
@@ -113,6 +158,7 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                     </FormItem>
                   )}
                 />
+               
               </div>
               <FormField
                 control={form.control}
@@ -121,7 +167,33 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   <FormItem>
                     <FormLabel className="text-slate-600">Address</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="GST Number" {...field} />
+                      <Textarea placeholder="Address" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="addressLine1"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-slate-600">Address Line 1</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Address Line 1" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="addressLine2"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-slate-600">Address Line 2</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Address Line 2" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
