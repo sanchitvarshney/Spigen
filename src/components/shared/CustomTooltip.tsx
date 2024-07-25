@@ -12,7 +12,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({ children, message, side =
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>{children}</TooltipTrigger>
-        <TooltipContent className={className} side={side}>
+        <TooltipContent className={`bg-cyan-600 ${className}`} side={side}>
           <p>{message}</p>
         </TooltipContent>
       </Tooltip>

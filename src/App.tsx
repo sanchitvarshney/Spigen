@@ -18,12 +18,10 @@ import "@ag-grid-community/styles/ag-theme-quartz.css";
 import "./font.css";
 import Protected from "./components/Protected";
 import Custom404Page from "./pages/Custom404Page";
-import CreateSalesOrderPage from "./pages/salesModule/CreateSalesOrderPage";
 import SalesShipmentPage from "./pages/salesModule/SalesShipmentPage";
 import SalesInvoicePage from "./pages/salesModule/SalesInvoicePage";
 import AllocatedInvoicesPage from "./pages/salesModule/AllocatedInvoicesPage";
 import SalesETransactionRegisterPage from "./pages/salesModule/SalesETransactionRegisterPage";
-import AddSalesOrderPage from "./pages/salesModule/AddSalesOrderPage";
 import MasterProductLayout from "./layouts/MasterProductLayout";
 import MasterProductFgPage from "./pages/masterModule/MasterProductFgPage";
 import MasterProductSfgPage from "./pages/masterModule/MasterProductSfgPage";
@@ -33,6 +31,7 @@ import MasterShippingAddressPage from "./pages/masterModule/MasterShippingAddres
 import BlockedPageRenderPage from "./pages/BlockedPageRenderPage";
 import MasterCustomerPage from "./pages/masterModule/MasterCustomerPage";
 import NotPermissionPage from "./pages/NotPermissionPage";
+import CreateSalesOrderPage from "./pages/salesModule/CreateSalesOrderPage";
 // Define the authenticated routes
 const router = createBrowserRouter([
   {
@@ -119,26 +118,14 @@ const router = createBrowserRouter([
       <Protected authentication>
         <MainLayout>
           <SOLayout>
-            <CreateSalesOrderPage />
+           <CreateSalesOrderPage/>
           </SOLayout>
         </MainLayout>
       </Protected>
     ),
     path: "/sales/order/create",
   },
-  {
-    element: (
-      <Protected authentication>
-        <MainLayout>
-          <SOLayout>
-            <AddSalesOrderPage />
-          </SOLayout>
-        </MainLayout>
-      </Protected>
-    ),
-    path: "/sales/order/add",
-  },
-
+  
   {
     element: (
       <Protected authentication>
