@@ -11,30 +11,30 @@ export const sidebarMenulinklist: SidebarMenuLinkType[] = [
           {
             name: "Components",
             subMenu: [
-              { name: "Material", path: "#" },
-              { name: "Service", path: "#" },
+              { name: "Material", path: "/not-permission" },
+              { name: "Service", path: "/not-permission" },
             ],
           },
-          { name: "Component Map", path: "#" },
-          { name: "Products", path: "#" },
-          { name: "HSN map", path: "#" },
-          { name: "Groups", path: "#" },
-          { name: "Locations", path: "#" },
-          { name: "Billing address", path: "#" },
-          { name: "Shipping address", path: "#" },
+          { name: "Component Map", path: "/not-permission" },
+          { name: "Products", path: "/not-permission" },
+          { name: "HSN map", path: "/not-permission" },
+          { name: "Groups", path: "/not-permission" },
+          { name: "Locations", path: "/not-permission" },
+          { name: "Billing address", path: "/not-permission" },
+          { name: "Shipping address", path: "/not-permission" },
           {
             name: "Bill Of Material",
             subMenu: [
-              { name: "Create Bom", path: "#" },
-              { name: "Manage Bom", path: "#" },
+              { name: "Create Bom", path: "/not-permission" },
+              { name: "Manage Bom", path: "/not-permission" },
             ],
           },
-          { name: "Vender / Suppliar", subMenu: [{ name: "Add / Rectify", path: "#" }] },
+          { name: "Vender / Suppliar", subMenu: [{ name: "Add / Rectify", path: "/not-permission" }] },
           {
             name: "Customer / Client",
             subMenu: [
-              { name: "Add", path: "#" },
-              { name: "View", path: "#" },
+              { name: "Add", path: "/not-permission" },
+              { name: "View", path: "/not-permission" },
             ],
           },
         ],
@@ -42,9 +42,9 @@ export const sidebarMenulinklist: SidebarMenuLinkType[] = [
       {
         name: "Procurement",
         subMenu: [
-          { name: " Create PO", path: "#" },
-          { name: "Manage PO", path: "#" },
-          { name: "Compleated PO", path: "#" },
+          { name: " Create PO", path: "/not-permission" },
+          { name: "Manage PO", path: "/not-permission" },
+          { name: "Compleated PO", path: "/not-permission" },
         ],
       },
       {
@@ -61,52 +61,52 @@ export const sidebarMenulinklist: SidebarMenuLinkType[] = [
       {
         name: "Warehouse",
         subMenu: [
-          { name: "MR Approval", path: "#" },
-          { name: "Inward", path: "#" },
-          { name: "Transfer", path: "#" },
-          { name: "Pic Slip", path: "#" },
-          { name: "Batch Allocation", path: "#" },
+          { name: "MR Approval", path: "/not-permission" },
+          { name: "Inward", path: "/not-permission" },
+          { name: "Transfer", path: "/not-permission" },
+          { name: "Pic Slip", path: "/not-permission" },
+          { name: "Batch Allocation", path: "/not-permission" },
         ],
       },
       {
         name: " FG(s) Inwarding",
         subMenu: [
-          { name: "Pending FG(s)", path: "#" },
-          { name: "Complete FG(s)", path: "#" },
+          { name: "Pending FG(s)", path: "/not-permission" },
+          { name: "Complete FG(s)", path: "/not-permission" },
         ],
       },
       {
         name: "FG(s) OUT",
         subMenu: [
-          { name: "Create FG(s) OUT", path: "#" },
-          { name: "View FG(s) OUT", path: "#" },
+          { name: "Create FG(s) OUT", path: "/not-permission" },
+          { name: "View FG(s) OUT", path: "/not-permission" },
         ],
       },
       {
         name: "Production",
-        subMenu: [{ name: "PPC", path: "#" }],
+        subMenu: [{ name: "PPC", path: "/not-permission" }],
       },
       {
         name: "Report (s)",
         subMenu: [
-          { name: "Inventory report", path: "#" },
-          { name: "Printing", path: "#" },
+          { name: "Inventory report", path: "/not-permission" },
+          { name: "Printing", path: "/not-permission" },
         ],
       },
       {
         name: "   Query (s)",
-        subMenu: [{ name: "Q1-Q2", path: "#" }],
+        subMenu: [{ name: "Q1-Q2", path: "/not-permission" }],
       },
       {
         name: " Physical Stock",
         subMenu: [
-          { name: "Create Physical Stock", path: "#" },
-          { name: "View Physical Stock", path: "#" },
+          { name: "Create Physical Stock", path: "/not-permission" },
+          { name: "View Physical Stock", path: "/not-permission" },
         ],
       },
     ],
   },
-  { name: "Customer Management", subMenu: [{ name: " Customer Enquiry", path: "#" }] },
+  { name: "Customer Management", subMenu: [{ name: " Customer Enquiry", path: "/not-permission" }] },
 ];
 export const materialmenu = [
   {
@@ -115,40 +115,37 @@ export const materialmenu = [
       {
         name: "Components",
         subMenu: [
-          { name: "Material", path: "#" },
-          { name: "Service", path: "#" },
+          { name: "Material", path: "/not-permission" },
+          { name: "Service", path: "/not-permission" },
         ],
       },
-      { name: "Component Map", path: "#" },
-      { name: "Products", path: "#" },
-      { name: "HSN map", path: "#" },
-      { name: "Groups", path: "#" },
-      { name: "Locations", path: "#" },
-      { name: "Billing address", path: "#" },
-      { name: "Shipping address", path: "#" },
+      { name: "Component Map", path: "/not-permission" },
+      { name: "Products", path: "/not-permission" },
+      { name: "HSN map", path: "/not-permission" },
+      { name: "Groups", path: "/not-permission" },
+      { name: "Locations", path: "/not-permission" },
+      { name: "Billing address", path: "/not-permission" },
+      { name: "Shipping address", path: "/not-permission" },
       {
         name: "Bill Of Material",
         subMenu: [
-          { name: "Create Bom", path: "#" },
-          { name: "Manage Bom", path: "#" },
+          { name: "Create Bom", path: "/not-permission" },
+          { name: "Manage Bom", path: "/not-permission" },
         ],
       },
-      { name: "Vender / Suppliar", subMenu: [{ name: "Add / Rectify", path: "#" }] },
+      { name: "Vender / Suppliar", subMenu: [{ name: "Add / Rectify", path: "/not-permission" }] },
       {
         name: "Customer / Client",
-        subMenu: [
-          { name: "Add", path: "#" },
-          { name: "View", path: "#" },
-        ],
+        path: "/master/customer" 
       },
     ],
   },
   {
     name: "Procurement",
     subMenu: [
-      { name: " Create PO", path: "#" },
-      { name: "Manage PO", path: "#" },
-      { name: "Compleated PO", path: "#" },
+      { name: " Create PO", path: "/not-permission" },
+      { name: "Manage PO", path: "/not-permission" },
+      { name: "Compleated PO", path: "/not-permission" },
     ],
   },
   {
@@ -165,47 +162,47 @@ export const materialmenu = [
   {
     name: "Warehouse",
     subMenu: [
-      { name: "MR Approval", path: "#" },
-      { name: "Inward", path: "#" },
-      { name: "Transfer", path: "#" },
-      { name: "Pic Slip", path: "#" },
-      { name: "Batch Allocation", path: "#" },
+      { name: "MR Approval", path: "/not-permission" },
+      { name: "Inward", path: "/not-permission" },
+      { name: "Transfer", path: "/not-permission" },
+      { name: "Pic Slip", path: "/not-permission" },
+      { name: "Batch Allocation", path: "/not-permission" },
     ],
   },
   {
     name: " FG(s) Inwarding",
     subMenu: [
-      { name: "Pending FG(s)", path: "#" },
-      { name: "Complete FG(s)", path: "#" },
+      { name: "Pending FG(s)", path: "/not-permission" },
+      { name: "Complete FG(s)", path: "/not-permission" },
     ],
   },
   {
     name: "FG(s) OUT",
     subMenu: [
-      { name: "Create FG(s) OUT", path: "#" },
-      { name: "View FG(s) OUT", path: "#" },
+      { name: "Create FG(s) OUT", path: "/not-permission" },
+      { name: "View FG(s) OUT", path: "/not-permission" },
     ],
   },
   {
     name: "Production",
-    subMenu: [{ name: "PPC", path: "#" }],
+    subMenu: [{ name: "PPC", path: "/not-permission" }],
   },
   {
     name: "Report (s)",
     subMenu: [
-      { name: "Inventory report", path: "#" },
-      { name: "Printing", path: "#" },
+      { name: "Inventory report", path: "/not-permission" },
+      { name: "Printing", path: "/not-permission" },
     ],
   },
   {
     name: "   Query (s)",
-    subMenu: [{ name: "Q1-Q2", path: "#" }],
+    subMenu: [{ name: "Q1-Q2", path: "/not-permission" }],
   },
   {
     name: " Physical Stock",
     subMenu: [
-      { name: "Create Physical Stock", path: "#" },
-      { name: "View Physical Stock", path: "#" },
+      { name: "Create Physical Stock", path: "/not-permission" },
+      { name: "View Physical Stock", path: "/not-permission" },
     ],
   },
 ];

@@ -21,7 +21,7 @@ import { Props } from "@/types/MainLayout";
 import { CgArrowTopRight } from "react-icons/cg";
 import CustomTooltip from "./CustomTooltip";
 import { materialmenu } from "@/data/SidebarMenuData";
-const renderMenu = (menu: any) => {
+const renderMenu = (menu: any,setSidemenu:any) => {
   return (
     <ul className="flex flex-col gap-[10px]">
       {menu.map((item: any, index: number) => (
@@ -32,12 +32,12 @@ const renderMenu = (menu: any) => {
                 <AccordionTrigger className="hover:no-underline hover:bg-cyan-800 p-[10px] rounded-md cursor-pointer">
                   <span className="flex gap-[10px] items-center">{item.name}</span>
                 </AccordionTrigger>
-                <AccordionContent className="p-[10px] mt-[10px] border-l-2 border-yellow-600 bg-cyan-900 rounded">{renderMenu(item.subMenu)}</AccordionContent>
+                <AccordionContent className="p-[10px] mt-[10px] border-l-2 border-yellow-600 bg-cyan-900 rounded">{renderMenu(item.subMenu,setSidemenu)}</AccordionContent>
               </AccordionItem>
             </Accordion>
           ) : (
            <div className="flex items-center justify-between w-full">
-             <Link to={item.path} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center gap-[10px]">
+             <Link onClick={()=>setSidemenu(false)} to={item.path} className="w-full hover:no-underline hover:bg-cyan-700 p-[10px] rounded-md cursor-pointer flex items-center gap-[10px]">
               {item.name} <CgArrowTopRight className="h-[20px] w-[20px] font-[600]" />
            
             </Link>
@@ -87,7 +87,7 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
               </div>
               <Separator className="bg-slate-200 text-slate-200" />
               <ul className="p-[10px] overflow-y-auto h-[500px] scrollbar-thin scrollbar-thumb-cyan-800 scrollbar-track-gray-300 flex flex-col gap-[10px]">
-              {renderMenu(materialmenu)}
+              {renderMenu(materialmenu,setSheetOpen)}
               </ul>
             </div>
           </div>
