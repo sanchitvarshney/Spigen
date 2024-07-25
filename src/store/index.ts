@@ -6,6 +6,7 @@ import createSalesOrderReducer from "../features/salesmodule/createSalesOrderSli
 import productSlice from "@/features/product/productSlice";
 import billingAdressSlice from "@/features/billingAddress/billingAdressSlice";
 import shippingAdressSlice from "@/features/shippingAddress/shippingAdressSlice";
+import clientSlice from "@/features/client/clientSlice";
 
 
 export const store = configureStore({
@@ -17,6 +18,7 @@ export const store = configureStore({
     prod:productSlice,
     billing:billingAdressSlice,
     shipping:shippingAdressSlice,
+    client:clientSlice,
   },
 });
 export type RootState = ReturnType<typeof store.getState>;
