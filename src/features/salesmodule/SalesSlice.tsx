@@ -37,6 +37,7 @@ interface SellRequestPayload {
   };
 }
 
+
 export interface ApiResponse<T> {
   success: boolean;
   data: T;
@@ -50,6 +51,7 @@ export const createSellRequest = createAsyncThunk<
   const response = await spigenAxios.post(endpoint, payload);
   return response.data;
 });
+
 
 interface SellRequestState {
   data: any[];
@@ -65,7 +67,7 @@ const initialState: SellRequestState = {
 
 
 const sellRequestSlice = createSlice({
-  name: "sellRequests",
+  name: "sellRequest",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
