@@ -13,6 +13,7 @@ export const columnDefs: ColDef[] = [
     minWidth: 100,
   },
   { headerName: "Product Name", field: "productName", sortable: true, filter: true },
+  { headerName: "Product Key", field: "productKey" },
   {
     headerName: "SKU",
     field: "sku",
@@ -32,9 +33,9 @@ export const columnDefs: ColDef[] = [
   {
     headerName: "Actions",
     field: "actions",
-    cellRenderer: () => (
+    cellRenderer: (params:any) => (
       <div>
-        <ProductActionCellRender />
+        <ProductActionCellRender params={params}/>
       </div>
     ),
   },

@@ -5,12 +5,14 @@ import { Tabs, TabsContent} from "@/components/ui/tabs";
 import { useState } from "react";
 
 const CreateSalesOrderPage = () => {
-    const [tabvalue,setTabvalue] = useState<string>("create")
+  const [tabvalue, setTabvalue] = useState<string>("create");
+  const [data,setData] = useState<any>()
+  console.log("formdata",data)
   return (
     <div className="">
       <Tabs value={tabvalue} defaultValue="account" >
         <TabsContent value="create" className="p-0 m-0">
-         <CreateSalesOrder setTab={setTabvalue}/>
+          <CreateSalesOrder setTab={setTabvalue}  setPayloadData={setData}/>
         </TabsContent>
         <TabsContent value="add" className="p-0 m-0">
         <AddSalesOrder setTab={setTabvalue}/>
