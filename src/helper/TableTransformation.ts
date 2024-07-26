@@ -69,6 +69,7 @@ export const transformProductTable = (data:any[])=>{
     productName:item.p_name,
     sku:item.p_sku,
     unit:item.units_name,
+    productKey:item.product_key
     
   }))
 }

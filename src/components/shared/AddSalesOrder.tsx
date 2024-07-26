@@ -13,8 +13,8 @@ import { AddPoUIStateType } from "@/types/AddPOTypes";
 import columnDefs, { RowData } from "@/config/agGrid/SalseOrderCreateTableColumns";
 import AddPOPopovers from "@/components/shared/AddPOPopovers";
 import { commonAgGridConfig } from "@/config/agGrid/commongridoption";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store";
 import { Dispatch, SetStateAction } from "react";
 import { fetchComponentDetail } from "@/features/salesmodule/createSalesOrderSlice";
 interface Props{
@@ -26,8 +26,7 @@ const AddSalesOrder:React.FC<Props> = ({setTab}) => {
   const [backModel, setBackModel] = useState<boolean>(false);
   const [resetModel, setResetModel] = useState<boolean>(false);
   const dispatch = useDispatch<AppDispatch>();
-  const data = useSelector((state: RootState) => state.createSalesOrder);
-  console.log("//////////////", data);
+
   const gridRef = useRef<AgGridReact<RowData>>(null);
   const uiState: AddPoUIStateType = {
     excelModel,

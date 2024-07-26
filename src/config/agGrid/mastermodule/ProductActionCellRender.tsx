@@ -41,7 +41,9 @@ const productSchema = z.object({
   jwCost: z.number().min(0, "JW Cost must be a positive number"),
   otherCost: z.number().min(0, "Other Cost must be a positive number"),
 });
-const ProductActionCellRender = () => {
+const ProductActionCellRender = (params:any) => {
+  console.log(params)
+
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
     defaultValues: {
