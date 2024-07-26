@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -8,11 +8,15 @@ import { Input } from "@/components/ui/input";
 import { clientEditFormSchema } from "@/schema/masterModule/customerSchema";
 import ReusableAsyncSelect from "./ReusableAsyncSelect";
 import { transformClientTds } from "@/helper/transform";
-import { Props } from "@/types/masterModule/masterCustomerTypes";
+import { MasterCustomer, Props } from "@/types/masterModule/masterCustomerTypes";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import styled from "styled-components";
-const MasterClientEdit: React.FC<Props> = ({ uiState }) => {
-  const { clientEdit, setClientEdit } = uiState;
+import { useDispatch, useSelector } from "react-redux";
+import { fetchClient, updateClient } from "@/features/client/clientSlice";
+const MasterClientEdit: React.FC<Props> = ({ uiState }: { uiState: MasterCustomer }) => {
+  const { clientEdit, setClientEdit, clientId } = uiState; 
+  const dispatch = useDispatch();
+  const clientData = useSelector((state: any) => state.client.data.find((client: any) => client.code === clientId)); 
   const form = useForm<z.infer<typeof clientEditFormSchema>>({
     resolver: zodResolver(clientEditFormSchema),
     defaultValues: {
@@ -20,21 +24,52 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }) => {
     },
   });
 
+  console.log("client id",clientId)
+
+  useEffect(() => {
+    if (clientEdit && clientId) {
+      dispatch(fetchClient({ code:clientId }) as any);
+    }
+  }, [clientEdit, clientId, dispatch]);
+
+  useEffect(() => {
+    if (clientData) {
+      form.reset({
+        clientName: clientData.name,
+        email: clientData.email,
+        panNo: clientData.panNo,
+        mobileNo: clientData.mobile,
+        salePerson: clientData.salesPerson,
+        website: clientData.website,
+        clientTDS: clientData.tds || [],
+        clientTCS: clientData.tcs || [],
+        active: clientData.status === 'active',
+      });
+    }
+  }, [clientData, form]);
+
   const onSubmit = (value: any) => {
-   console.log(value)
+    const payload = {
+      ...value,
+      code: clientId,
+      status: value.active ? 'active' : 'inactive',
+    };
+    dispatch(updateClient({ endpoint: `/client/update`, payload }) as any);
+    setClientEdit(false);
   };
+
   return (
     <Sheet open={clientEdit} onOpenChange={setClientEdit}>
       <SheetContent className="min-w-[50%]">
         <SheetHeader>
-          <SheetTitle>Are you absolutely sure?</SheetTitle>
+          <SheetTitle>Edit Client Details</SheetTitle>
           <div>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <div className="grid grid-cols-2 gap-[10px]">
                   <FormField
                     control={form.control}
-                    name="vendorName"
+                    name="clientName"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-slate-600">Vendor Name</FormLabel>
@@ -60,7 +95,7 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }) => {
                   />
                   <FormField
                     control={form.control}
-                    name="panNumber"
+                    name="panNo"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-slate-600">PAN Number</FormLabel>
@@ -73,7 +108,7 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }) => {
                   />
                   <FormField
                     control={form.control}
-                    name="mobile"
+                    name="mobileNo"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-slate-600">Mobile</FormLabel>
@@ -118,7 +153,13 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }) => {
                     <FormItem>
                       <FormLabel className="text-slate-600">Client TDS</FormLabel>
                       <FormControl>
-                        <ReusableAsyncSelect placeholder="Client TDS" endpoint="vendor/getAllTds" transform={transformClientTds} fetchOptionWith="query" onChange={(e: any) => form.setValue("clientTDS", e.value)} />
+                        <ReusableAsyncSelect
+                          placeholder="Client TDS"
+                          endpoint="vendor/getAllTds"
+                          transform={transformClientTds}
+                          fetchOptionWith="query"
+                          onChange={(e: any) => form.setValue("clientTDS", e.value)}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -131,7 +172,13 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }) => {
                     <FormItem>
                       <FormLabel className="text-slate-600">Client TCS</FormLabel>
                       <FormControl>
-                        <ReusableAsyncSelect placeholder="Client TCS" endpoint="/tally/tcs/getAllTcs" transform={transformClientTds} fetchOptionWith="query" onChange={(e: any) => form.setValue("clientTCS", e.value)} />
+                        <ReusableAsyncSelect
+                          placeholder="Client TCS"
+                          endpoint="/tally/tcs/getAllTcs"
+                          transform={transformClientTds}
+                          fetchOptionWith="query"
+                          onChange={(e: any) => form.setValue("clientTCS", e.value)}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -140,12 +187,16 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }) => {
                 <FormField
                   control={form.control}
                   name="active"
-                  render={({field}) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormControl>
                         <Switch className="flex items-center gap-[10px]">
                           <label className="switch">
-                            <input type="checkbox" checked={field.value} onChange={(e: any) => form.setValue("active",e.target.checked)} />
+                            <input
+                              type="checkbox"
+                              checked={field.value}
+                              onChange={(e: any) => form.setValue("active", e.target.checked)}
+                            />
                             <span className="slider"></span>
                           </label>
                           <p className="text-slate-600 text-[13px]">Active</p>
@@ -155,7 +206,6 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }) => {
                     </FormItem>
                   )}
                 />
-
                 <Button type="submit" className="bg-cyan-700 hover:bg-cyan-600 shadow-slate-500">
                   Submit
                 </Button>
@@ -167,8 +217,8 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }) => {
     </Sheet>
   );
 };
+
 const Switch = styled.div`
-  /* The switch - the box around the slider */
   .switch {
     position: relative;
     display: inline-block;
@@ -176,14 +226,12 @@ const Switch = styled.div`
     height: 18px;
   }
 
-  /* Hide default HTML checkbox */
   .switch input {
     opacity: 0;
     width: 0;
     height: 0;
   }
 
-  /* The slider */
   .slider {
     position: absolute;
     cursor: pointer;
