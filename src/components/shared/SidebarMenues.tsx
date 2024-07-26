@@ -75,7 +75,7 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
           </div>
           <div className=" top-[20px] bottom-[20px] z-[-9] bg-cyan-950 shadow absolute border-l border-slate-600 rounded-md  right-[0] w-[0]  opacity-0 overflow-hidden  transition-all duration-500 group-hover:w-[400px] group-hover:opacity-100 group-hover:right-[-400px]">
             <div className="min-w-[400px]">
-              <div className="p-[10px]">
+              <div className="p-[10px] h-[130px]">
                 <span className="flex gap-[10px] items-center cursor-pointer text-[18px] opacity-0 group-hover:opacity-100 transition-all duration-500">
                   <IoGrid className="h-[20px] w-[20px]" />
                   Material Management
@@ -86,7 +86,7 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
                 </a>
               </div>
               <Separator className="bg-slate-200 text-slate-200" />
-              <ul className="p-[10px] overflow-y-auto h-[500px] scrollbar-thin scrollbar-thumb-cyan-800 scrollbar-track-gray-300 flex flex-col gap-[10px]">
+              <ul className="p-[10px] overflow-y-auto h-[calc(100vh-170px)] scrollbar-thin scrollbar-thumb-cyan-800 scrollbar-track-gray-300 flex flex-col gap-[10px]">
               {renderMenu(materialmenu,setSheetOpen)}
               </ul>
             </div>
