@@ -68,6 +68,33 @@ const CreateSalesOrder:React.FC<Props> = ({setTab}) => {
             </CardHeader>
             <CardContent className="mt-[30px]">
               <div className="grid grid-cols-2 gap-[40px] mt-[30px]">
+              <div>
+                  <Select
+                    styles={customStyles}
+                    components={{ DropdownIndicator }}
+                    placeholder="Select Channel"
+                    className="border-0 basic-single"
+                    classNamePrefix="select border-0"
+                    isDisabled={false}
+                    isClearable={true}
+                    isSearchable={true}
+                    name="color"
+                    options={[
+                      {
+                        label:"Amazon",
+                        value:"AMZ"
+                      },
+                      {
+                        label:"Flipkart",
+                        value:"FLK"
+                      },
+                      {
+                        label:"B2B",
+                        value:"B2B"
+                      }
+                    ]}
+                  />
+                </div>
                 <div>
                   <ReusableAsyncSelect placeholder="Client Name" endpoint="client/getClient" transform={transformCustomerData} onChange={handleClientCahnge} value={selectedCustomer} fetchOptionWith="query" />
                 </div>
