@@ -10,14 +10,14 @@ export const clientFormSchema = z.object({
 });
 
 export const clientEditFormSchema = z.object({
-  vendorName: z.string().min(1, "Vendor Name is required"),
+  clientName: z.string().min(1, "Vendor Name is required"),
   email: z.string().email("Invalid email address").optional(),
-  panNumber: z.string().min(1, "PAN Number is required"),
-  mobile: z.string().min(1, "Mobile number is required"),
+  panNo: z.string().min(1, "PAN Number is required"),
+  mobileNo: z.string().min(1, "Mobile number is required"),
   salePerson: z.string().optional(),
   website: z.string().url("Invalid URL").optional(),
-  clientTDS: z.string().optional(), // Assuming each entry in the array is a string
-  clientTCS: z.string().optional(), // Assuming each entry in the array is a string
+  clientTDS: z.array(z.string()).optional(),
+clientTCS: z.array(z.string()).optional(),
   active: z.boolean().optional(),
 });
 

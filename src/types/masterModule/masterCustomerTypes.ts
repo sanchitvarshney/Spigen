@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 export interface MasterCustomer {
+    clientId: string;
     clientEdit:boolean;
     setClientEdit:Dispatch<SetStateAction<boolean>>;
     params:any
