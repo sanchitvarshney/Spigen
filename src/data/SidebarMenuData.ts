@@ -120,12 +120,12 @@ export const materialmenu = [
         ],
       },
       { name: "Component Map", path: "/not-permission" },
-      { name: "Products", path: "/not-permission" },
+      { name: "Products", path: "/master/product/fg" },
       { name: "HSN map", path: "/not-permission" },
       { name: "Groups", path: "/not-permission" },
       { name: "Locations", path: "/not-permission" },
-      { name: "Billing address", path: "/not-permission" },
-      { name: "Shipping address", path: "/not-permission" },
+      { name: "Billing address", path: "/master/billing-address" },
+      { name: "Shipping address", path: "/master/shipping-address" },
       {
         name: "Bill Of Material",
         subMenu: [
@@ -143,9 +143,9 @@ export const materialmenu = [
   {
     name: "Procurement",
     subMenu: [
-      { name: " Create PO", path: "/not-permission" },
-      { name: "Manage PO", path: "/not-permission" },
-      { name: "Compleated PO", path: "/not-permission" },
+      { name: " Create PO", path: "/create-po" },
+      { name: "Manage PO", path: "/manage-po" },
+      { name: "Compleated PO", path: "/approve-po" },
     ],
   },
   {
