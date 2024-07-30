@@ -8,6 +8,10 @@ import billingAdressSlice from "@/features/billingAddress/billingAdressSlice";
 import shippingAdressSlice from "@/features/shippingAddress/shippingAdressSlice";
 import clientSlice from "@/features/client/clientSlice";
 import branchSlice from "@/features/client/branchSlice";
+import SalesSlice from "@/features/salesmodule/SalesSlice";
+import salesTransactionSlice from "@/features/salesmodule/salesTransactionSlice";
+import salesShipmentSlice from "@/features/salesmodule/salesShipmentSlice";
+
 
 
 export const store = configureStore({
@@ -21,6 +25,11 @@ export const store = configureStore({
     shipping:shippingAdressSlice,
     client:clientSlice,
     branch:branchSlice,
+    sellRequest:SalesSlice,
+    sellShipment:salesShipmentSlice,
+    invoice:salesTransactionSlice,
+    
+    
   },
 });
 export type RootState = ReturnType<typeof store.getState>;

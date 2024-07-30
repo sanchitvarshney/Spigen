@@ -15,12 +15,13 @@ import AddPOPopovers from "@/components/shared/AddPOPopovers";
 import { commonAgGridConfig } from "@/config/agGrid/commongridoption";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store";
-import { Dispatch, SetStateAction } from "react";
+
 import { fetchComponentDetail } from "@/features/salesmodule/createSalesOrderSlice";
-interface Props{
-  setTab:Dispatch<SetStateAction<string>>;
-}
-const AddSalesOrder:React.FC<Props> = ({setTab}) => {
+import { createSellRequest } from "@/features/salesmodule/SalesSlice";
+// interface Props{
+//   setTab:Dispatch<SetStateAction<string>>;
+// }
+const AddSalesOrder = ({ setTab, payloadData }: { setTab: React.Dispatch<React.SetStateAction<string>>; payloadData: any }) => {
   const [rowData, setRowData] = useState<RowData[]>([]);
   const [excelModel, setExcelModel] = useState<boolean>(false);
   const [backModel, setBackModel] = useState<boolean>(false);
@@ -98,6 +99,26 @@ const AddSalesOrder:React.FC<Props> = ({setTab}) => {
   useEffect(() => {
     dispatch(fetchComponentDetail({ search: "" }));
   }, []);
+
+
+  const handleSubmit = () => {
+    console.log('Payload Data:', payloadData); // Debugging log
+    if (!payloadData || Object.keys(payloadData).length === 0) {
+      console.error('Payload data is missing or undefined.');
+      // Handle error, e.g., show a message to the user
+      return;
+    }
+  
+    try {
+      dispatch(createSellRequest(payloadData));
+      setTab('create');
+    } catch (error) {
+      console.error('Error submitting data:', error);
+      // Handle error, e.g., show a message to the user
+    }
+  };
+  
+  
   return (
     <Wrapper>
       <AddPOPopovers uiState={uiState} />
@@ -203,7 +224,7 @@ const AddSalesOrder:React.FC<Props> = ({setTab}) => {
       <div className="bg-white border-t shadow border-slate-300 h-[50px] flex items-center justify-end gap-[20px] px-[20px]">
         <Button className="rounded-md shadow bg-red-700 hover:bg-red-600 shadow-slate-500 max-w-max px-[30px]">Reset</Button>
         <Button className="rounded-md shadow bg-cyan-700 hover:bg-cyan-600 shadow-slate-500 max-w-max px-[30px]" onClick={()=>setTab("create")}>Back</Button>
-        <Button className="rounded-md shadow bg-green-700 hover:bg-green-600 shadow-slate-500 max-w-max px-[30px]">Submit</Button>
+        <Button className="rounded-md shadow bg-green-700 hover:bg-green-600 shadow-slate-500 max-w-max px-[30px]" onClick={handleSubmit}>Submit</Button>
       </div>
     </Wrapper>
   );

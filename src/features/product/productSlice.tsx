@@ -46,6 +46,16 @@ export const fetchProducts = createAsyncThunk<
   return response.data;
 });
 
+
+export const fetchProductForUpdate = createAsyncThunk<
+  ApiResponse<any>,
+  { endpoint: string; product_key: string }
+>("/products/getProductForUpdate", async ({ endpoint, product_key }) => {
+  const response = await spigenAxios.post(endpoint, { product_key });
+  return response.data;
+});
+
+
 export const createProduct = createAsyncThunk<
   ApiResponse<any>,
   { endpoint: string; payload: ProductPayload }
@@ -86,7 +96,7 @@ const productSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
-        state.data = action.payload.data; 
+        state.data = action.payload.data;
         state.loading = false;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
@@ -121,8 +131,27 @@ const productSlice = createSlice({
       .addCase(updateProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Failed to update product";
+      })
+      // Handle fetchProductForUpdate action
+      .addCase(fetchProductForUpdate.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProductForUpdate.fulfilled, (state, action) => {
+        const fetchedProduct = action.payload.data;
+        state.data = state.data.map((product) =>
+          product.producttKey === fetchedProduct.producttKey ? fetchedProduct : product
+        );
+        state.loading = false;
+      })
+      .addCase(fetchProductForUpdate.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to fetch product details";
       });
   },
 });
+
+
+
 
 export default productSlice.reducer;

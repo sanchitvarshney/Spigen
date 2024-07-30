@@ -1,9 +1,9 @@
 export interface RowData {
     id: number;
-    date: string;
+    delivery_challan_dt: string;
     invoiceNumber: string;
-    clientCode: string;
+    client_code: string;
     client: string;
-    billingAddress: string;
-    shippingAddress: string;
+    billingaddress1: string;
+    shippingaddress1: string;
   }
