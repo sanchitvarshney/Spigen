@@ -8,6 +8,8 @@ import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 
 const SalesShipmentCreateInvoice: React.FC<Props> = ({ uiState }) => {
+
+  
   const { createInvoice, setCreateInvoivce } = uiState;
   return (
     <Dialog open={createInvoice} onOpenChange={setCreateInvoivce}>

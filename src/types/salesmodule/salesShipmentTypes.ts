@@ -8,6 +8,7 @@ export interface ShipmentuiStateType{
     createInvoice:boolean;
     setCancelShipment:Dispatch<SetStateAction<boolean>>;
     cancelShipment:boolean;
+   
 
   }
   export interface Props {

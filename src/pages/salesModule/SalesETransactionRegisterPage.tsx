@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
@@ -18,19 +18,19 @@ import { RowData } from "@/types/SalesEtransactionTypes";
 
 import { gridOptions } from "@/config/agGrid/ModuleRegistry";
 import { columnDefs } from "@/config/agGrid/SalesEtransactionTableColumns";
+
+import { RootState } from "@/store";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchInvoiceList } from "@/features/salesmodule/salesTransactionSlice";
 const { RangePicker } = DatePicker;
 const dateFormat = "YYYY/MM/DD";
-const languages = [
-  { label: "English", value: "en" },
-  { label: "French", value: "fr" },
-  { label: "German", value: "de" },
-  { label: "Spanish", value: "es" },
-  { label: "Portuguese", value: "pt" },
-  { label: "Russian", value: "ru" },
-  { label: "Japanese", value: "ja" },
-  { label: "Korean", value: "ko" },
-  { label: "Chinese", value: "zh" },
+const wises = [
+  { label: "Date Wise", value: "date" },
+  { label: "client", value: "client" },
+  { label: "invoice", value: "invoice" },
+
 ] as const;
+
 
 const FormSchema = z.object({
   dateRange: z
@@ -40,40 +40,58 @@ const FormSchema = z.object({
     .refine(data => data === undefined || data.length === 2, {
       message: "Please select a valid date range.",
     }),
-  language: z.string().optional(),
+    wise: z.string().optional(),
 });
 const SalesETransactionRegisterPage: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const [rowData] = useState<RowData[]>([
-    {
-      id: 1,
-      invoiceDate: '2024-07-16',
-      invoiceNumber: 'INV001',
-      client: 'Client 1',
-      clientCode: 'C001',
-      eInvoiceNumber: 'EINV001',
-      eInvoiceDate: '2024-07-16',
-      irnNumber: 'IRN001',
-      clientAddress: '123 Main St',
-      billingAddress: '456 Elm St',
-      shippingAddress: '789 Oak St'
-    },
-    // Add more row data here
-  ]);
+  const dispatch = useDispatch();
+  const [wise] = useState<any>("date");
+  const { data: rowData} = useSelector((state: RootState) => state.invoice);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
+  const onSubmit = async (formData: z.infer<typeof FormSchema>) => {
+    const { dateRange, wise } = formData;
+  
+    let dataString = "";
+    if (wise === "date" && dateRange) {
+      const startDate = dateRange[0].toLocaleDateString("en-GB").split("/").reverse().join("-");
+      const endDate = dateRange[1].toLocaleDateString("en-GB").split("/").reverse().join("-");
+      dataString = `${startDate}-${endDate}`;
+    } else if (wise === "client" && wise !== undefined) {
+      dataString = wise;
+    }
+  
+    try {
+      console.log("Dispatching fetchSellRequestList with:", { wise, data: dataString });
+      const resultAction = await dispatch(fetchInvoiceList({ wise, data: dataString }) as any).unwrap();
+      console.log("Result Action:", resultAction);
+      if (resultAction.success) {
+        toast({
+          title: "Shipment fetched successfully",
+          className: "bg-green-600 text-white items-center",
+        });
+      } else {
+        toast({
+          title: resultAction.message || "Failed to Create Product",
+          className: "bg-red-600 text-white items-center",
+        });
+      }
+    } catch (error: any) {
+      console.error("Failed to fetch sell requests:", error);
+      toast({
+        title: error.message || "Failed to fetch Product",
+        className: "bg-red-600 text-white items-center",
+      });
+    }
+  };
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
-  }
+  useEffect(() => {
+    if (wise === "date") {
+      dispatch(fetchInvoiceList({ wise, data: "" }) as any);
+    }
+  }, [wise, dispatch]);
+
   return (
     <Wrapper className="h-[calc(100vh-100px)] grid grid-cols-[350px_1fr] ">
       <div className=" bg-[#fff]">
@@ -89,14 +107,14 @@ const SalesETransactionRegisterPage: React.FC = () => {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 overflow-hidden p-[10px]">
                 <FormField
                   control={form.control}
-                  name="language"
+                  name="wise"
                   render={({ field }) => (
                     <FormItem className="flex flex-col p-[10px]">
                       <Popover open={open} onOpenChange={setOpen}>
                         <PopoverTrigger asChild onClick={() => setOpen(true)}>
                           <FormControl>
                             <Button variant="outline" role="combobox" className={`${cn(" justify-between", !field.value && "text-muted-foreground")} text-slate-600 border-slate-400 ${field.value?"text-slate-600":"text-neutral-400 font-[350]"}`}>
-                              {field.value ? languages.find((language) => language.value === field.value)?.label : "Select language"}
+                              {field.value ? wises.find((wise) => wise.value === field.value)?.label : "Select"}
                               <CaretSortIcon className="w-4 h-4 ml-2 opacity-50 shrink-0" />
                             </Button>
                           </FormControl>
@@ -107,17 +125,17 @@ const SalesETransactionRegisterPage: React.FC = () => {
                             <CommandList className="max-h-[400px]">
                               <CommandEmpty>No framework found.</CommandEmpty>
                               <CommandGroup>
-                                {languages.map((language) => (
+                                {wises.map((wise) => (
                                   <CommandItem
-                                    key={language.value}
-                                    value={language.value}
+                                    key={wise.value}
+                                    value={wise.value}
                                     className="data-[disabled]:opacity-100 aria-selected:bg-cyan-600 aria-selected:text-white data-[disabled]:pointer-events-auto flex items-center gap-[10px]"
                                     onSelect={() => {
-                                      form.setValue("language", language.value);
+                                      form.setValue("wise", wise.value);
                                       setOpen(false);
                                     }}
                                   >
-                                    {language.label}
+                                    {wise.label}
                                   </CommandItem>
                                 ))}
                               </CommandGroup>
@@ -159,7 +177,7 @@ const SalesETransactionRegisterPage: React.FC = () => {
       </div>
       <div className="ag-theme-quartz h-[calc(100vh-100px)]">
       <AgGridReact
-        rowData={rowData}
+        rowData={rowData as RowData[]}
         columnDefs={columnDefs}
         defaultColDef={{ filter: true, sortable: true, resizable: true }}
         pagination={true}

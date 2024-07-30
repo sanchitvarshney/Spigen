@@ -13,6 +13,27 @@ export const transformSalesOrderRegisterData = (data: any[]) => {
     }));
   };
   
+
+  export const transformSalesOrderShipmentData = (data: any[]) => {
+    return data.map((item,i) => ({
+      id:i+1,
+      shipment_id:item.shipment_id,
+      so_id:item.so_id,
+      item_part_no:item.item_part_no,
+      item_name:item.item_name,
+      item_qty:item.item_qty,
+      item_rate:item.item_rate ,
+      shipment_dt:item.shipment_dt,
+      client_code:item.client_code,
+      client:item.client,
+      clientaddress:item.clientaddress,
+      billingaddress1:item.billingaddress1,
+      shipping_id:item.shipping_id,
+      shippingaddress1:item.shippingaddress1,
+      shipment_status:item.shipment_status,
+    }));
+  };
+  
   interface TransformedDataItem {
     id: number;
     orderId: string;

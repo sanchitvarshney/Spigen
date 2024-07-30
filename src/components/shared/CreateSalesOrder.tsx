@@ -10,20 +10,43 @@ import styled from "styled-components";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
-import { fetchBillingAddress, fetchClientAddressDetail, fetchClientDetails, fetchCountries, fetchProjectDescription, fetchStates } from "@/features/salesmodule/createSalesOrderSlice";
+import  {
+  fetchBillingAddress,
+  fetchClientAddressDetail,
+  fetchClientDetails,
+  fetchCountries,
+  fetchProjectDescription,
+  fetchStates,
+} from "@/features/salesmodule/createSalesOrderSlice";
 import { fetchBillingAddressList } from "../../features/salesmodule/createSalesOrderSlice";
-import { transformCustomerData, transformOptionData, transformPlaceData } from "@/helper/transform";
+import {
+  transformCustomerData,
+  transformOptionData,
+  transformPlaceData,
+} from "@/helper/transform";
 import ReusableAsyncSelect from "@/components/shared/ReusableAsyncSelect";
 import FullPageLoading from "@/components/shared/FullPageLoading";
 import { Dispatch, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
-import { InputStyle, LableStyle, primartButtonStyle } from "@/constants/themeContants";
+import {
+  InputStyle,
+  LableStyle,
+  primartButtonStyle,
+} from "@/constants/themeContants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { createSalesFormSchema } from "@/schema/salesorder/createsalesordeschema";
+
 interface OptionType {
   value: string;
   label: string;
@@ -32,10 +55,25 @@ interface Props {
   setTab: Dispatch<SetStateAction<string>>;
   setPayloadData: Dispatch<SetStateAction<any>>;
 }
-const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
-  const [selectedCustomer, setSelectedCustomer] = useState<{ label: string; value: string } | null>(null);
-  const [selectedCostCenter, setSelectedCostCenter] = useState<{ label: string; value: string } | null>(null);
-  const [selectedProjectId, setSelectedProjectId] = useState<{ label: string; value: string } | null>(null);
+type CreateSalesOrderForm = z.infer<typeof createSalesFormSchema>;
+const CreateSalesOrder: React.FC<Props> = ({ setTab, setPayloadData }) => {
+  const form = useForm<z.infer<typeof createSalesFormSchema>>({
+    resolver: zodResolver(createSalesFormSchema),
+    mode: "onBlur",
+  });
+
+  const [selectedCustomer, setSelectedCustomer] = useState<{
+    label: string;
+    value: string;
+  } | null>(null);
+  const [selectedCostCenter, setSelectedCostCenter] = useState<{
+    label: string;
+    value: string;
+  } | null>(null);
+  const [selectedProjectId, setSelectedProjectId] = useState<{
+    label: string;
+    value: string;
+  } | null>(null);
   const [options, setOptions] = useState<OptionType[]>([]);
   const dispatch = useDispatch<AppDispatch>();
   const data = useSelector((state: RootState) => state.createSalesOrder);
@@ -51,13 +89,20 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
     setSelectedCustomer(e);
     dispatch(fetchClientDetails(e!.value)).then((response: any) => {
       if (response.meta.requestStatus === "fulfilled") {
-        setOptions([{ label: response.payload.city.name, value: response.payload.city.name }]);
-        dispatch(fetchClientAddressDetail({ addressID: response.payload.addressID })).then((response:any)=>{
-          if(response.meta.requestStatus === "fulfilled"){
+        setOptions([
+          {
+            label: response.payload.city.name,
+            value: response.payload.city.name,
+          },
+        ]);
+        dispatch(
+          fetchClientAddressDetail({ addressID: response.payload.addressID })
+        ).then((response: any) => {
+          if (response.meta.requestStatus === "fulfilled") {
             form.setValue("billing_address", response.payload.address);
             form.setValue("client_gst", response.payload.gst);
           }
-        })
+        });
       }
     });
   };
@@ -68,21 +113,19 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
   const handleProjectIdChange = (e: any) => {
     setSelectedProjectId(e);
     form.setValue("project_id", e.value);
-    dispatch(fetchProjectDescription({ project_name: e.value })).then((response: any) => {
-      if (response.meta.requestStatus === "fulfilled") {
-        form.setValue("project_description", response.payload?.description);
+    dispatch(fetchProjectDescription({ project_name: e.value })).then(
+      (response: any) => {
+        if (response.meta.requestStatus === "fulfilled") {
+          form.setValue("project_description", response.payload?.description);
+        }
       }
-    });
+    );
   };
-  const form = useForm<z.infer<typeof createSalesFormSchema>>({
-    resolver: zodResolver(createSalesFormSchema),
-  });
 
-  function onSubmit(data: z.infer<typeof createSalesFormSchema>) {
-    console.log(data);
-    setPayloadData(data)
-    setTab("add")
-  }
+  const onSubmit = (data: CreateSalesOrderForm) => {
+    console.log("create sale order data", data);
+    setPayloadData(data), setTab("add");
+  };
 
   return (
     <div className="h-[calc(100vh-150px)]">
@@ -93,8 +136,12 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
             <div className="grid grid-cols-2 gap-[30px]">
               <Card className="rounded shadow bg-[#fff]">
                 <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
-                  <h3 className="text-[17px] font-[600] text-slate-600">Client Details</h3>
-                  <p className="text-slate-600 text-[13px]">Type Name or Code of the Client</p>
+                  <h3 className="text-[17px] font-[600] text-slate-600">
+                    Client Details
+                  </h3>
+                  <p className="text-slate-600 text-[13px]">
+                    Type Name or Code of the Client
+                  </p>
                 </CardHeader>
                 <CardContent className="mt-[30px]">
                   <div className="grid grid-cols-2 gap-[40px] mt-[30px]">
@@ -104,7 +151,9 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                         name="channels"
                         render={() => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>Select Channel</FormLabel>
+                            <FormLabel className={LableStyle}>
+                              Select Channel
+                            </FormLabel>
                             <FormControl>
                               <Select
                                 styles={customStyles}
@@ -115,7 +164,9 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                                 isDisabled={false}
                                 isClearable={true}
                                 isSearchable={true}
-                                onChange={(e: any) => form.setValue("channels", e.value)}
+                                onChange={(e: any) =>
+                                  form.setValue("channels", e.value)
+                                }
                                 name="color"
                                 options={[
                                   {
@@ -144,9 +195,18 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                         name="customer"
                         render={() => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>Client Name</FormLabel>
+                            <FormLabel className={LableStyle}>
+                              Client Name
+                            </FormLabel>
                             <FormControl>
-                              <ReusableAsyncSelect placeholder="Client Name" endpoint="client/getClient" transform={transformCustomerData} onChange={handleClientCahnge} value={selectedCustomer} fetchOptionWith="query" />
+                              <ReusableAsyncSelect
+                                placeholder="Client Name"
+                                endpoint="client/getClient"
+                                transform={transformCustomerData}
+                                onChange={handleClientCahnge}
+                                value={selectedCustomer}
+                                fetchOptionWith="query"
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -172,7 +232,14 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                                 isSearchable={true}
                                 options={options}
                                 onChange={(e) => console.log(e)}
-                                value={data.clientDetails ? { label: data.clientDetails.city.name, value: data.clientDetails.city.name } : null}
+                                value={
+                                  data.clientDetails
+                                    ? {
+                                        label: data.clientDetails.city.name,
+                                        value: data.clientDetails.city.name,
+                                      }
+                                    : null
+                                }
                               />
                             </FormControl>
                             <FormMessage />
@@ -181,19 +248,23 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                       />
                     </div>
                     <div className="">
-                    <FormField
-                      control={form.control}
-                      name="client_gst"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className={LableStyle}>GSTIN</FormLabel>
-                          <FormControl>
-                            <Input className={InputStyle} placeholder="GSTIN" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                      <FormField
+                        control={form.control}
+                        name="client_gst"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={LableStyle}>GSTIN</FormLabel>
+                            <FormControl>
+                              <Input
+                                className={InputStyle}
+                                placeholder="GSTIN"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     </div>
                   </div>
                   <div className="mt-[40px]">
@@ -202,9 +273,15 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                       name="billing_address"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className={LableStyle}>Billing Address</FormLabel>
+                          <FormLabel className={LableStyle}>
+                            Billing Address
+                          </FormLabel>
                           <FormControl>
-                            <Textarea className={InputStyle} placeholder="Billing Address" {...field} />
+                            <Textarea
+                              className={InputStyle}
+                              placeholder="Billing Address"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -217,8 +294,12 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
               </Card>
               <Card className="rounded shadow bg-[#fff]">
                 <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
-                  <h3 className="text-[17px] font-[600] text-slate-600">SO Terms</h3>
-                  <p className="text-slate-600 text-[13px]">Provide SO terms and other information</p>
+                  <h3 className="text-[17px] font-[600] text-slate-600">
+                    SO Terms
+                  </h3>
+                  <p className="text-slate-600 text-[13px]">
+                    Provide SO terms and other information
+                  </p>
                 </CardHeader>
                 <CardContent className="mt-[10px]">
                   <div className="grid grid-cols-2 gap-[40px] mt-[30px]">
@@ -228,9 +309,15 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                         name="terms_condition"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>Terms and Conditions</FormLabel>
+                            <FormLabel className={LableStyle}>
+                              Terms and Conditions
+                            </FormLabel>
                             <FormControl>
-                              <Input className={InputStyle} placeholder="Terms and Conditions" {...field} />
+                              <Input
+                                className={InputStyle}
+                                placeholder="Terms and Conditions"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -243,9 +330,15 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                         name="quotation_detail"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>Quotation</FormLabel>
+                            <FormLabel className={LableStyle}>
+                              Quotation
+                            </FormLabel>
                             <FormControl>
-                              <Input className={InputStyle} placeholder="Quotation" {...field} />
+                              <Input
+                                className={InputStyle}
+                                placeholder="Quotation"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -258,9 +351,15 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                         name="payment_term"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>Payment Terms</FormLabel>
+                            <FormLabel className={LableStyle}>
+                              Payment Terms
+                            </FormLabel>
                             <FormControl>
-                              <Input className={InputStyle} placeholder="Payment Terms" {...field} />
+                              <Input
+                                className={InputStyle}
+                                placeholder="Payment Terms"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -273,9 +372,15 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                         name="due_day"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>Due Date (in days)</FormLabel>
+                            <FormLabel className={LableStyle}>
+                              Due Date (in days)
+                            </FormLabel>
                             <FormControl>
-                              <Input className={InputStyle} placeholder="Due Date (in days)" {...field} />
+                              <Input
+                                className={InputStyle}
+                                placeholder="Due Date (in days)"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -284,16 +389,27 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                     </div>
                     <div>
                       <div className="flex justify-end">
-                        <Badge className="p-0 text-[13px] bg-transparent border-none shadow-none font-[400] max-h-max text-cyan-600 py-[3px] px-[10px] cursor-pointer hover:bg-blue-100 hover:shadow shadow-slate-500 rounded-full">Add Vendor</Badge>
+                        <Badge className="p-0 text-[13px] bg-transparent border-none shadow-none font-[400] max-h-max text-cyan-600 py-[3px] px-[10px] cursor-pointer hover:bg-blue-100 hover:shadow shadow-slate-500 rounded-full">
+                          Add Vendor
+                        </Badge>
                       </div>
                       <FormField
                         control={form.control}
                         name="cost_center"
                         render={() => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>Cost Center</FormLabel>
+                            <FormLabel className={LableStyle}>
+                              Cost Center
+                            </FormLabel>
                             <FormControl>
-                              <ReusableAsyncSelect placeholder="Cost Center" endpoint="backend/costCenter" transform={transformOptionData} fetchOptionWith="payload" onChange={handleCostCenterChange} value={selectedCostCenter} />
+                              <ReusableAsyncSelect
+                                placeholder="Cost Center"
+                                endpoint="backend/costCenter"
+                                transform={transformOptionData}
+                                fetchOptionWith="payload"
+                                onChange={handleCostCenterChange}
+                                value={selectedCostCenter}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -304,16 +420,27 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                     </div>
                     <div>
                       <div className="flex justify-end">
-                        <Badge className="p-0 text-[13px] bg-transparent border-none shadow-none font-[400] max-h-max text-cyan-600 py-[3px] px-[10px] cursor-pointer hover:bg-blue-100 hover:shadow shadow-slate-500 rounded-full">Add Vendor</Badge>
+                        <Badge className="p-0 text-[13px] bg-transparent border-none shadow-none font-[400] max-h-max text-cyan-600 py-[3px] px-[10px] cursor-pointer hover:bg-blue-100 hover:shadow shadow-slate-500 rounded-full">
+                          Add Vendor
+                        </Badge>
                       </div>
                       <FormField
                         control={form.control}
                         name="project_id"
                         render={() => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>Project Id</FormLabel>
+                            <FormLabel className={LableStyle}>
+                              Project Id
+                            </FormLabel>
                             <FormControl>
-                              <ReusableAsyncSelect placeholder="Project Id" endpoint="backend/poProjectName" transform={transformOptionData} onChange={handleProjectIdChange} value={selectedProjectId} fetchOptionWith="payload" />
+                              <ReusableAsyncSelect
+                                placeholder="Project Id"
+                                endpoint="backend/poProjectName"
+                                transform={transformOptionData}
+                                onChange={handleProjectIdChange}
+                                value={selectedProjectId}
+                                fetchOptionWith="payload"
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -325,7 +452,11 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                   </div>
                   <div className="mt-[40px]">
                     <Textarea
-                      value={data.projectDescription ? data.projectDescription.description : ""}
+                      value={
+                        data.projectDescription
+                          ? data.projectDescription.description
+                          : ""
+                      }
                       disabled={!data.projectDescription}
                       className="border-0 border-b rounded-none shadow-none outline-none resize-none border-slate-600 focus-visible:ring-0"
                       placeholder="Project Description"
@@ -340,7 +471,11 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                         <FormItem>
                           <FormLabel className={LableStyle}>Comments</FormLabel>
                           <FormControl>
-                            <Input className={InputStyle} placeholder="Comments" {...field} />
+                            <Input
+                              className={InputStyle}
+                              placeholder="Comments"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -351,8 +486,12 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
               </Card>
               <Card className="rounded shadow bg-[#fff]">
                 <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
-                  <h3 className="text-[17px] font-[600] text-slate-600">Dispatch from</h3>
-                  <p className="text-slate-600 text-[13px]">Provide billing information</p>
+                  <h3 className="text-[17px] font-[600] text-slate-600">
+                    Dispatch from
+                  </h3>
+                  <p className="text-slate-600 text-[13px]">
+                    Provide billing information
+                  </p>
                 </CardHeader>
                 <CardContent className="mt-[10px]">
                   <div className="mt-[30px] grid grid-cols-2 gap-[40px]">
@@ -362,7 +501,9 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                         name="bill_from_address"
                         render={() => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>Pan No.</FormLabel>
+                            <FormLabel className={LableStyle}>
+                              Pan No.
+                            </FormLabel>
                             <FormControl>
                               <Select
                                 styles={customStyles}
@@ -370,12 +511,20 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                                 className="border-0 basic-single"
                                 classNamePrefix="select border-0"
                                 components={{ DropdownIndicator }}
-                                onChange={(e: any) => form.setValue("bill_from_address", e.value)}
+                                onChange={(e: any) =>
+                                  form.setValue("bill_from_address", e.value)
+                                }
                                 isDisabled={false}
                                 isLoading={true}
                                 isClearable={true}
                                 isSearchable={true}
-                                options={data.billingAddressList ? transformOptionData(data.billingAddressList) : []}
+                                options={
+                                  data.billingAddressList
+                                    ? transformOptionData(
+                                        data.billingAddressList
+                                      )
+                                    : []
+                                }
                               />
                             </FormControl>
                             <FormMessage />
@@ -391,9 +540,15 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                         name="dispatch_pan"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>Pan No.</FormLabel>
+                            <FormLabel className={LableStyle}>
+                              Pan No.
+                            </FormLabel>
                             <FormControl>
-                              <Input className={InputStyle} placeholder="Pan No." {...field} />
+                              <Input
+                                className={InputStyle}
+                                placeholder="Pan No."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -406,9 +561,15 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                         name="dispatch_gstin_uin"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>GSTIN / UIN</FormLabel>
+                            <FormLabel className={LableStyle}>
+                              GSTIN / UIN
+                            </FormLabel>
                             <FormControl>
-                              <Input className={InputStyle} placeholder="GSTIN / UIN" {...field} />
+                              <Input
+                                className={InputStyle}
+                                placeholder="GSTIN / UIN"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -421,9 +582,15 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                         name="dispatch_pincode"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>Pincode</FormLabel>
+                            <FormLabel className={LableStyle}>
+                              Pincode
+                            </FormLabel>
                             <FormControl>
-                              <Input className={InputStyle} placeholder="Pincode" {...field} />
+                              <Input
+                                className={InputStyle}
+                                placeholder="Pincode"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -439,7 +606,11 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                         <FormItem>
                           <FormLabel className={LableStyle}>Address</FormLabel>
                           <FormControl>
-                            <Textarea className={InputStyle} placeholder="Address" {...field} />
+                            <Textarea
+                              className={InputStyle}
+                              placeholder="Address"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -450,14 +621,20 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
               </Card>
               <Card className="rounded shadow bg-[#fff]">
                 <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
-                  <h3 className="text-[17px] font-[600] text-slate-600">Ship To</h3>
-                  <p className="text-slate-600 text-[13px]">Provide shipping information</p>
+                  <h3 className="text-[17px] font-[600] text-slate-600">
+                    Ship To
+                  </h3>
+                  <p className="text-slate-600 text-[13px]">
+                    Provide shipping information
+                  </p>
                   <Switch className="flex items-center gap-[10px]">
                     <label className="switch">
                       <input type="checkbox" />
                       <span className="slider"></span>
                     </label>
-                    <p className="text-slate-600 text-[13px]">Same as Billing Address</p>
+                    <p className="text-slate-600 text-[13px]">
+                      Same as Billing Address
+                    </p>
                   </Switch>
                 </CardHeader>
 
@@ -471,7 +648,11 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                           <FormItem>
                             <FormLabel className={LableStyle}>Name</FormLabel>
                             <FormControl>
-                              <Input className={InputStyle} placeholder="Name" {...field} />
+                              <Input
+                                className={InputStyle}
+                                placeholder="Name"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -484,9 +665,15 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                         name="shipping_pan"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>Pan No.</FormLabel>
+                            <FormLabel className={LableStyle}>
+                              Pan No.
+                            </FormLabel>
                             <FormControl>
-                              <Input className={InputStyle} placeholder="Pan No." {...field} />
+                              <Input
+                                className={InputStyle}
+                                placeholder="Pan No."
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -499,9 +686,15 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                         name="shipping_gstin_uin"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>GSTIN / UIN</FormLabel>
+                            <FormLabel className={LableStyle}>
+                              GSTIN / UIN
+                            </FormLabel>
                             <FormControl>
-                              <Input className={InputStyle} placeholder="GSTIN / UIN" {...field} />
+                              <Input
+                                className={InputStyle}
+                                placeholder="GSTIN / UIN"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -514,7 +707,9 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                         name="shipping_state"
                         render={() => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>Pincode</FormLabel>
+                            <FormLabel className={LableStyle}>
+                              Pincode
+                            </FormLabel>
                             <FormControl>
                               <Select
                                 styles={customStyles}
@@ -527,8 +722,14 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                                 isClearable={true}
                                 isSearchable={true}
                                 name="color"
-                                options={data.states ? transformPlaceData(data.states) : []}
-                                onChange={(e: any) => form.setValue("shipping_state", e.value)}
+                                options={
+                                  data.states
+                                    ? transformPlaceData(data.states)
+                                    : []
+                                }
+                                onChange={(e: any) =>
+                                  form.setValue("shipping_state", e.value)
+                                }
                               />
                             </FormControl>
                             <FormMessage />
@@ -544,9 +745,15 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                         name="shipping_pinCode"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>Pincode</FormLabel>
+                            <FormLabel className={LableStyle}>
+                              Pincode
+                            </FormLabel>
                             <FormControl>
-                              <Input className={InputStyle} placeholder="Pincode" {...field} />
+                              <Input
+                                className={InputStyle}
+                                placeholder="Pincode"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -562,7 +769,11 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
                         <FormItem>
                           <FormLabel className={LableStyle}>Address</FormLabel>
                           <FormControl>
-                            <Textarea className={InputStyle} placeholder="Address" {...field} />
+                            <Textarea
+                              className={InputStyle}
+                              placeholder="Address"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -574,7 +785,11 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab ,setPayloadData}) => {
             </div>
           </div>
           <div className="h-[50px] w-full flex justify-end items-center px-[20px] bg-white shadow-md border-t border-slate-300">
-            <Button  className={`${primartButtonStyle} flex gap-[10px]`}>
+            <Button
+              onClick={() => setTab("add")}
+              className={`${primartButtonStyle} flex gap-[10px]`}
+              type="submit"
+            >
               Next
               <FaArrowRightLong className="" />
             </Button>
