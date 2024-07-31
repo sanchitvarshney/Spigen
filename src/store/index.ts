@@ -11,7 +11,7 @@ import branchSlice from "@/features/client/branchSlice";
 import SalesSlice from "@/features/salesmodule/SalesSlice";
 import salesTransactionSlice from "@/features/salesmodule/salesTransactionSlice";
 import salesShipmentSlice from "@/features/salesmodule/salesShipmentSlice";
-
+import salesInvoiceSlice from "@/features/salesmodule/salesInvoiceSlice";
 
 
 export const store = configureStore({
@@ -27,7 +27,9 @@ export const store = configureStore({
     branch:branchSlice,
     sellRequest:SalesSlice,
     sellShipment:salesShipmentSlice,
+    sellInvoice:salesInvoiceSlice,
     invoice:salesTransactionSlice,
+    
     
     
   },

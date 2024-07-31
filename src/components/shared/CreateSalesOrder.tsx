@@ -10,7 +10,7 @@ import styled from "styled-components";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
-import  {
+import {
   fetchBillingAddress,
   fetchClientAddressDetail,
   fetchClientDetails,
@@ -278,6 +278,7 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab, setPayloadData }) => {
                           </FormLabel>
                           <FormControl>
                             <Textarea
+                            
                               className={InputStyle}
                               placeholder="Billing Address"
                               {...field}
@@ -502,7 +503,7 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab, setPayloadData }) => {
                         render={() => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
-                              Pan No.
+                              Billing name
                             </FormLabel>
                             <FormControl>
                               <Select
@@ -515,7 +516,6 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab, setPayloadData }) => {
                                   form.setValue("bill_from_address", e.value)
                                 }
                                 isDisabled={false}
-                                isLoading={true}
                                 isClearable={true}
                                 isSearchable={true}
                                 options={
@@ -537,7 +537,7 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab, setPayloadData }) => {
                     <div className="">
                       <FormField
                         control={form.control}
-                        name="dispatch_pan"
+                        name="pan"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>

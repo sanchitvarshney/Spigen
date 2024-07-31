@@ -1,88 +1,211 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Edit2, Eye, Image, Upload } from "lucide-react";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import Select from "react-select";
 import { customStyles } from "@/config/reactSelect/SelectColorConfig";
 import DropdownIndicator from "@/config/reactSelect/DropdownIndicator";
 import { Textarea } from "@/components/ui/textarea";
-import { modelFixFooterStyle, modelFixHeaderStyle } from "@/constants/themeContants";
+import {
+  modelFixFooterStyle,
+  modelFixHeaderStyle,
+} from "@/constants/themeContants";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { fetchImageProduct, getProductForUpdate, updateProduct } from "@/features/product/productSlice";
+import { useDispatch } from "react-redux";
+import { RootState } from "@/store";
+import { useToast } from "@/components/ui/use-toast";
 
 const productSchema = z.object({
-  productName: z.string().min(1, "Product Name is required"),
-  uom: z.string().min(1, "UoM is required"),
-  productCategory: z.string().min(1, "Product Category is required"),
-  category: z.string().min(1, "Category is required"),
-  mrp: z.number().min(0, "MRP must be a positive number"),
-  type: z.string().min(0, "Type is required"),
-  enabled: z.boolean(),
+  product_name: z.string().optional(),
+  uom: z.string().optional(),
+  productcategory: z.string().optional(),
+  category: z.string().optional(),
+  mrp: z.string().optional(),
+  producttype: z.string().optional(),
+  isenabled: z.string().optional(),
   description: z.string().optional(),
-  taxType: z.number().min(0, "Tax Type must be a positive number"),
-  gstRate: z.number().min(0, "GST Rate must be a positive number"),
+  gsttype: z.string().optional(),
+  gstrate: z.string().optional(),
+  
   hsn: z.string().optional(),
   brand: z.string().optional(),
   ean: z.string().optional(),
-  weight: z.number().min(0, "Weight must be a positive number").optional(),
-  volumetricWeight: z.number().min(0, "Volumetric Weight must be a positive number").optional(),
-  height: z.number().min(0, "Height must be a positive number").optional(),
-  width: z.number().min(0, "Width must be a positive number").optional(),
-  minStockFg: z.number().min(0, "MIN Stock (FG) must be a positive number"),
-  minStockRm: z.number().min(0, "MIN Stock (RM) must be a positive number").optional(),
-  mfgBatchSize: z.number().min(0, "MFG Batch Size must be a positive number"),
-  defaultStockLocation: z.string().optional(),
-  labourCost: z.number().min(0, "Labour Cost must be a positive number"),
-  secPackingCost: z.number().min(0, "Sec Packing Cost must be a positive number"),
-  jwCost: z.number().min(0, "JW Cost must be a positive number"),
-  otherCost: z.number().min(0, "Other Cost must be a positive number"),
+  weight: z.string().optional(),
+  vweight: z.string().optional(),
+  height: z.string().optional(),
+  width: z.string().optional(),
+  minstockrm: z.string().optional(),
+  minstock: z.string().optional(),
+  mfgBatchSize: z.string().optional(),
+  location: z.string().optional(),
+  labourcost: z.string().optional(),
+  packingcost: z.string().optional(),
+  jobworkcost: z.string().optional(),
+  othercost: z.string().optional(),
+  batchstock:z.string().optional(),
+ 
 });
-const ProductActionCellRender = (params:any) => {
-  console.log(params)
+
+const ProductActionCellRender = (params: any) => {
+  const { productKey } = params.params.data;
+  const { toast } = useToast();
+  const dispatch = useDispatch();
+
+  const productData = useSelector(
+    (state: RootState) =>
+      state.prod.data.find((prod: any) => prod?.pKey === productKey) || {}
+  );
+
 
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
     defaultValues: {
-      productName: "",
+      product_name: "",
     },
   });
-  function onSubmit(values: z.infer<typeof productSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+
+
+  useEffect(() => {
+    if (productData) {
+      form.reset({
+        // pKey: productData.pKey,
+        // sku: productData.sku,
+        product_name: productData.productname,
+        uom: productData.uomname,
+        // uomid: productData.uomid,
+        category: productData.productcategory,
+        mrp: productData.mrp,
+        producttype: productData.producttype_name,
+        // costprice: productData.costprice,
+        isenabled: productData.enablestatus_name,
+        gsttype: productData.tax_type_name,
+        gstrate: productData.gstrate_name,
+        hsn: productData.hsncode,
+        brand: productData.brand,
+        ean: productData.ean,
+        weight: productData.weight,
+        vweight: productData.vweight,
+        height: productData.height,
+        width: productData.width,
+        // url: productData.url,
+        // loc: productData.loc,
+        labourcost: productData.laboutcost,
+        packingcost: productData.packingcost,
+        othercost: productData.othercost,
+        jobworkcost: productData.jobworkcost,
+        minstock: productData.minstock,
+        minstockrm: productData.minrmstock,
+        batchstock: productData.batchstock,
+        location: productData.loc,
+        description: productData.description,
+      
+        
+
+        // description: productData.description,
+      });
+    }
+  }, [productData,form]);
+
+  async function onSubmit(value: any) {
+    const payload = {
+      ...value,
+      
+      producttKey: productKey,
+      status: value.active ? "active" : "inactive",
+    };
+  
+    try {
+      const action= await dispatch(updateProduct({ endpoint: `/products/updateProduct`, payload }) as any);
+  
+      if (updateProduct.fulfilled.match(action)) {
+      
+        toast({
+          title: "Product updated successfully",
+          className: "bg-green-600 text-white items-center",
+        });
+      } else if (updateProduct.rejected.match(action)) {
+       
+        toast({
+          title: (action.payload as { message: string })?.message || "Failed to update product",
+          className: "bg-red-600 text-white items-center",
+        });
+      }
+    } catch (error) {
+      // Handle unexpected errors
+      toast({
+        title: "An unexpected error occurred",
+        className: "bg-red-600 text-white items-center",
+      });
+    }
+  
+    console.log(value);
   }
+  
   return (
     <div className="flex items-center gap-[10px]">
       <Sheet>
         <SheetTrigger>
-          <Edit2 className="text-cyan-700 h-[20px] w-[20px]" />
+          <Edit2
+            onClick={() => {
+              if (productKey) {
+                dispatch(
+                  getProductForUpdate({ product_key: productKey }) as any
+                );
+              }
+            }}
+            className="text-cyan-700 h-[20px] w-[20px]"
+          />
         </SheetTrigger>
         <SheetContent className="min-w-[60%] p-0">
           <SheetHeader className={modelFixHeaderStyle}>
-            <SheetTitle>Updating: Oakmist 5 Ltr</SheetTitle>
+            <SheetTitle>Updating: Oakmist 5 Ltr {productKey}</SheetTitle>
           </SheetHeader>
           <div className=" h-[calc(100vh-50px)]">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8"
+              >
                 <div className="px-[10px] h-[calc(100vh-100px)] py-[20px] overflow-y-auto flex flex-col gap-[20px]">
                   <Card className="border rounded-md shadow-sm">
                     <CardHeader className="h-[50px] p-0 px-[10px] flex justify-center bg-hbg">
-                      <CardTitle className="font-[500] text-slate-600">Basic Details</CardTitle>
+                      <CardTitle className="font-[500] text-slate-600">
+                        Basic Details
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="mt-[20px] px-[10px]">
                       <div className="grid grid-cols-3 gap-[30px] items-center ">
                         <FormField
                           control={form.control}
-                          name="productName"
+                          name="product_name"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">Label</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                Product name
+                              </FormLabel>
                               <FormControl>
-                                <Input placeholder="shadcn" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                                <Input placeholder="Product Name" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -93,7 +216,9 @@ const ProductActionCellRender = (params:any) => {
                           name="uom"
                           render={() => (
                             <FormItem className="flex flex-col w-full">
-                              <FormLabel className=" text-slate-600 ml-[10px]">Label</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                Umo Name
+                              </FormLabel>
                               <FormControl>
                                 <Select
                                   styles={customStyles}
@@ -110,8 +235,13 @@ const ProductActionCellRender = (params:any) => {
                                     { label: "Good", value: "good" },
                                     { label: "Service", value: "service" },
                                   ]}
-                                  onChange={(value: any) => form.setValue("uom", value!.value)}
-                                  defaultValue={{ label: "Good", value: "good" }}
+                                  onChange={(value: any) =>
+                                    form.setValue("uom", value!.value)
+                                  }
+                                  defaultValue={{
+                                    label: "Good",
+                                    value: "good",
+                                  }}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -120,12 +250,14 @@ const ProductActionCellRender = (params:any) => {
                         />
                         <FormField
                           control={form.control}
-                          name="productCategory"
+                          name="productcategory"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">productCategory</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                productCategory
+                              </FormLabel>
                               <FormControl>
-                                <Input placeholder="shadcn" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                              <Input placeholder="Product category" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -136,7 +268,9 @@ const ProductActionCellRender = (params:any) => {
                           name="category"
                           render={() => (
                             <FormItem className="flex flex-col w-full">
-                              <FormLabel className=" text-slate-600 ml-[10px]">Category</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                Category
+                              </FormLabel>
                               <FormControl>
                                 <Select
                                   styles={customStyles}
@@ -153,8 +287,13 @@ const ProductActionCellRender = (params:any) => {
                                     { label: "Good", value: "good" },
                                     { label: "Service", value: "service" },
                                   ]}
-                                  onChange={(value: any) => form.setValue("category", value!.value)}
-                                  defaultValue={{ label: "Good", value: "good" }}
+                                  onChange={(value: any) =>
+                                    form.setValue("category", value!.value)
+                                  }
+                                  defaultValue={{
+                                    label: "Good",
+                                    value: "good",
+                                  }}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -166,9 +305,11 @@ const ProductActionCellRender = (params:any) => {
                           name="mrp"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">MRP</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                MRP
+                              </FormLabel>
                               <FormControl>
-                                <Input type="number" placeholder="shadcn" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                              <Input placeholder="Mrp" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -176,10 +317,12 @@ const ProductActionCellRender = (params:any) => {
                         />
                         <FormField
                           control={form.control}
-                          name="type"
+                          name="producttype"
                           render={() => (
                             <FormItem className="flex flex-col w-full">
-                              <FormLabel className=" text-slate-600 ml-[10px]">Type</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                Type
+                              </FormLabel>
                               <FormControl>
                                 <Select
                                   styles={customStyles}
@@ -196,38 +339,57 @@ const ProductActionCellRender = (params:any) => {
                                     { label: "Good", value: "good" },
                                     { label: "Service", value: "service" },
                                   ]}
-                                  onChange={(value: any) => form.setValue("type", value!.value)}
-                                  defaultValue={{ label: "Good", value: "good" }}
+                                  onChange={(value: any) =>
+                                    form.setValue(
+                                      "producttype",
+                                      value!.value
+                                    )
+                                  }
+                                  defaultValue={{
+                                    label: "Good",
+                                    value: "good",
+                                  }}
                                 />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-                        <FormField
+                         <FormField
                           control={form.control}
-                          name="enabled"
+                          name="isenabled"
                           render={() => (
                             <FormItem className="flex flex-col w-full">
-                              <FormLabel className=" text-slate-600 ml-[10px]">Enabled</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                Enabled
+                              </FormLabel>
                               <FormControl>
                                 <Select
                                   styles={customStyles}
-                                  placeholder="Product Type"
+                                  placeholder="Enabled"
                                   className="border-0 basic-single"
                                   classNamePrefix="select border-0"
                                   components={{ DropdownIndicator }}
                                   isDisabled={false}
-                                  isLoading={true}
+                                  isLoading={false}
                                   isClearable={true}
                                   isSearchable={true}
-                                  name="color"
-                                  options={[
-                                    { label: "Good", value: true },
-                                    { label: "Service", value: false },
-                                  ]}
-                                  onChange={(value: any) => form.setValue("enabled", value!.value)}
-                                  defaultValue={{ label: "Good", value: true }}
+                                  name="enablestatus_name"
+                                  // options={[
+                                  //   { label: "Yes", value: "Y" },
+                                  //   { label: "No", value: "N" },
+                                  // ]}
+                                  onChange={(value: any) =>
+                                    form.setValue(
+                                      "isenabled",
+                                      value.value
+                                    )
+                                  }
+                                  defaultValue={
+                                    productData.enablestatus_name === "Y"
+                                      ? { label: "Yes", value: "Y" }
+                                      : { label: "No", value: "N" }
+                                  }
                                 />
                               </FormControl>
                               <FormMessage />
@@ -240,9 +402,15 @@ const ProductActionCellRender = (params:any) => {
                         name="description"
                         render={({ field }) => (
                           <FormItem className="mt-[30px]">
-                            <FormLabel className=" text-slate-600 ml-[10px]">Description</FormLabel>
+                            <FormLabel className=" text-slate-600 ml-[10px]">
+                              Description
+                            </FormLabel>
                             <FormControl>
-                              <Textarea placeholder="shadcn" {...field} className=" border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                              <Textarea
+                                placeholder=""
+                                {...field}
+                                className=" border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0"
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -252,16 +420,20 @@ const ProductActionCellRender = (params:any) => {
                   </Card>
                   <Card className="border rounded-md shadow-sm">
                     <CardHeader className="h-[50px] p-0 px-[10px] flex justify-center bg-hbg">
-                      <CardTitle className="font-[500] text-slate-600">Tax Details</CardTitle>
+                      <CardTitle className="font-[500] text-slate-600">
+                        Tax Details
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="mt-[20px] px-[10px]">
                       <div className="grid grid-cols-3 gap-[30px] items-center ">
                         <FormField
                           control={form.control}
-                          name="taxType"
+                          name="gsttype"
                           render={() => (
                             <FormItem className="flex flex-col w-full">
-                              <FormLabel className=" text-slate-600 ml-[10px]">Tax Type</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                Tax Type
+                              </FormLabel>
                               <FormControl>
                                 <Select
                                   styles={customStyles}
@@ -270,16 +442,21 @@ const ProductActionCellRender = (params:any) => {
                                   classNamePrefix="select border-0"
                                   components={{ DropdownIndicator }}
                                   isDisabled={false}
-                                  isLoading={true}
-                                  isClearable={true}
+                                  isLoading={false}
+                                  // isClearable={true}
                                   isSearchable={true}
                                   name="color"
                                   options={[
                                     { label: "Good", value: "good" },
                                     { label: "Service", value: "service" },
                                   ]}
-                                  onChange={(value: any) => form.setValue("taxType", value!.value)}
-                                  defaultValue={{ label: "Good", value: "good" }}
+                                  onChange={(value: any) =>
+                                    form.setValue("gsttype", value!.value)
+                                  }
+                                  defaultValue={{
+                                    label: "Exempted",
+                                    value: "0",
+                                  }}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -288,12 +465,14 @@ const ProductActionCellRender = (params:any) => {
                         />
                         <FormField
                           control={form.control}
-                          name="gstRate"
+                          name="gstrate"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">GST Rate</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                GST Rate
+                              </FormLabel>
                               <FormControl>
-                                <Input type="number" placeholder="shadcn" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                              <Input placeholder="Gst Rate" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -304,9 +483,11 @@ const ProductActionCellRender = (params:any) => {
                           name="hsn"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">HSN</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                HSN
+                              </FormLabel>
                               <FormControl>
-                                <Input placeholder="shadcn" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                              <Input placeholder="Hsn code" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -317,7 +498,9 @@ const ProductActionCellRender = (params:any) => {
                   </Card>
                   <Card className="border rounded-md shadow-sm">
                     <CardHeader className="h-[50px] p-0 px-[10px] flex justify-center bg-hbg">
-                      <CardTitle className="font-[500] text-slate-600">Advance Details</CardTitle>
+                      <CardTitle className="font-[500] text-slate-600">
+                        Advance Details
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="mt-[20px] px-[10px]">
                       <div className="grid grid-cols-3 gap-[30px] items-center ">
@@ -326,9 +509,11 @@ const ProductActionCellRender = (params:any) => {
                           name="brand"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">Brand</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                Brand
+                              </FormLabel>
                               <FormControl>
-                                <Input placeholder="shadcn" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                              <Input placeholder="Brand" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -339,9 +524,11 @@ const ProductActionCellRender = (params:any) => {
                           name="ean"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">EAN</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                EAN
+                              </FormLabel>
                               <FormControl>
-                                <Input placeholder="shadcn" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                              <Input placeholder="Ean" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -352,9 +539,11 @@ const ProductActionCellRender = (params:any) => {
                           name="weight"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">Weight</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                Weight
+                              </FormLabel>
                               <FormControl>
-                                <Input type="number" placeholder="shadcn" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                              <Input placeholder="weight" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -362,12 +551,14 @@ const ProductActionCellRender = (params:any) => {
                         />
                         <FormField
                           control={form.control}
-                          name="volumetricWeight"
+                          name="vweight"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">Volumetric Weight</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                Volumetric Weight
+                              </FormLabel>
                               <FormControl>
-                                <Input type="number" placeholder="shadcn" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                              <Input placeholder="vweight" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -378,9 +569,11 @@ const ProductActionCellRender = (params:any) => {
                           name="height"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">Height</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                Height
+                              </FormLabel>
                               <FormControl>
-                                <Input type="number" placeholder="shadcn" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                              <Input placeholder="vweight" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -391,9 +584,11 @@ const ProductActionCellRender = (params:any) => {
                           name="width"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">Width</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                Width
+                              </FormLabel>
                               <FormControl>
-                                <Input type="number" placeholder="shadcn" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                              <Input placeholder="width" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -404,18 +599,22 @@ const ProductActionCellRender = (params:any) => {
                   </Card>
                   <Card className="border rounded-md shadow-sm">
                     <CardHeader className="h-[50px] p-0 px-[10px] flex justify-center bg-hbg">
-                      <CardTitle className="font-[500] text-slate-600">Advance Details</CardTitle>
+                      <CardTitle className="font-[500] text-slate-600">
+                        Advance Details
+                      </CardTitle>
                     </CardHeader>
                     <CardContent className="mt-[20px] px-[10px]">
                       <div className="grid grid-cols-3 gap-[30px] items-center ">
                         <FormField
                           control={form.control}
-                          name="minStockFg"
+                          name="minstockrm"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">MIN Stock (FG)</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                MIN Stock (FG)
+                              </FormLabel>
                               <FormControl>
-                                <Input type="number" placeholder="shadcn" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                              <Input placeholder="min stock" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -423,12 +622,14 @@ const ProductActionCellRender = (params:any) => {
                         />
                         <FormField
                           control={form.control}
-                          name="minStockRm"
+                          name="minstock"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">MIN Stock(RM)</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                MIN Stock(RM)
+                              </FormLabel>
                               <FormControl>
-                                <Input type="number" placeholder="shadcn" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                              <Input placeholder="min stock rm" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -439,9 +640,11 @@ const ProductActionCellRender = (params:any) => {
                           name="mfgBatchSize"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">MFG Batch Size</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                MFG Batch Size
+                              </FormLabel>
                               <FormControl>
-                                <Input type="number" placeholder="shadcn" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                              <Input placeholder="mfg batch size" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -449,12 +652,18 @@ const ProductActionCellRender = (params:any) => {
                         />
                         <FormField
                           control={form.control}
-                          name="defaultStockLocation"
+                          name="location"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">Default Stock Location</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                Default Stock Location
+                              </FormLabel>
                               <FormControl>
-                                <Input placeholder="Default Stock Location" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                                <Input
+                                  placeholder="Default Stock Location"
+                                  {...field}
+                                  className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0"
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -462,12 +671,14 @@ const ProductActionCellRender = (params:any) => {
                         />
                         <FormField
                           control={form.control}
-                          name="labourCost"
+                          name="labourcost"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">Labour Cost</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                Labour Cost
+                              </FormLabel>
                               <FormControl>
-                                <Input type="number" placeholder="Labour Cost" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                              <Input placeholder="labour cost" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -475,12 +686,19 @@ const ProductActionCellRender = (params:any) => {
                         />
                         <FormField
                           control={form.control}
-                          name="secPackingCost"
+                          name="packingcost"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">Sec Packing Cost</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                Sec Packing Cost
+                              </FormLabel>
                               <FormControl>
-                                <Input type="number" placeholder="Sec Packing Cost" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                                <Input
+                                  type="number"
+                                  placeholder="Sec Packing Cost"
+                                  {...field}
+                                  className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0"
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -488,12 +706,19 @@ const ProductActionCellRender = (params:any) => {
                         />
                         <FormField
                           control={form.control}
-                          name="jwCost"
+                          name="jobworkcost"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">JW Cost</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                JW Cost
+                              </FormLabel>
                               <FormControl>
-                                <Input type="number" placeholder="JW Cost" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                                <Input
+                                  type="number"
+                                  placeholder="JW Cost"
+                                  {...field}
+                                  className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0"
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -501,12 +726,14 @@ const ProductActionCellRender = (params:any) => {
                         />
                         <FormField
                           control={form.control}
-                          name="otherCost"
+                          name="othercost"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">Other Cost</FormLabel>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                Other Cost
+                              </FormLabel>
                               <FormControl>
-                                <Input type="number" placeholder="Other Cost" {...field} className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0" />
+                              <Input placeholder="other cost" {...field} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -517,7 +744,10 @@ const ProductActionCellRender = (params:any) => {
                   </Card>
                 </div>
                 <div className={modelFixFooterStyle}>
-                  <Button type="submit" className="bg-cyan-700 hover:bg-cyan-600">
+                  <Button
+                    type="submit"
+                    className="bg-cyan-700 hover:bg-cyan-600"
+                  >
                     Submit
                   </Button>
                 </div>
@@ -528,7 +758,13 @@ const ProductActionCellRender = (params:any) => {
       </Sheet>
       <Sheet>
         <SheetTrigger>
-          <Eye className="text-cyan-700 h-[20px] w-[20px]" />
+          <Eye className="text-cyan-700 h-[20px] w-[20px]" onClick={() => {
+              if (productKey) {
+                dispatch(
+                  fetchImageProduct(productKey) as any
+                );
+              }
+            }} />
         </SheetTrigger>
         <SheetContent className="p-0">
           <SheetHeader className={modelFixHeaderStyle}>
@@ -549,15 +785,23 @@ const ProductActionCellRender = (params:any) => {
             <SheetTitle className="text-slate-600">Oakmist Plus</SheetTitle>
           </SheetHeader>
           <div>
-           <div  className="mt-[20px] flex flex-col gap-[20px] px-[20px]">
-           <Input placeholder="Lable" className="border-slate-400" />
-            <Label htmlFor="image" className="flex items-center justify-center border border-dashed border-slate-400 shadow h-[150px] rounded-md flex-col">
-              <Image className="text-slate-300 h-[50px] w-[50px]" />
-              <p className="text-slate-500 mt-[20px]">Select images to upload for this product.</p>
-              <Input id="image" type="file" className="hidden" />
-            </Label>
-           </div>
-           <div className={modelFixFooterStyle}> <Button className="bg-cyan-700 hover:bg-cyan-600">Submit</Button></div>
+            <div className="mt-[20px] flex flex-col gap-[20px] px-[20px]">
+              <Input placeholder="Lable" className="border-slate-400" />
+              <Label
+                htmlFor="image"
+                className="flex items-center justify-center border border-dashed border-slate-400 shadow h-[150px] rounded-md flex-col"
+              >
+                <Image className="text-slate-300 h-[50px] w-[50px]" />
+                <p className="text-slate-500 mt-[20px]">
+                  Select images to upload for this product.
+                </p>
+                <Input id="image" type="file" className="hidden" />
+              </Label>
+            </div>
+            <div className={modelFixFooterStyle}>
+              {" "}
+              <Button className="bg-cyan-700 hover:bg-cyan-600">Submit</Button>
+            </div>
           </div>
         </SheetContent>
       </Sheet>

@@ -30,7 +30,6 @@ const MasterCustomerPage: React.FC = () => {
       website:"",
       salesPersonName:"",
      
-
     }
   });
   const onSubmit = async (values: z.infer<typeof clientFormSchema>) => {
@@ -49,7 +48,7 @@ const MasterCustomerPage: React.FC = () => {
         })
     ).unwrap();
 
-      if (resultAction.success) {
+      if (resultAction.message) {
         toast({
           title: "Client created successfully",
           className: "bg-green-600 text-white items-center",
