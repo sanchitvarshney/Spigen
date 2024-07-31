@@ -50,7 +50,7 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
         })
       ).unwrap();
 
-      if (resultAction.success) {
+      if (resultAction.message) {
         toast({
           title: "Branch created successfully",
           className: "bg-green-600 text-white items-center",

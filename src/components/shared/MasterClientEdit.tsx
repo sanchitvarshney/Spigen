@@ -3,20 +3,46 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { clientEditFormSchema } from "@/schema/masterModule/customerSchema";
 import ReusableAsyncSelect from "./ReusableAsyncSelect";
 import { transformClientTds } from "@/helper/transform";
-import { MasterCustomer, Props } from "@/types/masterModule/masterCustomerTypes";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import {
+  MasterCustomer,
+  Props,
+} from "@/types/masterModule/masterCustomerTypes";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import styled from "styled-components";
+import { useToast } from "@/components/ui/use-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchClient, updateClient } from "@/features/client/clientSlice";
-const MasterClientEdit: React.FC<Props> = ({ uiState }: { uiState: MasterCustomer }) => {
-  const { clientEdit, setClientEdit, clientId } = uiState; 
+const MasterClientEdit: React.FC<Props> = ({
+  uiState,
+}: {
+  uiState: MasterCustomer;
+}) => {
+  const { clientEdit, setClientEdit, clientId } = uiState;
+  const { toast } = useToast();
   const dispatch = useDispatch();
-  const clientData = useSelector((state: any) => state.client.data.find((client: any) => client.code === clientId)); 
+
+  const clientData = useSelector(
+    (state: any) =>
+      state.client.data.find((client: any) => client?.code === clientId) || {}
+  );
+
   const form = useForm<z.infer<typeof clientEditFormSchema>>({
     resolver: zodResolver(clientEditFormSchema),
     defaultValues: {
@@ -24,11 +50,11 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }: { uiState: MasterCustome
     },
   });
 
-  console.log("client id",clientId)
+  console.log("client data", clientData);
 
   useEffect(() => {
     if (clientEdit && clientId) {
-      dispatch(fetchClient({ code:clientId }) as any);
+      dispatch(fetchClient({ code: clientId }) as any);
     }
   }, [clientEdit, clientId, dispatch]);
 
@@ -43,7 +69,7 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }: { uiState: MasterCustome
         website: clientData.website,
         clientTDS: clientData.tds || [],
         clientTCS: clientData.tcs || [],
-        active: clientData.status === 'active',
+        active: clientData.status === "active",
       });
     }
   }, [clientData, form]);
@@ -52,9 +78,14 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }: { uiState: MasterCustome
     const payload = {
       ...value,
       code: clientId,
-      status: value.active ? 'active' : 'inactive',
+      status: value.active ? "active" : "inactive",
     };
     dispatch(updateClient({ endpoint: `/client/update`, payload }) as any);
+    toast({
+      title: "Client updated successfully",
+      className: "bg-green-600 text-white items-center",
+    });
+
     setClientEdit(false);
   };
 
@@ -65,14 +96,19 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }: { uiState: MasterCustome
           <SheetTitle>Edit Client Details</SheetTitle>
           <div>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8"
+              >
                 <div className="grid grid-cols-2 gap-[10px]">
                   <FormField
                     control={form.control}
                     name="clientName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-slate-600">Vendor Name</FormLabel>
+                        <FormLabel className="text-slate-600">
+                          Vendor Name
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="Vendor Name" {...field} />
                         </FormControl>
@@ -98,7 +134,9 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }: { uiState: MasterCustome
                     name="panNo"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-slate-600">PAN Number</FormLabel>
+                        <FormLabel className="text-slate-600">
+                          PAN Number
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="PAN Number" {...field} />
                         </FormControl>
@@ -113,7 +151,11 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }: { uiState: MasterCustome
                       <FormItem>
                         <FormLabel className="text-slate-600">Mobile</FormLabel>
                         <FormControl>
-                          <Input type="number" placeholder="Mobile" {...field} />
+                          <Input
+                            type="number"
+                            placeholder="Mobile"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -124,7 +166,9 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }: { uiState: MasterCustome
                     name="salePerson"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-slate-600">Sale Person</FormLabel>
+                        <FormLabel className="text-slate-600">
+                          Sale Person
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="Sale Person" {...field} />
                         </FormControl>
@@ -137,7 +181,9 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }: { uiState: MasterCustome
                     name="website"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-slate-600">Website</FormLabel>
+                        <FormLabel className="text-slate-600">
+                          Website
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="Website" {...field} />
                         </FormControl>
@@ -151,14 +197,18 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }: { uiState: MasterCustome
                   name="clientTDS"
                   render={() => (
                     <FormItem>
-                      <FormLabel className="text-slate-600">Client TDS</FormLabel>
+                      <FormLabel className="text-slate-600">
+                        Client TDS
+                      </FormLabel>
                       <FormControl>
                         <ReusableAsyncSelect
                           placeholder="Client TDS"
                           endpoint="vendor/getAllTds"
                           transform={transformClientTds}
                           fetchOptionWith="query"
-                          onChange={(e: any) => form.setValue("clientTDS", e.value)}
+                          onChange={(e: any) =>
+                            form.setValue("clientTDS", e.value)
+                          }
                         />
                       </FormControl>
                       <FormMessage />
@@ -170,14 +220,18 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }: { uiState: MasterCustome
                   name="clientTCS"
                   render={() => (
                     <FormItem>
-                      <FormLabel className="text-slate-600">Client TCS</FormLabel>
+                      <FormLabel className="text-slate-600">
+                        Client TCS
+                      </FormLabel>
                       <FormControl>
                         <ReusableAsyncSelect
                           placeholder="Client TCS"
                           endpoint="/tally/tcs/getAllTcs"
                           transform={transformClientTds}
                           fetchOptionWith="query"
-                          onChange={(e: any) => form.setValue("clientTCS", e.value)}
+                          onChange={(e: any) =>
+                            form.setValue("clientTCS", e.value)
+                          }
                         />
                       </FormControl>
                       <FormMessage />
@@ -195,7 +249,9 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }: { uiState: MasterCustome
                             <input
                               type="checkbox"
                               checked={field.value}
-                              onChange={(e: any) => form.setValue("active", e.target.checked)}
+                              onChange={(e: any) =>
+                                form.setValue("active", e.target.checked)
+                              }
                             />
                             <span className="slider"></span>
                           </label>
@@ -206,7 +262,10 @@ const MasterClientEdit: React.FC<Props> = ({ uiState }: { uiState: MasterCustome
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="bg-cyan-700 hover:bg-cyan-600 shadow-slate-500">
+                <Button
+                  type="submit"
+                  className="bg-cyan-700 hover:bg-cyan-600 shadow-slate-500"
+                >
                   Submit
                 </Button>
               </form>

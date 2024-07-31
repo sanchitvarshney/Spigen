@@ -28,6 +28,22 @@ const schema = z.object({
   productName: z.string().min(2, {
     message: "Product Name is required",
   }),
+  p_asin: z.string().min(2, {
+    message: "asin is required",
+  }),
+  p_fnsku: z.string().min(2, {
+    message: "fnsku is required",
+  }),
+  p_item_code: z.string().min(2, {
+    message: "item code  is required",
+  }),
+  p_fsnid: z.string().min(2, {
+    message: "fsnid is required",
+  }),
+  
+  
+  
+  
 });
 
 const languages = [
@@ -45,6 +61,13 @@ const MasterProductFgPage: React.FC = () => {
       productSku: "",
       productName: "",
       uom: "",
+      p_asin:"",
+      p_fnsku:"",
+      p_item_code:"",
+      p_fsnid:"",
+
+
+
     },
   });
 
@@ -57,6 +80,13 @@ const MasterProductFgPage: React.FC = () => {
             p_name: values.productName,
             p_sku: values.productSku,
             units_id: values.uom,
+            p_asin:values.p_asin,
+            p_fnsku:values.p_fnsku,
+            p_item_code:values.p_item_code,
+            p_fsnid:values.p_fsnid,
+
+
+
           },
         })
       ).unwrap();
@@ -168,6 +198,70 @@ const MasterProductFgPage: React.FC = () => {
                         <FormControl>
                           <Input
                             placeholder="Product Name"
+                            {...field}
+                            className="placeholder:text-neutral-500 text-[15px] border-0 border-b rounded-none shadow-none border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="p_asin"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder="ASIN"
+                            {...field}
+                            className="placeholder:text-neutral-500 text-[15px] border-0 border-b rounded-none shadow-none border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="p_fnsku"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder="FNSKU"
+                            {...field}
+                            className="placeholder:text-neutral-500 text-[15px] border-0 border-b rounded-none shadow-none border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="p_item_code"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder="item code"
+                            {...field}
+                            className="placeholder:text-neutral-500 text-[15px] border-0 border-b rounded-none shadow-none border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="p_fsnid"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder="FSNID"
                             {...field}
                             className="placeholder:text-neutral-500 text-[15px] border-0 border-b rounded-none shadow-none border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0"
                           />

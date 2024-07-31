@@ -107,17 +107,6 @@ export const fetchSalesOrderShipmentList = createAsyncThunk<
 });
 
 
-export const fetchSalesOrderInvoiceList = createAsyncThunk<
-  ApiResponse<any>,
-  
-  { data: string; wise: any }
->("so_challan_shipment/fetchDeliveryChallan", async (payload) => {
-  const response = await spigenAxios.post("so_challan_shipment/fetchDeliveryChallan", payload);
-  return response.data;
-});
-
-
-
 
 
 
@@ -176,28 +165,8 @@ const sellRequestSlice = createSlice({
       })
 
 
-      .addCase(fetchSalesOrderInvoiceList.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(fetchSalesOrderInvoiceList.fulfilled, (state, action) => {
-        if (action.payload.success) {
-          state.data = action.payload.data;
-          state.error = null;
-        } else {
-          state.error = action.payload.message || "Failed to fetch invoice order shipment list";
-        }
-        state.loading = false;
-      })
-      .addCase(fetchSalesOrderInvoiceList.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message || "Failed to fetch invoice order shipment list";
-      });
-
       
-      
-
-
+  
   },
 });
 

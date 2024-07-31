@@ -24,7 +24,7 @@ const ClientActionCellRender: React.FC = (params: any) => {
     setClientBranch,
     editView,
     setEditView,
-    clientId, // Pass the clientId to the components
+    clientId,
   };
 
   return (

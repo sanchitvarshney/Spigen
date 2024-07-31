@@ -5,7 +5,7 @@ interface ProductPayload {
   p_name?: string;
   p_sku?: string;
   units_id?: string;
-  producttKey?: string; 
+  product_key?: string; 
   product_name?: string;
   hsn?: string;
   jobworkcost?: number;
@@ -30,7 +30,30 @@ interface ProductPayload {
   location?: string;
   description?: string;
   uom?: string;
+  p_asin?: string;
+  p_fnsku?:string,
+  p_item_code?:string,
+  p_fsnid?:string,
+
+
+
+
+
+  
 }
+interface ProductImage {
+  image_name: string;
+  image_url: string;
+  image_id: string;
+  uploaded_date: string;
+  uploaded_by: string;
+  product: any;
+}
+interface FetchImageProductResponse {
+  data: ProductImage[];
+}
+
+
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -38,20 +61,20 @@ export interface ApiResponse<T> {
   message?: string | null;
 }
 
+export const fetchImageProduct = createAsyncThunk<
+  FetchImageProductResponse,
+  string // Assuming `product_key` is a string
+>("products/fetchImageProduct", async (product_key) => {
+  const response = await spigenAxios.post("products/fetchImageProduct", { product: product_key });
+  return response.data;
+});
+
+
 export const fetchProducts = createAsyncThunk<
   ApiResponse<any>,
   string
 >("/products", async (endpoint) => {
   const response = await spigenAxios.get(endpoint);
-  return response.data;
-});
-
-
-export const fetchProductForUpdate = createAsyncThunk<
-  ApiResponse<any>,
-  { endpoint: string; product_key: string }
->("/products/getProductForUpdate", async ({ endpoint, product_key }) => {
-  const response = await spigenAxios.post(endpoint, { product_key });
   return response.data;
 });
 
@@ -64,6 +87,15 @@ export const createProduct = createAsyncThunk<
   return response.data;
 });
 
+export const getProductForUpdate = createAsyncThunk<
+  ApiResponse<any>,
+  {product_key: string }
+>("/products/getProductForUpdate", async ({ product_key }) => {
+  const response = await spigenAxios.post("/products/getProductForUpdate", { product_key });
+  return response.data;
+});
+
+
 export const updateProduct = createAsyncThunk<
   ApiResponse<any>,
   { endpoint: string; payload: ProductPayload }
@@ -72,16 +104,21 @@ export const updateProduct = createAsyncThunk<
   return response.data;
 });
 
+
 interface ProductState {
   data: any[];
   loading: boolean;
   error: string | null;
+  productForUpdate: any;
+  images: any[]; 
 }
 
 const initialState: ProductState = {
   data: [],
   loading: false,
   error: null,
+  productForUpdate: null,
+  images:[],
 };
 
 const productSlice = createSlice({
@@ -90,6 +127,19 @@ const productSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+
+    .addCase(fetchImageProduct.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase(fetchImageProduct.fulfilled, (state, action) => {
+      state.images = action.payload.data;
+      state.loading = false;
+    })
+    .addCase(fetchImageProduct.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message || "Failed to fetch product images";
+    })
       // Handle fetchProducts action
       .addCase(fetchProducts.pending, (state) => {
         state.loading = true;
@@ -122,9 +172,9 @@ const productSlice = createSlice({
         state.error = null;
       })
       .addCase(updateProduct.fulfilled, (state, action) => {
-        const updatedProduct = action.payload.data;
+        // const updatedProduct = action.payload.data;
         state.data = state.data.map((product) =>
-          product.producttKey === updatedProduct.producttKey ? updatedProduct : product
+          product?.product_key === action.payload.data?.product_key ? action.payload.data  : product
         );
         state.loading = false;
       })
@@ -132,22 +182,23 @@ const productSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || "Failed to update product";
       })
+
       // Handle fetchProductForUpdate action
-      .addCase(fetchProductForUpdate.pending, (state) => {
+      .addCase(getProductForUpdate.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchProductForUpdate.fulfilled, (state, action) => {
-        const fetchedProduct = action.payload.data;
-        state.data = state.data.map((product) =>
-          product.producttKey === fetchedProduct.producttKey ? fetchedProduct : product
-        );
+      .addCase(getProductForUpdate.fulfilled, (state, action) => {
+        // const fetchedProduct = action.payload.data;
+        state.data = action.payload.data;
         state.loading = false;
       })
-      .addCase(fetchProductForUpdate.rejected, (state, action) => {
+      .addCase(getProductForUpdate.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Failed to fetch product details";
-      });
+      })
+
+      
   },
 });
 

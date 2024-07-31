@@ -24,7 +24,7 @@ const createSalesFormSchema = z.object({
   shipping_pan: z.string().optional(),
   shipping_gstin_uin: z.string().optional(),
   dispatch_pincode: z.string().optional(),
-  dispatch_pan: z.string().optional(),
+  pan: z.string().optional(),
   dispatch_gstin_uin: z.string().optional(),
   dispatch_address: z.string().optional(),
   bill_from_address: z.string().optional(),

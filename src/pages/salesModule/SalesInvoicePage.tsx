@@ -17,7 +17,7 @@ import { DatePicker, Space } from "antd";
 import { columnDefs } from "@/config/agGrid/SalesInvoiceTableColumns";
 import { gridOptions } from "@/config/agGrid/ModuleRegistry";
 import { RootState } from "@/store";
-import { fetchSalesOrderInvoiceList } from "@/features/salesmodule/SalesSlice";
+import { fetchSalesOrderInvoiceList } from "@/features/salesmodule/salesInvoiceSlice";
 import { useDispatch, useSelector } from "react-redux";
 import CustomLoadingCellRenderer from "@/config/agGrid/CustomLoadingCellRenderer";
 
@@ -44,7 +44,7 @@ const SalesInvoicePage: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const dispatch = useDispatch();
   const [wise] = useState<any>("datwwise");
-  const { data: rowData } = useSelector((state: RootState) => state.sellRequest);
+  const { data: rowData } = useSelector((state: RootState) => state.sellInvoice);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
