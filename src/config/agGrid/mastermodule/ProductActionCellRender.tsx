@@ -30,8 +30,8 @@ import {
   modelFixHeaderStyle,
 } from "@/constants/themeContants";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
-import { fetchImageProduct, getProductForUpdate, updateProduct } from "@/features/product/productSlice";
+import { useEffect, useState } from "react";
+import { fetchImageProduct, getProductForUpdate, updateProduct, uploadProductImages } from "@/features/product/productSlice";
 import { useDispatch } from "react-redux";
 import { RootState } from "@/store";
 import { useToast } from "@/components/ui/use-toast";
@@ -64,11 +64,15 @@ const productSchema = z.object({
   jobworkcost: z.string().optional(),
   othercost: z.string().optional(),
   batchstock:z.string().optional(),
+  caption:z.string().optional(),
  
 });
 
 const ProductActionCellRender = (params: any) => {
   const { productKey } = params.params.data;
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+ 
   const { toast } = useToast();
   const dispatch = useDispatch();
 
@@ -82,6 +86,8 @@ const ProductActionCellRender = (params: any) => {
     resolver: zodResolver(productSchema),
     defaultValues: {
       product_name: "",
+      caption: "",
+      
     },
   });
 
@@ -119,6 +125,8 @@ const ProductActionCellRender = (params: any) => {
         batchstock: productData.batchstock,
         location: productData.loc,
         description: productData.description,
+        
+        
       
         
 
@@ -126,6 +134,54 @@ const ProductActionCellRender = (params: any) => {
       });
     }
   }, [productData,form]);
+
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const files = Array.from(event.target.files);
+      setSelectedFiles(files);
+
+      // Generate preview URLs
+      const previews = files.map(file => URL.createObjectURL(file));
+      setImagePreviews(previews);
+    }
+  };
+
+  const uploadImages = async () => {
+    if (selectedFiles.length > 0) {
+      const uploadPayload = {
+        files: selectedFiles,
+        product: productKey,
+        caption: form.getValues('caption') || '',
+      };
+
+      try {
+        const uploadAction = await dispatch(uploadProductImages(uploadPayload) as any);
+
+        if (uploadProductImages.fulfilled.match(uploadAction)) {
+          toast({
+            title: "Images uploaded successfully",
+            className: "bg-green-600 text-white items-center",
+          });
+        } else if (uploadProductImages.rejected.match(uploadAction)) {
+          toast({
+            title: (uploadAction.payload as { message: string })?.message || "Failed to upload images",
+            className: "bg-red-600 text-white items-center",
+          });
+        }
+      } catch (error) {
+        toast({
+          title: "An unexpected error occurred",
+          className: "bg-red-600 text-white items-center",
+        });
+      }
+    } else {
+      toast({
+        title: "No images selected",
+        className: "bg-yellow-600 text-white items-center",
+      });
+    }
+  };
 
   async function onSubmit(value: any) {
     const payload = {
@@ -777,34 +833,60 @@ const ProductActionCellRender = (params: any) => {
         </SheetContent>
       </Sheet>
       <Sheet>
-        <SheetTrigger>
-          <Upload className="text-cyan-700 h-[20px] w-[20px]" />
-        </SheetTrigger>
-        <SheetContent className="p-0">
-          <SheetHeader className={modelFixHeaderStyle}>
-            <SheetTitle className="text-slate-600">Oakmist Plus</SheetTitle>
-          </SheetHeader>
-          <div>
-            <div className="mt-[20px] flex flex-col gap-[20px] px-[20px]">
-              <Input placeholder="Lable" className="border-slate-400" />
-              <Label
-                htmlFor="image"
-                className="flex items-center justify-center border border-dashed border-slate-400 shadow h-[150px] rounded-md flex-col"
-              >
-                <Image className="text-slate-300 h-[50px] w-[50px]" />
-                <p className="text-slate-500 mt-[20px]">
-                  Select images to upload for this product.
-                </p>
-                <Input id="image" type="file" className="hidden" />
-              </Label>
-            </div>
-            <div className={modelFixFooterStyle}>
-              {" "}
-              <Button className="bg-cyan-700 hover:bg-cyan-600">Submit</Button>
-            </div>
+      <SheetTrigger>
+        <Upload className="text-cyan-700 h-[20px] w-[20px]" />
+      </SheetTrigger>
+      <SheetContent className="p-0">
+        <SheetHeader className={modelFixHeaderStyle}>
+          <SheetTitle className="text-slate-600">Oakmist Plus</SheetTitle>
+        </SheetHeader>
+        <div>
+          <div className="mt-[20px] flex flex-col gap-[20px] px-[20px]">
+            <Input 
+              placeholder="caption" 
+              className="border-slate-400" 
+              {...form.register('caption')}
+            />
+            <Label
+              htmlFor="image"
+              className="flex items-center justify-center border border-dashed border-slate-400 shadow h-[150px] rounded-md flex-col"
+            >
+              <Upload className="text-slate-300 h-[50px] w-[50px]" />
+              <p className="text-slate-500 mt-[20px]">
+                Select images to upload for this product.
+              </p>
+              <Input 
+                id="image" 
+                type="file" 
+                multiple 
+                onChange={handleFileChange} 
+                className="hidden" 
+              />
+            </Label>
+            {imagePreviews.length > 0 && (
+              <div className="flex flex-wrap gap-4 mt-4">
+                {imagePreviews.map((src, index) => (
+                  <img 
+                    key={index} 
+                    src={src} 
+                    alt={`Preview ${index + 1}`} 
+                    className="h-[100px] w-[100px] object-cover rounded-md shadow" 
+                  />
+                ))}
+              </div>
+            )}
           </div>
-        </SheetContent>
-      </Sheet>
+          <div className={modelFixFooterStyle}>
+            <Button 
+              className="bg-cyan-700 hover:bg-cyan-600" 
+              onClick={uploadImages}
+            >
+              Upload Images
+            </Button>
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
     </div>
   );
 };

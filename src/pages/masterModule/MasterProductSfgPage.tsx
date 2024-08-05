@@ -49,6 +49,7 @@ const MasterProductSfgPage: React.FC = () => {
       productSku: "",
       productName: "",
       uom: "",
+      
     },
   });
   // 2. Define a submit handler.

@@ -124,7 +124,7 @@ const SalesShipmentPage: React.FC = () => {
                         <PopoverTrigger asChild onClick={() => setOpen(true)}>
                           <FormControl>
                             <Button variant="outline" role="combobox" className={`${cn(" justify-between", !field.value && "text-muted-foreground")} text-slate-600 border-slate-400 ${field.value?"text-slate-600":"text-neutral-400 font-[350]"}`}>
-                              {field.value ? wises.find((wise) => wise.value === field.value)?.label : "Select language"}
+                              {field.value ? wises.find((wise) => wise.value === field.value)?.label : "Select option"}
                               <CaretSortIcon className="w-4 h-4 ml-2 opacity-50 shrink-0" />
                             </Button>
                           </FormControl>
