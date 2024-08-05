@@ -103,6 +103,18 @@ export const updateProduct = createAsyncThunk<
   const response = await spigenAxios.post(endpoint, payload);
   return response.data;
 });
+interface UploadImagePayload {
+  files: File[]; 
+  product: string;
+  caption: string;
+}
+
+interface UploadImageResponse {
+  code: number; 
+  status: string; 
+  message: string; 
+}
+
 
 
 interface ProductState {
@@ -110,7 +122,12 @@ interface ProductState {
   loading: boolean;
   error: string | null;
   productForUpdate: any;
-  images: any[]; 
+  images: any[];
+  uploadLoading: boolean;
+  uploadError: string | null;
+  uploadSuccess: boolean;
+  uploadMessage: string | null;
+  uploadedImages: any[];
 }
 
 const initialState: ProductState = {
@@ -118,8 +135,30 @@ const initialState: ProductState = {
   loading: false,
   error: null,
   productForUpdate: null,
-  images:[],
+  images: [],
+  uploadLoading: false,
+  uploadError: null,
+  uploadSuccess: false,
+  uploadMessage: null,
+  uploadedImages: [],
 };
+
+export const uploadProductImages = createAsyncThunk<UploadImageResponse, UploadImagePayload>(
+  'products/upload_product_img',
+  async ({ files, product, caption }) => {
+    const formData = new FormData();
+    files.forEach((file, index) => formData.append(`files[${index}]`, file));
+    formData.append('product', product);
+    formData.append('caption', caption);
+
+    const response = await spigenAxios.post('products/upload_product_img', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  }
+);
 
 const productSlice = createSlice({
   name: "products",
@@ -197,6 +236,25 @@ const productSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || "Failed to fetch product details";
       })
+
+
+      .addCase(uploadProductImages.pending, (state) => {
+        state.uploadLoading = true;
+        state.uploadError = null;
+        state.uploadSuccess = false;
+        state.uploadMessage = null;
+      })
+      .addCase(uploadProductImages.fulfilled, (state, action) => {
+        state.uploadLoading = false;
+        state.uploadSuccess = true;
+        state.uploadMessage = action.payload.message;
+        state.uploadedImages.push(action.payload);
+      })
+      .addCase(uploadProductImages.rejected, (state, action) => {
+        state.uploadLoading = false;
+        state.uploadError = action.error.message || 'Failed to upload images';
+        state.uploadSuccess = false;
+      });
 
       
   },

@@ -56,7 +56,7 @@ interface Props {
   setPayloadData: Dispatch<SetStateAction<any>>;
 }
 type CreateSalesOrderForm = z.infer<typeof createSalesFormSchema>;
-const CreateSalesOrder: React.FC<Props> = ({ setTab, setPayloadData }) => {
+const CreateSalesOrder: React.FC<Props> = ({ setTabvalue, setTab ,setPayloadData }:any) => {
   const form = useForm<z.infer<typeof createSalesFormSchema>>({
     resolver: zodResolver(createSalesFormSchema),
     mode: "onBlur",
@@ -106,6 +106,27 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab, setPayloadData }) => {
       }
     });
   };
+
+  const handleBillingAddressChange = (e: any) => {
+    const billingCode = e.value;
+    form.setValue("bill_from_address", billingCode);
+  
+    dispatch(fetchBillingAddress({ billing_code: billingCode })).then((response: any) => {
+      if (response.meta.requestStatus === "fulfilled") {
+      
+        const billingData = response.payload;
+        form.setValue("address", billingData.address);
+        form.setValue("company", billingData.company);
+        form.setValue("gstin", billingData.gstin);
+        form.setValue("pan", billingData.pan);
+        form.setValue("statecode", billingData.statecode);
+      }
+     
+
+      
+    });
+  };
+  
   const handleCostCenterChange = (e: any) => {
     setSelectedCostCenter(e);
     form.setValue("cost_center", e.value);
@@ -123,8 +144,13 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab, setPayloadData }) => {
   };
 
   const onSubmit = (data: CreateSalesOrderForm) => {
-    console.log("create sale order data", data);
-    setPayloadData(data), setTab("add");
+    console.log('Submitted Data from CreateSalesOrder:', data); // Debugging log
+    if (data) {
+      setPayloadData(data);
+      setTabvalue('add'); // Switch to AddSalesOrder tab
+    } else {
+      console.error('Data is null or undefined');
+    }
   };
 
   return (
@@ -497,40 +523,35 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab, setPayloadData }) => {
                 <CardContent className="mt-[10px]">
                   <div className="mt-[30px] grid grid-cols-2 gap-[40px]">
                     <div>
-                      <FormField
-                        control={form.control}
-                        name="bill_from_address"
-                        render={() => (
-                          <FormItem>
-                            <FormLabel className={LableStyle}>
-                              Billing name
-                            </FormLabel>
-                            <FormControl>
-                              <Select
-                                styles={customStyles}
-                                placeholder="Bill From Address"
-                                className="border-0 basic-single"
-                                classNamePrefix="select border-0"
-                                components={{ DropdownIndicator }}
-                                onChange={(e: any) =>
-                                  form.setValue("bill_from_address", e.value)
-                                }
-                                isDisabled={false}
-                                isClearable={true}
-                                isSearchable={true}
-                                options={
-                                  data.billingAddressList
-                                    ? transformOptionData(
-                                        data.billingAddressList
-                                      )
-                                    : []
-                                }
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                    <FormField
+  control={form.control}
+  name="bill_from_address"
+  render={() => (
+    <FormItem>
+      <FormLabel className={LableStyle}>Billing Name</FormLabel>
+      <FormControl>
+        <Select
+          styles={customStyles}
+          placeholder="Bill From Address"
+          className="border-0 basic-single"
+          classNamePrefix="select border-0"
+          components={{ DropdownIndicator }}
+          onChange={handleBillingAddressChange} 
+          isDisabled={false}
+          isClearable={true}
+          isSearchable={true}
+          options={
+            data.billingAddressList
+              ? transformOptionData(data.billingAddressList)
+              : []
+          }
+        />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
 
                       {/* <p>error message</p> */}
                     </div>
@@ -558,7 +579,7 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab, setPayloadData }) => {
                     <div className="">
                       <FormField
                         control={form.control}
-                        name="dispatch_gstin_uin"
+                        name="gstin"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
@@ -579,7 +600,7 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab, setPayloadData }) => {
                     <div className="">
                       <FormField
                         control={form.control}
-                        name="dispatch_pincode"
+                        name="statecode"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
@@ -601,7 +622,7 @@ const CreateSalesOrder: React.FC<Props> = ({ setTab, setPayloadData }) => {
                   <div className="mt-[40px]">
                     <FormField
                       control={form.control}
-                      name="dispatch_address"
+                      name="address"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className={LableStyle}>Address</FormLabel>
