@@ -2,7 +2,17 @@ import { z } from "zod";
 
 // Define schema for "headers" with custom error messages
 const createSalesFormSchema = z.object({
-  channels: z.string().optional(),
+  channels: z.string(),
+  fba_shipment_id:z.string().optional(),
+  fba_appointment_id:z.string().optional(),
+  hawb_number:z.string().optional(),
+  consignment_id:z.string().optional(),
+  po_number:z.string().optional(),
+  vendor_code:z.string().optional(),
+  order_id:z.string().optional(),
+  state_of_supply:z.string().optional(),
+  address_line1:z.string().optional(),
+  address_line2:z.string().optional(),
   customer: z.string().optional(),
   project: z.string().optional(),
   cost_center: z.string().optional(),
@@ -14,7 +24,8 @@ const createSalesFormSchema = z.object({
   bill_id: z.string().optional(),
   billing_address: z.string().optional(),
   shipping_id: z.string().optional(),
-  shipping_address: z.string().optional(),
+  shipping_address_line1: z.string().optional(),
+  shipping_address_line2: z.string().optional(),
   shipping_state: z.string().optional(),
   due_day: z.string().optional(),
   terms_condition: z.string().optional(),
@@ -28,6 +39,10 @@ const createSalesFormSchema = z.object({
   dispatch_gstin_uin: z.string().optional(),
   dispatch_address: z.string().optional(),
   bill_from_address: z.string().optional(),
+  bill_pan: z.string().optional(),
+  bill_gstin_uin: z.string().optional(),
+  bill_address1: z.string().optional(),
+  bill_address2: z.string().optional(),
   project_id: z.string().optional(),
   project_description: z.string().optional(),
   client_gst: z.string().optional(),
@@ -54,4 +69,6 @@ const materialsSchema = z.object({
   due_date: z.array(z.string()).optional().nullable(), // Ensure format validation as needed
   remark: z.array(z.string()).optional().nullable(),
 });
+
+
 export { createSalesFormSchema, materialsSchema };

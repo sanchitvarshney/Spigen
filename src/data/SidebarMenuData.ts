@@ -112,28 +112,29 @@ export const materialmenu = [
   {
     name: "Master",
     subMenu: [
-      {
-        name: "Components",
-        subMenu: [
-          { name: "Material", path: "/not-permission" },
-          { name: "Service", path: "/not-permission" },
-        ],
-      },
-      { name: "Component Map", path: "/not-permission" },
+      // {
+      //   name: "Components",
+      //   subMenu: [
+      //     { name: "Material", path: "/not-permission" },
+      //     { name: "Service", path: "/not-permission" },
+      //   ],
+      // },
+      // { name: "Component Map", path: "/not-permission" },
+      { name: "UOM", path: "/not-permission" },
       { name: "Products", path: "/master/product/fg" },
-      { name: "HSN map", path: "/not-permission" },
-      { name: "Groups", path: "/not-permission" },
-      { name: "Locations", path: "/not-permission" },
+      // { name: "HSN map", path: "/not-permission" },
+      // { name: "Groups", path: "/not-permission" },
+      // { name: "Locations", path: "/not-permission" },
       { name: "Billing address", path: "/master/billing-address" },
       { name: "Shipping address", path: "/master/shipping-address" },
-      {
-        name: "Bill Of Material",
-        subMenu: [
-          { name: "Create Bom", path: "/not-permission" },
-          { name: "Manage Bom", path: "/not-permission" },
-        ],
-      },
-      { name: "Vender / Suppliar", subMenu: [{ name: "Add / Rectify", path: "/not-permission" }] },
+      // {
+      //   name: "Bill Of Material",
+      //   subMenu: [
+      //     { name: "Create Bom", path: "/not-permission" },
+      //     { name: "Manage Bom", path: "/not-permission" },
+      //   ],
+      // },
+      // { name: "Vender / Suppliar", subMenu: [{ name: "Add / Rectify", path: "/not-permission" }] },
       {
         name: "Customer / Client",
         path: "/master/customer" 

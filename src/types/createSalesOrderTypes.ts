@@ -134,6 +134,7 @@ export interface ClientAddressDetail {
   }
   export interface ClientState {
     clientDetails: Client | null;
+    client: Client | null;
     billingAddress: BillingAddress | null;
     projectDescription:ProjectDescription | null ;
     billingAddressList: BillingAddressListItem[] | null;

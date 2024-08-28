@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
 import {
   fetchBillingAddress,
+  fetchClient,
   fetchClientAddressDetail,
   fetchClientDetails,
   fetchCountries,
@@ -56,12 +57,22 @@ interface Props {
   setPayloadData: Dispatch<SetStateAction<any>>;
 }
 type CreateSalesOrderForm = z.infer<typeof createSalesFormSchema>;
-const CreateSalesOrder: React.FC<Props> = ({ setTabvalue, setTab ,setPayloadData }:any) => {
+const CreateSalesOrder: React.FC<Props> = ({
+  setTabvalue,
+  setTab,
+  setPayloadData,
+}: any) => {
   const form = useForm<z.infer<typeof createSalesFormSchema>>({
     resolver: zodResolver(createSalesFormSchema),
     mode: "onBlur",
   });
-
+  // const {
+  //   control,
+  //   handleSubmit,
+  //   register,
+  //   setValue,
+  //   formState: { errors },
+  // } = form;
   const [selectedCustomer, setSelectedCustomer] = useState<{
     label: string;
     value: string;
@@ -71,6 +82,10 @@ const CreateSalesOrder: React.FC<Props> = ({ setTabvalue, setTab ,setPayloadData
     value: string;
   } | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState<{
+    label: string;
+    value: string;
+  } | null>(null);
+  const [channel, setChannel] = useState<{
     label: string;
     value: string;
   } | null>(null);
@@ -110,23 +125,20 @@ const CreateSalesOrder: React.FC<Props> = ({ setTabvalue, setTab ,setPayloadData
   const handleBillingAddressChange = (e: any) => {
     const billingCode = e.value;
     form.setValue("bill_from_address", billingCode);
-  
-    dispatch(fetchBillingAddress({ billing_code: billingCode })).then((response: any) => {
-      if (response.meta.requestStatus === "fulfilled") {
-      
-        const billingData = response.payload;
-        form.setValue("address", billingData.address);
-        form.setValue("company", billingData.company);
-        form.setValue("gstin", billingData.gstin);
-        form.setValue("pan", billingData.pan);
-        form.setValue("statecode", billingData.statecode);
-      }
-     
 
-      
-    });
+    dispatch(fetchBillingAddress({ billing_code: billingCode })).then(
+      (response: any) => {
+        if (response.meta.requestStatus === "fulfilled") {
+          const billingData = response.payload;
+          form.setValue("bill_address1", billingData.billing_address1);
+          form.setValue("bill_address2", billingData.billing_address2);
+          form.setValue("bill_gstin_uin", billingData.gstin);
+          form.setValue("bill_pan", billingData.pan);
+        }
+      }
+    );
   };
-  
+
   const handleCostCenterChange = (e: any) => {
     setSelectedCostCenter(e);
     form.setValue("cost_center", e.value);
@@ -144,15 +156,29 @@ const CreateSalesOrder: React.FC<Props> = ({ setTabvalue, setTab ,setPayloadData
   };
 
   const onSubmit = (data: CreateSalesOrderForm) => {
-    console.log('Submitted Data from CreateSalesOrder:', data); // Debugging log
+    console.log("Submitted Data from CreateSalesOrder:", data); // Debugging log
     if (data) {
       setPayloadData(data);
-      setTabvalue('add'); // Switch to AddSalesOrder tab
+      setTabvalue("add"); // Switch to AddSalesOrder tab
     } else {
-      console.error('Data is null or undefined');
+      console.error("Data is null or undefined");
     }
   };
 
+  useEffect(() => {
+    form.setValue("channels", channel?.value);
+    console.log(channel?.value);
+    if (channel?.value) {
+      // Ensure dispatch is called with an object containing clientCode
+      dispatch(fetchClient({ clientCode: channel.value })).then(
+        (response: any) => {
+          console.log("Fetch Client Response:", response);
+        }
+      );
+    }
+  }, [channel]);
+
+  console.log(form.control._formValues, "channel", form.getValues("channels"));
   return (
     <div className="h-[calc(100vh-150px)]">
       {data.loading && <FullPageLoading />}
@@ -163,10 +189,10 @@ const CreateSalesOrder: React.FC<Props> = ({ setTabvalue, setTab ,setPayloadData
               <Card className="rounded shadow bg-[#fff]">
                 <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
                   <h3 className="text-[17px] font-[600] text-slate-600">
-                    Client Details
+                    Channel Details
                   </h3>
                   <p className="text-slate-600 text-[13px]">
-                    Type Name or Code of the Client
+                    Provide the Channel Details
                   </p>
                 </CardHeader>
                 <CardContent className="mt-[30px]">
@@ -178,59 +204,18 @@ const CreateSalesOrder: React.FC<Props> = ({ setTabvalue, setTab ,setPayloadData
                         render={() => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
-                              Select Channel
-                            </FormLabel>
-                            <FormControl>
-                              <Select
-                                styles={customStyles}
-                                components={{ DropdownIndicator }}
-                                placeholder="Select Channel"
-                                className="border-0 basic-single"
-                                classNamePrefix="select border-0"
-                                isDisabled={false}
-                                isClearable={true}
-                                isSearchable={true}
-                                onChange={(e: any) =>
-                                  form.setValue("channels", e.value)
-                                }
-                                name="color"
-                                options={[
-                                  {
-                                    label: "Amazon",
-                                    value: "AMZ",
-                                  },
-                                  {
-                                    label: "Flipkart",
-                                    value: "FLK",
-                                  },
-                                  {
-                                    label: "B2B",
-                                    value: "B2B",
-                                  },
-                                ]}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div>
-                      <FormField
-                        control={form.control}
-                        name="customer"
-                        render={() => (
-                          <FormItem>
-                            <FormLabel className={LableStyle}>
-                              Client Name
+                              Channel
+                              <span className="pl-1 text-red-500 font-bold">
+                                *
+                              </span>
                             </FormLabel>
                             <FormControl>
                               <ReusableAsyncSelect
-                                placeholder="Client Name"
-                                endpoint="client/getClient"
+                                placeholder="Channel Name"
+                                endpoint="channel/getChannel"
                                 transform={transformCustomerData}
-                                onChange={handleClientCahnge}
-                                value={selectedCustomer}
+                                onChange={setChannel}
+                                value={channel}
                                 fetchOptionWith="query"
                               />
                             </FormControl>
@@ -239,33 +224,275 @@ const CreateSalesOrder: React.FC<Props> = ({ setTabvalue, setTab ,setPayloadData
                         )}
                       />
                     </div>
+                    {channel?.value === "AMZ" ||
+                    channel?.value === "AMZ_IMP" ? (
+                      <>
+                        <div className="">
+                          <FormField
+                            control={form.control}
+                            name="fba_shipment_id"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className={LableStyle}>
+                                  FBA Shipment Id
+                                  <span className="pl-1 text-red-500 font-bold">
+                                    *
+                                  </span>
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className={InputStyle}
+                                    placeholder="FBA Shipment Id"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="">
+                          <FormField
+                            control={form.control}
+                            name="fba_appointment_id"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className={LableStyle}>
+                                  FBA Appointment Id
+                                  <span className="pl-1 text-red-500 font-bold">
+                                    *
+                                  </span>
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className={InputStyle}
+                                    placeholder="FBA Appointment Id"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="">
+                          <FormField
+                            control={form.control}
+                            name="hawb_number"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className={LableStyle}>
+                                  HAWB Number
+                                  <span className="pl-1 text-red-500 font-bold">
+                                    *
+                                  </span>
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className={InputStyle}
+                                    placeholder="HAWB Number"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </>
+                    ) : channel?.value === "FLK" ? (
+                      <div className="">
+                        <FormField
+                          control={form.control}
+                          name="consignment_id"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className={LableStyle}>
+                                Consignment Id
+                                <span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  className={InputStyle}
+                                  placeholder="Consignment Id"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    ) : channel?.value === "FLK_VC" ? (
+                      <div className="">
+                        <FormField
+                          control={form.control}
+                          name="po_number"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className={LableStyle}>
+                                PO Number
+                                <span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  className={InputStyle}
+                                  placeholder="PO Number"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    ) : channel?.value === "BLK" ? (
+                      <>
+                        <div className="">
+                          <FormField
+                            control={form.control}
+                            name="po_number"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className={LableStyle}>
+                                  PO Number
+                                  <span className="pl-1 text-red-500 font-bold">
+                                    *
+                                  </span>
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className={InputStyle}
+                                    placeholder="PO Number"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="">
+                          <FormField
+                            control={form.control}
+                            name="vendor_code"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className={LableStyle}>
+                                  Vendor Code
+                                  <span className="pl-1 text-red-500 font-bold">
+                                    *
+                                  </span>
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className={InputStyle}
+                                    placeholder="Vendor Code"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </>
+                    ) : channel?.value === "CROMA" ? (
+                      <div className="">
+                        <FormField
+                          control={form.control}
+                          name="po_number"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className={LableStyle}>
+                                PO Number
+                                <span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  className={InputStyle}
+                                  placeholder="PO Number"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    ) : channel?.value === "B2B" ? (
+                      <div className="">
+                        <FormField
+                          control={form.control}
+                          name="order_id"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className={LableStyle}>
+                                Order Id
+                                <span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  className={InputStyle}
+                                  placeholder="Order Id"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="rounded shadow bg-[#fff]">
+                <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
+                  <h3 className="text-[17px] font-[600] text-slate-600">
+                    Bill to Details
+                  </h3>
+                  <p className="text-slate-600 text-[13px]">
+                    Provide Bill to information
+                  </p>
+                </CardHeader>
+                <CardContent className="mt-[30px]">
+                  <div className="grid grid-cols-2 gap-[40px] mt-[30px]">
                     <div>
+                      <div className="flex justify-end">
+                        <Badge className="p-0 text-[13px] bg-transparent border-none shadow-none font-[400] max-h-max text-cyan-600 py-[3px] px-[10px] cursor-pointer hover:bg-blue-100 hover:shadow shadow-slate-500 rounded-full">
+                          Add Bill to details
+                        </Badge>
+                      </div>
                       <FormField
                         control={form.control}
-                        name="customer_branch"
+                        name="customer"
                         render={() => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>Branch</FormLabel>
+                            <FormLabel className={LableStyle}>
+                              Name
+                              <span className="pl-1 text-red-500 font-bold">
+                                *
+                              </span>
+                            </FormLabel>
                             <FormControl>
-                              <Select
-                                styles={customStyles}
-                                components={{ DropdownIndicator }}
-                                placeholder="Branch"
-                                className="border-0 basic-single"
-                                classNamePrefix="select border-0"
-                                isDisabled={false}
-                                isClearable={true}
-                                isSearchable={true}
-                                options={options}
-                                onChange={(e) => console.log(e)}
-                                value={
-                                  data.clientDetails
-                                    ? {
-                                        label: data.clientDetails.city.name,
-                                        value: data.clientDetails.city.name,
-                                      }
-                                    : null
-                                }
+                              <ReusableAsyncSelect
+                                placeholder="Name"
+                                endpoint="client/getClient"
+                                transform={transformCustomerData}
+                                onChange={handleClientCahnge}
+                                value={channel}
+                                fetchOptionWith="payload"
                               />
                             </FormControl>
                             <FormMessage />
@@ -273,13 +500,61 @@ const CreateSalesOrder: React.FC<Props> = ({ setTabvalue, setTab ,setPayloadData
                         )}
                       />
                     </div>
+                    {channel?.value !== "BLK" && channel?.value !== "B2B" && (
+                      <div>
+                        <div className="flex justify-end">
+                          <Badge className="p-0 text-[13px] bg-transparent border-none shadow-none font-[400] max-h-max text-cyan-600 py-[3px] px-[10px] cursor-pointer hover:bg-blue-100 hover:shadow shadow-slate-500 rounded-full">
+                            Add Branch
+                          </Badge>
+                        </div>
+                        <FormField
+                          control={form.control}
+                          name="customer"
+                          render={() => (
+                            <FormItem>
+                              <FormLabel className={LableStyle}>
+                                {channel?.value == "FLK"
+                                  ? "Warehouse"
+                                  : channel?.value == "FLK_VC"
+                                  ? "FC Code"
+                                  : channel?.value == "CROMA"
+                                  ? "DC"
+                                  : "Label"}
+                              </FormLabel>
+                              <FormControl>
+                                <ReusableAsyncSelect
+                                  placeholder={channel?.value == "FLK"
+                                    ? "Warehouse"
+                                    : channel?.value == "FLK_VC"
+                                    ? "FC Code"
+                                    : channel?.value == "CROMA"
+                                    ? "DC"
+                                    : "Label"}
+                                  endpoint="client/getClient"
+                                  transform={transformCustomerData}
+                                  onChange={handleClientCahnge}
+                                  value={selectedCustomer}
+                                  fetchOptionWith="query"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    )}
                     <div className="">
                       <FormField
                         control={form.control}
                         name="client_gst"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>GSTIN</FormLabel>
+                            <FormLabel className={LableStyle}>
+                              GSTIN
+                              <span className="pl-1 text-red-500 font-bold">
+                                *
+                              </span>
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 className={InputStyle}
@@ -292,21 +567,47 @@ const CreateSalesOrder: React.FC<Props> = ({ setTabvalue, setTab ,setPayloadData
                         )}
                       />
                     </div>
+                    <div className="">
+                      <FormField
+                        control={form.control}
+                        name="state_of_supply"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={LableStyle}>
+                              State of Supply
+                              <span className="pl-1 text-red-500 font-bold">
+                                *
+                              </span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                className={InputStyle}
+                                placeholder="State of Supply"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
                   <div className="mt-[40px]">
                     <FormField
                       control={form.control}
-                      name="billing_address"
+                      name="address_line1"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className={LableStyle}>
-                            Billing Address
+                            Address Line 1
+                            <span className="pl-1 text-red-500 font-bold">
+                              *
+                            </span>
                           </FormLabel>
                           <FormControl>
                             <Textarea
-                            
                               className={InputStyle}
-                              placeholder="Billing Address"
+                              placeholder="Address Line 1"
                               {...field}
                             />
                           </FormControl>
@@ -316,6 +617,391 @@ const CreateSalesOrder: React.FC<Props> = ({ setTabvalue, setTab ,setPayloadData
                     />
 
                     {/* <p>error message</p> */}
+                  </div>
+                  <div className="mt-[40px]">
+                    <FormField
+                      control={form.control}
+                      name="address_line2"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className={LableStyle}>
+                            Address Line 2
+                            <span className="pl-1 text-red-500 font-bold">
+                              *
+                            </span>
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea
+                              className={InputStyle}
+                              placeholder="Address Line 2"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* <p>error message</p> */}
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="rounded shadow bg-[#fff]">
+                <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
+                  <h3 className="text-[17px] font-[600] text-slate-600">
+                    Bill From Details
+                  </h3>
+                  <p className="text-slate-600 text-[13px]">
+                    Provide Bill From information
+                  </p>
+                </CardHeader>
+                <CardContent className="mt-[10px]">
+                  <div className="mt-[30px] grid grid-cols-2 gap-[40px]">
+                    <div>
+                      <FormField
+                        control={form.control}
+                        name="bill_from_address"
+                        render={() => (
+                          <FormItem>
+                            <FormLabel className={LableStyle}>
+                              Billing Name
+                              <span className="pl-1 text-red-500 font-bold">
+                                *
+                              </span>
+                            </FormLabel>
+                            <FormControl>
+                              <Select
+                                styles={customStyles}
+                                placeholder="Bill From Address"
+                                className="border-0 basic-single"
+                                classNamePrefix="select border-0"
+                                components={{ DropdownIndicator }}
+                                onChange={handleBillingAddressChange}
+                                isDisabled={false}
+                                isClearable={true}
+                                isSearchable={true}
+                                options={
+                                  data.billingAddressList
+                                    ? transformOptionData(
+                                        data.billingAddressList
+                                      )
+                                    : []
+                                }
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* <p>error message</p> */}
+                    </div>
+                    <div className="">
+                      <FormField
+                        control={form.control}
+                        name="bill_pan"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={LableStyle}>
+                              Pan No.
+                              <span className="pl-1 text-red-500 font-bold">
+                                *
+                              </span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                className={InputStyle}
+                                placeholder="Pan No."
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="">
+                      <FormField
+                        control={form.control}
+                        name="bill_gstin_uin"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={LableStyle}>
+                              GSTIN / UIN
+                              <span className="pl-1 text-red-500 font-bold">
+                                *
+                              </span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                className={InputStyle}
+                                placeholder="GSTIN / UIN"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-[40px]">
+                    <FormField
+                      control={form.control}
+                      name="bill_address1"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className={LableStyle}>
+                            Address Line 1
+                            <span className="pl-1 text-red-500 font-bold">
+                              *
+                            </span>
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea
+                              className={InputStyle}
+                              placeholder="Address Line 1"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="mt-[40px]">
+                    <FormField
+                      control={form.control}
+                      name="bill_address2"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className={LableStyle}>
+                            Address Line 2
+                            <span className="pl-1 text-red-500 font-bold">
+                              *
+                            </span>
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea
+                              className={InputStyle}
+                              placeholder="Address Line 2"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="rounded shadow bg-[#fff]">
+                <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
+                  <h3 className="text-[17px] font-[600] text-slate-600">
+                    Ship To
+                  </h3>
+                  <p className="text-slate-600 text-[13px]">
+                    Provide shipping information
+                  </p>
+                  <Switch className="flex items-center gap-[10px]">
+                    <label className="switch">
+                      <input type="checkbox" />
+                      <span className="slider"></span>
+                    </label>
+                    <p className="text-slate-600 text-[13px]">
+                      Same as Client Address
+                    </p>
+                  </Switch>
+                </CardHeader>
+
+                <CardContent className="mt-[10px]">
+                  <div className="mt-[30px] grid grid-cols-2 gap-[40px]">
+                    <div className="">
+                      <FormField
+                        control={form.control}
+                        name="shipping_name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={LableStyle}>
+                              Name
+                              <span className="pl-1 text-red-500 font-bold">
+                                *
+                              </span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                className={InputStyle}
+                                placeholder="Name"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="">
+                      <FormField
+                        control={form.control}
+                        name="shipping_pan"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={LableStyle}>
+                              Pan No
+                              <span className="pl-1 text-red-500 font-bold">
+                                *
+                              </span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                className={InputStyle}
+                                placeholder="Pan No."
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="">
+                      <FormField
+                        control={form.control}
+                        name="shipping_gstin_uin"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={LableStyle}>
+                              GSTIN / UIN
+                              <span className="pl-1 text-red-500 font-bold">
+                                *
+                              </span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                className={InputStyle}
+                                placeholder="GSTIN / UIN"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div>
+                      <FormField
+                        control={form.control}
+                        name="shipping_state"
+                        render={() => (
+                          <FormItem>
+                            <FormLabel className={LableStyle}>
+                              State
+                              <span className="pl-1 text-red-500 font-bold">
+                                *
+                              </span>
+                            </FormLabel>
+                            <FormControl>
+                              <Select
+                                styles={customStyles}
+                                placeholder="State"
+                                className="border-0 basic-single"
+                                classNamePrefix="select border-0"
+                                components={{ DropdownIndicator }}
+                                isDisabled={false}
+                                isLoading={true}
+                                isClearable={true}
+                                isSearchable={true}
+                                name="color"
+                                options={
+                                  data.states
+                                    ? transformPlaceData(data.states)
+                                    : []
+                                }
+                                onChange={(e: any) =>
+                                  form.setValue("shipping_state", e.value)
+                                }
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* <p>error message</p> */}
+                    </div>
+                    <div className="">
+                      <FormField
+                        control={form.control}
+                        name="shipping_pinCode"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={LableStyle}>
+                              Pincode
+                              <span className="pl-1 text-red-500 font-bold">
+                                *
+                              </span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                className={InputStyle}
+                                placeholder="Pincode"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-[40px]">
+                    <FormField
+                      control={form.control}
+                      name="shipping_address_line1"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className={LableStyle}>
+                            Address Line 1
+                            <span className="pl-1 text-red-500 font-bold">
+                              *
+                            </span>
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea
+                              className={InputStyle}
+                              placeholder="Address line 1"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="mt-[40px]">
+                    <FormField
+                      control={form.control}
+                      name="shipping_address_line2"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className={LableStyle}>
+                            Address Line 2
+                            <span className="pl-1 text-red-500 font-bold">
+                              *
+                            </span>
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea
+                              className={InputStyle}
+                              placeholder="Address line 2"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
                 </CardContent>
               </Card>
@@ -414,7 +1100,7 @@ const CreateSalesOrder: React.FC<Props> = ({ setTabvalue, setTab ,setPayloadData
                         )}
                       />
                     </div>
-                    <div>
+                    {/* <div>
                       <div className="flex justify-end">
                         <Badge className="p-0 text-[13px] bg-transparent border-none shadow-none font-[400] max-h-max text-cyan-600 py-[3px] px-[10px] cursor-pointer hover:bg-blue-100 hover:shadow shadow-slate-500 rounded-full">
                           Add Vendor
@@ -443,7 +1129,7 @@ const CreateSalesOrder: React.FC<Props> = ({ setTabvalue, setTab ,setPayloadData
                         )}
                       />
 
-                      {/* <p>error message</p> */}
+               
                     </div>
                     <div>
                       <div className="flex justify-end">
@@ -474,10 +1160,10 @@ const CreateSalesOrder: React.FC<Props> = ({ setTabvalue, setTab ,setPayloadData
                         )}
                       />
 
-                      {/* <p>error message</p> */}
-                    </div>
+                      
+                    </div> */}
                   </div>
-                  <div className="mt-[40px]">
+                  {/* <div className="mt-[40px]">
                     <Textarea
                       value={
                         data.projectDescription
@@ -488,7 +1174,7 @@ const CreateSalesOrder: React.FC<Props> = ({ setTabvalue, setTab ,setPayloadData
                       className="border-0 border-b rounded-none shadow-none outline-none resize-none border-slate-600 focus-visible:ring-0"
                       placeholder="Project Description"
                     />
-                    {/* <p>error message</p> */}
+                   
                   </div>
                   <div className="mt-[40px]">
                     <FormField
@@ -508,299 +1194,7 @@ const CreateSalesOrder: React.FC<Props> = ({ setTabvalue, setTab ,setPayloadData
                         </FormItem>
                       )}
                     />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="rounded shadow bg-[#fff]">
-                <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
-                  <h3 className="text-[17px] font-[600] text-slate-600">
-                    Dispatch from
-                  </h3>
-                  <p className="text-slate-600 text-[13px]">
-                    Provide billing information
-                  </p>
-                </CardHeader>
-                <CardContent className="mt-[10px]">
-                  <div className="mt-[30px] grid grid-cols-2 gap-[40px]">
-                    <div>
-                    <FormField
-  control={form.control}
-  name="bill_from_address"
-  render={() => (
-    <FormItem>
-      <FormLabel className={LableStyle}>Billing Name</FormLabel>
-      <FormControl>
-        <Select
-          styles={customStyles}
-          placeholder="Bill From Address"
-          className="border-0 basic-single"
-          classNamePrefix="select border-0"
-          components={{ DropdownIndicator }}
-          onChange={handleBillingAddressChange} 
-          isDisabled={false}
-          isClearable={true}
-          isSearchable={true}
-          options={
-            data.billingAddressList
-              ? transformOptionData(data.billingAddressList)
-              : []
-          }
-        />
-      </FormControl>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
-
-
-                      {/* <p>error message</p> */}
-                    </div>
-                    <div className="">
-                      <FormField
-                        control={form.control}
-                        name="pan"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className={LableStyle}>
-                              Pan No.
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                className={InputStyle}
-                                placeholder="Pan No."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="">
-                      <FormField
-                        control={form.control}
-                        name="gstin"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className={LableStyle}>
-                              GSTIN / UIN
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                className={InputStyle}
-                                placeholder="GSTIN / UIN"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="">
-                      <FormField
-                        control={form.control}
-                        name="statecode"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className={LableStyle}>
-                              Pincode
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                className={InputStyle}
-                                placeholder="Pincode"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-                  <div className="mt-[40px]">
-                    <FormField
-                      control={form.control}
-                      name="address"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className={LableStyle}>Address</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              className={InputStyle}
-                              placeholder="Address"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card className="rounded shadow bg-[#fff]">
-                <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
-                  <h3 className="text-[17px] font-[600] text-slate-600">
-                    Ship To
-                  </h3>
-                  <p className="text-slate-600 text-[13px]">
-                    Provide shipping information
-                  </p>
-                  <Switch className="flex items-center gap-[10px]">
-                    <label className="switch">
-                      <input type="checkbox" />
-                      <span className="slider"></span>
-                    </label>
-                    <p className="text-slate-600 text-[13px]">
-                      Same as Billing Address
-                    </p>
-                  </Switch>
-                </CardHeader>
-
-                <CardContent className="mt-[10px]">
-                  <div className="mt-[30px] grid grid-cols-2 gap-[40px]">
-                    <div className="">
-                      <FormField
-                        control={form.control}
-                        name="shipping_name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className={LableStyle}>Name</FormLabel>
-                            <FormControl>
-                              <Input
-                                className={InputStyle}
-                                placeholder="Name"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="">
-                      <FormField
-                        control={form.control}
-                        name="shipping_pan"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className={LableStyle}>
-                              Pan No.
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                className={InputStyle}
-                                placeholder="Pan No."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="">
-                      <FormField
-                        control={form.control}
-                        name="shipping_gstin_uin"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className={LableStyle}>
-                              GSTIN / UIN
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                className={InputStyle}
-                                placeholder="GSTIN / UIN"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div>
-                      <FormField
-                        control={form.control}
-                        name="shipping_state"
-                        render={() => (
-                          <FormItem>
-                            <FormLabel className={LableStyle}>
-                              Pincode
-                            </FormLabel>
-                            <FormControl>
-                              <Select
-                                styles={customStyles}
-                                placeholder="State"
-                                className="border-0 basic-single"
-                                classNamePrefix="select border-0"
-                                components={{ DropdownIndicator }}
-                                isDisabled={false}
-                                isLoading={true}
-                                isClearable={true}
-                                isSearchable={true}
-                                name="color"
-                                options={
-                                  data.states
-                                    ? transformPlaceData(data.states)
-                                    : []
-                                }
-                                onChange={(e: any) =>
-                                  form.setValue("shipping_state", e.value)
-                                }
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      {/* <p>error message</p> */}
-                    </div>
-                    <div className="">
-                      <FormField
-                        control={form.control}
-                        name="shipping_pinCode"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className={LableStyle}>
-                              Pincode
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                className={InputStyle}
-                                placeholder="Pincode"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-                  <div className="mt-[40px]">
-                    <FormField
-                      control={form.control}
-                      name="shipping_address"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className={LableStyle}>Address</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              className={InputStyle}
-                              placeholder="Address"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                  </div> */}
                 </CardContent>
               </Card>
             </div>
@@ -810,6 +1204,7 @@ const CreateSalesOrder: React.FC<Props> = ({ setTabvalue, setTab ,setPayloadData
               onClick={() => setTab("add")}
               className={`${primartButtonStyle} flex gap-[10px]`}
               type="submit"
+              // disabled={!isValid}
             >
               Next
               <FaArrowRightLong className="" />
