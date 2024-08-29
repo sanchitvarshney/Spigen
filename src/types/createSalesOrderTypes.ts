@@ -9,6 +9,17 @@ export interface City {
     code: string;
     name: string;
   }
+
+  export interface General{
+    code: string;
+    name: string;
+  }
+
+  export interface GeneralResponse {
+    success: boolean;
+    message?: string | null;
+    data?: General[];
+  }
   
   export interface Country {
     code: string;

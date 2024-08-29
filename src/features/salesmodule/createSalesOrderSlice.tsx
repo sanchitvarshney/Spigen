@@ -15,6 +15,7 @@ import {
   ComponentDetailResponse,
   Country2,
   CountryResponse,
+  GeneralResponse,
   ProjectDescription,
   ProjectDescriptionResponse,
   State2,
@@ -47,6 +48,7 @@ export const fetchClientDetails = createAsyncThunk<Client, string>(
         throw new Error("Failed to fetch client details");
       }
       // Assuming there is only one client in the data array
+      console.log(response.data.data)
       return response.data.data[0];
     } catch (error) {
       if (error instanceof Error) {
@@ -100,20 +102,18 @@ export const fetchBillingAddress = createAsyncThunk<
   }
 });
 
+
 export const fetchClient = createAsyncThunk<
   BillingAddress,
   { clientCode: string }
->("client/getClient", async ({ clientCode }) => {
+>("client/fetchClient", async ({ clientCode }) => {
   try {
     console.log(clientCode);
-    const response = await spigenAxios.post<BillingAddressResponse>(
+    const response = await spigenAxios.post<GeneralResponse>(
       "/client/getClient",
       { channel: clientCode }
     );
-    if (response.data.code !== 200) {
-      throw new Error("Failed to fetch client address");
-    }
-    return response.data;
+    return response.data?.data;
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(error.message);
@@ -251,7 +251,7 @@ const clientSlice = createSlice({
       })
       .addCase(fetchClient.fulfilled, (state, action) => {
         state.loading = false;
-        state.billingAddress = action.payload;
+        state.client = action.payload;
       })
       .addCase(fetchClient.rejected, (state, action) => {
         state.loading = false;

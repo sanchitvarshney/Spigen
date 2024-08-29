@@ -115,7 +115,7 @@ const CreateSalesOrder: React.FC<Props> = ({
         ).then((response: any) => {
           if (response.meta.requestStatus === "fulfilled") {
             form.setValue("billing_address", response.payload.address);
-            form.setValue("client_gst", response.payload.gst);
+            form.setValue("bill_to_gst", response.payload.gst);
           }
         });
       }
@@ -124,21 +124,69 @@ const CreateSalesOrder: React.FC<Props> = ({
 
   const handleBillingAddressChange = (e: any) => {
     const billingCode = e.value;
-    form.setValue("bill_from_address", billingCode);
+    form.setValue("bill_id", billingCode);
 
     dispatch(fetchBillingAddress({ billing_code: billingCode })).then(
       (response: any) => {
         if (response.meta.requestStatus === "fulfilled") {
           const billingData = response.payload;
-          form.setValue("bill_address1", billingData.billing_address1);
-          form.setValue("bill_address2", billingData.billing_address2);
-          form.setValue("bill_gstin_uin", billingData.gstin);
+          form.setValue("billing_address1", billingData.billing_address1);
+          form.setValue("billing_address2", billingData.billing_address2);
+          form.setValue("bill_from_gst", billingData.gstin);
           form.setValue("bill_pan", billingData.pan);
         }
       }
     );
   };
 
+  // Handler for the "Same as Client Address" checkbox
+const handleSameAsClientAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  if (e.target.checked) {
+    form.setValue("isSameClientAdd",'Y')
+    // Copy values from billing fields to shipping fields
+    form.setValue("shipping_name", form.getValues("customer"));
+    form.setValue("shipping_pan", form.getValues("bill_pan"));
+    form.setValue("shipping_gstin", form.getValues("bill_from_gst"));
+    form.setValue("shipping_state", form.getValues("billto_state_of_supply"));    
+    form.setValue("shipping_address_line1", form.getValues("customer_address1"));
+    form.setValue("shipping_address_line2", form.getValues("customer_address2"));
+  }
+};
+
+
+  const handleClientSelected = (e: any) => {
+    const bill_to_name = e.value;
+    form.setValue("bill_id", bill_to_name);
+
+    dispatch(fetchClientDetails(bill_to_name)).then((response: any) => {
+      console.log(response);
+      if (response.meta.requestStatus === "fulfilled") {
+        const data = response.payload;
+        form.setValue("bill_to_label", data.label);
+        form.setValue("bill_to_gst", data.gst);
+        form.setValue("billto_state_of_supply", data.state.label);
+        form.setValue("customer_address1", data.addressLine1);
+        form.setValue("customer_address2", data.addressLine2);
+        form.setValue("shipping_name", data?.shipmentAddress?.Company);
+        form.setValue("shipping_pan", data?.shipmentAddress?.Pan);
+        form.setValue("shipping_gstin", data?.shipmentAddress?.Gstin);
+        form.setValue("shipping_state", data?.shipmentAddress?.State?.value);
+        form.setValue("shipping_pincode", data?.shipmentAddress?.Pin);
+        form.setValue(
+          "shipping_address_line1",
+          data?.shipmentAddress?.Address1
+        );
+        form.setValue(
+          "shipping_address_line2",
+          data?.shipmentAddress?.Address2
+        );
+
+        form.setValue("bill_from_gst", data.gstin);
+        form.setValue("bill_pan", data.pan);
+      }
+    });
+  };
+console.log(form.getValues())
   const handleCostCenterChange = (e: any) => {
     setSelectedCostCenter(e);
     form.setValue("cost_center", e.value);
@@ -379,7 +427,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                         <div className="">
                           <FormField
                             control={form.control}
-                            name="vendor_code"
+                            name="blkt_vendor_code"
                             render={({ field }) => (
                               <FormItem>
                                 <FormLabel className={LableStyle}>
@@ -486,13 +534,21 @@ const CreateSalesOrder: React.FC<Props> = ({
                               </span>
                             </FormLabel>
                             <FormControl>
-                              <ReusableAsyncSelect
+                              <Select
+                                styles={customStyles}
                                 placeholder="Name"
-                                endpoint="client/getClient"
-                                transform={transformCustomerData}
-                                onChange={handleClientCahnge}
-                                value={channel}
-                                fetchOptionWith="payload"
+                                className="border-0 basic-single"
+                                classNamePrefix="select border-0"
+                                components={{ DropdownIndicator }}
+                                onChange={handleClientSelected}
+                                isDisabled={false}
+                                isClearable={true}
+                                isSearchable={true}
+                                options={
+                                  data.client
+                                    ? transformCustomerData(data.client)
+                                    : []
+                                }
                               />
                             </FormControl>
                             <FormMessage />
@@ -509,7 +565,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                         </div>
                         <FormField
                           control={form.control}
-                          name="customer"
+                          name="bill_to_label"
                           render={() => (
                             <FormItem>
                               <FormLabel className={LableStyle}>
@@ -523,13 +579,15 @@ const CreateSalesOrder: React.FC<Props> = ({
                               </FormLabel>
                               <FormControl>
                                 <ReusableAsyncSelect
-                                  placeholder={channel?.value == "FLK"
-                                    ? "Warehouse"
-                                    : channel?.value == "FLK_VC"
-                                    ? "FC Code"
-                                    : channel?.value == "CROMA"
-                                    ? "DC"
-                                    : "Label"}
+                                  placeholder={
+                                    channel?.value == "FLK"
+                                      ? "Warehouse"
+                                      : channel?.value == "FLK_VC"
+                                      ? "FC Code"
+                                      : channel?.value == "CROMA"
+                                      ? "DC"
+                                      : "Label"
+                                  }
                                   endpoint="client/getClient"
                                   transform={transformCustomerData}
                                   onChange={handleClientCahnge}
@@ -546,7 +604,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                     <div className="">
                       <FormField
                         control={form.control}
-                        name="client_gst"
+                        name="bill_to_gst"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
@@ -570,7 +628,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                     <div className="">
                       <FormField
                         control={form.control}
-                        name="state_of_supply"
+                        name="billto_state_of_supply"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
@@ -595,7 +653,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                   <div className="mt-[40px]">
                     <FormField
                       control={form.control}
-                      name="address_line1"
+                      name="customer_address1"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className={LableStyle}>
@@ -621,7 +679,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                   <div className="mt-[40px]">
                     <FormField
                       control={form.control}
-                      name="address_line2"
+                      name="customer_address2"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className={LableStyle}>
@@ -660,7 +718,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                     <div>
                       <FormField
                         control={form.control}
-                        name="bill_from_address"
+                        name="bill_id"
                         render={() => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
@@ -723,7 +781,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                     <div className="">
                       <FormField
                         control={form.control}
-                        name="bill_gstin_uin"
+                        name="bill_from_gst"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
@@ -748,7 +806,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                   <div className="mt-[40px]">
                     <FormField
                       control={form.control}
-                      name="bill_address1"
+                      name="billing_address1"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className={LableStyle}>
@@ -772,7 +830,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                   <div className="mt-[40px]">
                     <FormField
                       control={form.control}
-                      name="bill_address2"
+                      name="billing_address2"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className={LableStyle}>
@@ -806,7 +864,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                   </p>
                   <Switch className="flex items-center gap-[10px]">
                     <label className="switch">
-                      <input type="checkbox" />
+                      <input type="checkbox" onChange={handleSameAsClientAddressChange}/>
                       <span className="slider"></span>
                     </label>
                     <p className="text-slate-600 text-[13px]">
@@ -868,7 +926,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                     <div className="">
                       <FormField
                         control={form.control}
-                        name="shipping_gstin_uin"
+                        name="shipping_gstin"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
@@ -933,7 +991,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                     <div className="">
                       <FormField
                         control={form.control}
-                        name="shipping_pinCode"
+                        name="shipping_pincode"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
