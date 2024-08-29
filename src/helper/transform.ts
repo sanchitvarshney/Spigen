@@ -26,3 +26,9 @@ export const transformClientTds = (data: any[]) => {
     value: item.tds_key,
   }));
 };
+export const transformClientData = (data: any[]) => {
+  return data.map((item) => ({
+    label: item.label,
+    value: item.clientCode,
+  }));
+};

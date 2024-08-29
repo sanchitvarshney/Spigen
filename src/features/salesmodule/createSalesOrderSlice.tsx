@@ -37,7 +37,7 @@ const initialState: ClientState = {
   error: null,
 };
 // Define the async thunk for fetching client details
-export const fetchClientDetails = createAsyncThunk<Client, string>(
+export const fetchClientDetails = createAsyncThunk<Client[], string>(
   "client/fetchClientDetails",
   async (clientCode: string) => {
     try {
@@ -49,7 +49,7 @@ export const fetchClientDetails = createAsyncThunk<Client, string>(
       }
       // Assuming there is only one client in the data array
       console.log(response.data.data)
-      return response.data.data[0];
+      return response.data.data;
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);
@@ -104,23 +104,33 @@ export const fetchBillingAddress = createAsyncThunk<
 
 
 export const fetchClient = createAsyncThunk<
-  BillingAddress,
-  { clientCode: string }
->("client/fetchClient", async ({ clientCode }) => {
-  try {
-    console.log(clientCode);
-    const response = await spigenAxios.post<GeneralResponse>(
-      "/client/getClient",
-      { channel: clientCode }
-    );
-    return response.data?.data;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(error.message);
+  GeneralResponse, // Return type on success
+  { clientCode: string } // The argument type passed to the thunk
+>(
+  "client/fetchClient",
+  async ({ clientCode }, { rejectWithValue }) => {
+    try {
+      console.log(clientCode);
+      const response = await spigenAxios.post<GeneralResponse>(
+        "/client/getClient",
+        { channel: clientCode }
+      );
+
+      if (!response.data) {
+        throw new Error('No data received');
+      }
+
+      // Return the entire response as expected by the fulfilled case
+      return response.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        // Handle error using rejectWithValue
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue('An unknown error occurred');
     }
-    throw new Error("An unknown error occurred");
   }
-});
+);
 // Define the async thunk for fetching countries
 export const fetchCountries = createAsyncThunk<Country2[], void>(
   "client/fetchCountries",
@@ -251,7 +261,7 @@ const clientSlice = createSlice({
       })
       .addCase(fetchClient.fulfilled, (state, action) => {
         state.loading = false;
-        state.client = action.payload;
+        state.client = action.payload.data?.[0]||null;
       })
       .addCase(fetchClient.rejected, (state, action) => {
         state.loading = false;

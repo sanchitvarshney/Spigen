@@ -16,11 +16,11 @@ import {
   fetchClientAddressDetail,
   fetchClientDetails,
   fetchCountries,
-  fetchProjectDescription,
   fetchStates,
 } from "@/features/salesmodule/createSalesOrderSlice";
 import { fetchBillingAddressList } from "../../features/salesmodule/createSalesOrderSlice";
 import {
+  transformClientData,
   transformCustomerData,
   transformOptionData,
   transformPlaceData,
@@ -77,14 +77,6 @@ const CreateSalesOrder: React.FC<Props> = ({
     label: string;
     value: string;
   } | null>(null);
-  const [selectedCostCenter, setSelectedCostCenter] = useState<{
-    label: string;
-    value: string;
-  } | null>(null);
-  const [selectedProjectId, setSelectedProjectId] = useState<{
-    label: string;
-    value: string;
-  } | null>(null);
   const [channel, setChannel] = useState<{
     label: string;
     value: string;
@@ -101,21 +93,36 @@ const CreateSalesOrder: React.FC<Props> = ({
 
   const handleClientCahnge = (e: any) => {
     form.setValue("customer", e.value);
+    console.log(e.value);
     setSelectedCustomer(e);
     dispatch(fetchClientDetails(e!.value)).then((response: any) => {
+      console.log(response);
       if (response.meta.requestStatus === "fulfilled") {
-        setOptions([
-          {
-            label: response.payload.city.name,
-            value: response.payload.city.name,
-          },
-        ]);
+        // setOptions([
+        //   {
+        //     label: response.payload.city.name,
+        //     value: response.payload.city.name,
+        //   },
+        // ]);
         dispatch(
-          fetchClientAddressDetail({ addressID: response.payload.addressID })
+          fetchClientAddressDetail({ addressID: response.payload[0].addressID })
         ).then((response: any) => {
           if (response.meta.requestStatus === "fulfilled") {
-            form.setValue("billing_address", response.payload.address);
-            form.setValue("bill_to_gst", response.payload.gst);
+            const data = response.payload[0];
+            form.setValue("customer_branch", data.label);
+            form.setValue("customer_gstin", data.gst);
+            form.setValue("place_of_supply", data.state?.label);
+            form.setValue("customer_address1", data.addressLine1);
+            form.setValue("customer_address2", data.addressLine2);
+            form.setValue("shipping_id", data?.shipmentAddress?.Company);
+            form.setValue("shipping_pan", data?.shipmentAddress?.Pan);
+            form.setValue("shipping_gstin", data?.shipmentAddress?.Gstin);
+            form.setValue("shipping_state", data?.shipmentAddress?.State?.value);
+            form.setValue("shipping_pinCode", data?.shipmentAddress?.Pin);
+            form.setValue("shipping_address1", data?.shipmentAddress?.Address1);
+            form.setValue("shipping_address2", data?.shipmentAddress?.Address2);
+            form.setValue("bill_from_gst", data.gstin);
+            form.setValue("bill_pan", data.pan);
           }
         });
       }
@@ -123,6 +130,7 @@ const CreateSalesOrder: React.FC<Props> = ({
   };
 
   const handleBillingAddressChange = (e: any) => {
+    form.setValue("bill_to_label", e.label);
     const billingCode = e.value;
     form.setValue("bill_id", billingCode);
 
@@ -139,69 +147,50 @@ const CreateSalesOrder: React.FC<Props> = ({
     );
   };
 
+  const { clientAddressDetail } = useSelector(
+    (state: RootState) => state.createSalesOrder
+  );
+  console.log(clientAddressDetail, "clientDetails");
   // Handler for the "Same as Client Address" checkbox
-const handleSameAsClientAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  if (e.target.checked) {
-    form.setValue("isSameClientAdd",'Y')
-    // Copy values from billing fields to shipping fields
-    form.setValue("shipping_name", form.getValues("customer"));
-    form.setValue("shipping_pan", form.getValues("bill_pan"));
-    form.setValue("shipping_gstin", form.getValues("bill_from_gst"));
-    form.setValue("shipping_state", form.getValues("billto_state_of_supply"));    
-    form.setValue("shipping_address_line1", form.getValues("customer_address1"));
-    form.setValue("shipping_address_line2", form.getValues("customer_address2"));
-  }
-};
-
+  const handleSameAsClientAddressChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (e.target.checked) {
+      form.setValue("isSameClientAdd", "Y");
+      form.setValue("shipping_id", form.getValues("bill_to_label"));
+      form.setValue("shipping_pan", form.getValues("bill_pan"));
+      form.setValue("shipping_gstin", form.getValues("bill_from_gst"));
+      form.setValue("shipping_state", form.getValues("place_of_supply"));
+      form.setValue("shipping_address1", form.getValues("customer_address1"));
+      form.setValue("shipping_address2", form.getValues("customer_address2"));
+    }
+  };
 
   const handleClientSelected = (e: any) => {
     const bill_to_name = e.value;
     form.setValue("bill_id", bill_to_name);
 
     dispatch(fetchClientDetails(bill_to_name)).then((response: any) => {
-      console.log(response);
       if (response.meta.requestStatus === "fulfilled") {
-        const data = response.payload;
-        form.setValue("bill_to_label", data.label);
-        form.setValue("bill_to_gst", data.gst);
-        form.setValue("billto_state_of_supply", data.state.label);
+        const data = response.payload[0];
+        form.setValue("customer_branch", data.label);
+        form.setValue("customer_gstin", data.gst);
+        form.setValue("place_of_supply", data.state?.label);
         form.setValue("customer_address1", data.addressLine1);
         form.setValue("customer_address2", data.addressLine2);
-        form.setValue("shipping_name", data?.shipmentAddress?.Company);
+        form.setValue("shipping_id", data?.shipmentAddress?.Company);
         form.setValue("shipping_pan", data?.shipmentAddress?.Pan);
         form.setValue("shipping_gstin", data?.shipmentAddress?.Gstin);
         form.setValue("shipping_state", data?.shipmentAddress?.State?.value);
-        form.setValue("shipping_pincode", data?.shipmentAddress?.Pin);
-        form.setValue(
-          "shipping_address_line1",
-          data?.shipmentAddress?.Address1
-        );
-        form.setValue(
-          "shipping_address_line2",
-          data?.shipmentAddress?.Address2
-        );
-
+        form.setValue("shipping_pinCode", data?.shipmentAddress?.Pin);
+        form.setValue("shipping_address1", data?.shipmentAddress?.Address1);
+        form.setValue("shipping_address2", data?.shipmentAddress?.Address2);
         form.setValue("bill_from_gst", data.gstin);
         form.setValue("bill_pan", data.pan);
       }
     });
   };
-console.log(form.getValues())
-  const handleCostCenterChange = (e: any) => {
-    setSelectedCostCenter(e);
-    form.setValue("cost_center", e.value);
-  };
-  const handleProjectIdChange = (e: any) => {
-    setSelectedProjectId(e);
-    form.setValue("project_id", e.value);
-    dispatch(fetchProjectDescription({ project_name: e.value })).then(
-      (response: any) => {
-        if (response.meta.requestStatus === "fulfilled") {
-          form.setValue("project_description", response.payload?.description);
-        }
-      }
-    );
-  };
+  console.log(form.getValues());
 
   const onSubmit = (data: CreateSalesOrderForm) => {
     console.log("Submitted Data from CreateSalesOrder:", data); // Debugging log
@@ -214,8 +203,7 @@ console.log(form.getValues())
   };
 
   useEffect(() => {
-    form.setValue("channels", channel?.value);
-    console.log(channel?.value);
+    form.setValue("channels", channel?.value || "");
     if (channel?.value) {
       // Ensure dispatch is called with an object containing clientCode
       dispatch(fetchClient({ clientCode: channel.value })).then(
@@ -545,9 +533,11 @@ console.log(form.getValues())
                                 isClearable={true}
                                 isSearchable={true}
                                 options={
-                                  data.client
-                                    ? transformCustomerData(data.client)
-                                    : []
+                                  Array.isArray(data.client)
+                                    ? transformCustomerData(data.client) // Handle the case when data.client is already an array
+                                    : data.client
+                                    ? transformCustomerData([data.client]) // Wrap single object into an array
+                                    : [] // Fallback to empty array if data.client is null or undefined
                                 }
                               />
                             </FormControl>
@@ -563,9 +553,10 @@ console.log(form.getValues())
                             Add Branch
                           </Badge>
                         </div>
+
                         <FormField
                           control={form.control}
-                          name="bill_to_label"
+                          name="customer_branch"
                           render={() => (
                             <FormItem>
                               <FormLabel className={LableStyle}>
@@ -578,7 +569,8 @@ console.log(form.getValues())
                                   : "Label"}
                               </FormLabel>
                               <FormControl>
-                                <ReusableAsyncSelect
+                                <Select
+                                  styles={customStyles}
                                   placeholder={
                                     channel?.value == "FLK"
                                       ? "Warehouse"
@@ -588,11 +580,18 @@ console.log(form.getValues())
                                       ? "DC"
                                       : "Label"
                                   }
-                                  endpoint="client/getClient"
-                                  transform={transformCustomerData}
+                                  className="border-0 basic-single"
+                                  classNamePrefix="select border-0"
+                                  components={{ DropdownIndicator }}
                                   onChange={handleClientCahnge}
-                                  value={selectedCustomer}
-                                  fetchOptionWith="query"
+                                  isDisabled={false}
+                                  isClearable={true}
+                                  isSearchable={true}
+                                  options={
+                                    data.clientDetails
+                                      ? transformClientData(data.clientDetails)
+                                      : []
+                                  }
                                 />
                               </FormControl>
                               <FormMessage />
@@ -604,7 +603,7 @@ console.log(form.getValues())
                     <div className="">
                       <FormField
                         control={form.control}
-                        name="bill_to_gst"
+                        name="customer_gstin"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
@@ -628,7 +627,7 @@ console.log(form.getValues())
                     <div className="">
                       <FormField
                         control={form.control}
-                        name="billto_state_of_supply"
+                        name="place_of_supply"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
@@ -864,7 +863,10 @@ console.log(form.getValues())
                   </p>
                   <Switch className="flex items-center gap-[10px]">
                     <label className="switch">
-                      <input type="checkbox" onChange={handleSameAsClientAddressChange}/>
+                      <input
+                        type="checkbox"
+                        onChange={handleSameAsClientAddressChange}
+                      />
                       <span className="slider"></span>
                     </label>
                     <p className="text-slate-600 text-[13px]">
@@ -878,7 +880,7 @@ console.log(form.getValues())
                     <div className="">
                       <FormField
                         control={form.control}
-                        name="shipping_name"
+                        name="shipping_id"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
@@ -991,7 +993,7 @@ console.log(form.getValues())
                     <div className="">
                       <FormField
                         control={form.control}
-                        name="shipping_pincode"
+                        name="shipping_pinCode"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
@@ -1016,7 +1018,7 @@ console.log(form.getValues())
                   <div className="mt-[40px]">
                     <FormField
                       control={form.control}
-                      name="shipping_address_line1"
+                      name="shipping_address1"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className={LableStyle}>
@@ -1040,7 +1042,7 @@ console.log(form.getValues())
                   <div className="mt-[40px]">
                     <FormField
                       control={form.control}
-                      name="shipping_address_line2"
+                      name="shipping_address2"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className={LableStyle}>
