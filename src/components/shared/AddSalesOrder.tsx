@@ -13,11 +13,15 @@ import { AddPoUIStateType } from "@/types/AddPOTypes";
 import columnDefs, { RowData } from "@/config/agGrid/SalseOrderCreateTableColumns";
 import AddPOPopovers from "@/components/shared/AddPOPopovers";
 import { commonAgGridConfig } from "@/config/agGrid/commongridoption";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/store";
 
-import { fetchComponentDetail } from "@/features/salesmodule/createSalesOrderSlice";
+import { fetchComponentDetail, updateFormData } from "@/features/salesmodule/createSalesOrderSlice";
 import { createSellRequest } from "@/features/salesmodule/SalesSlice";
+import { createSalesFormSchema } from "@/schema/salesorder/createsalesordeschema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 // interface Props{
 //   setTab:Dispatch<SetStateAction<string>>;
 // }
@@ -26,8 +30,12 @@ const AddSalesOrder = ({ setTab, payloadData }: { setTab: React.Dispatch<React.S
   const [excelModel, setExcelModel] = useState<boolean>(false);
   const [backModel, setBackModel] = useState<boolean>(false);
   const [resetModel, setResetModel] = useState<boolean>(false);
+  const [search, setSearch] = useState("");
   const dispatch = useDispatch<AppDispatch>();
-
+  const formData = useSelector((state:RootState) => state.createSalesOrder.createOrderForm);
+  const { componentDetails } = useSelector((state: RootState) => state.createSalesOrder);
+console.log(formData,"ddddddd")
+  
   const gridRef = useRef<AgGridReact<RowData>>(null);
   const uiState: AddPoUIStateType = {
     excelModel,
@@ -61,6 +69,12 @@ const AddSalesOrder = ({ setTab, payloadData }: { setTab: React.Dispatch<React.S
     setRowData((prevData) => [...prevData, newRow]);
   };
 
+  useEffect(() => {
+    if (search) {
+      dispatch(fetchComponentDetail({ search}));
+    }
+  }, [search]);
+console.log(componentDetails)
   const defaultColDef = useMemo<ColDef>(() => {
     return {
       floatingFilter: false,
@@ -82,7 +96,14 @@ const AddSalesOrder = ({ setTab, payloadData }: { setTab: React.Dispatch<React.S
 
   const components = useMemo(
     () => ({
-      textInputCellRenderer: TextInputCellRenderer,
+      textInputCellRenderer: (props: any) => (
+        <TextInputCellRenderer 
+          {...props} 
+          componentDetails={componentDetails} 
+          setSearch={setSearch} 
+          search={search}
+        />
+      ),
       datePickerCellRenderer: DatePickerCellRenderer,
       statusCellRenderer: StatusCellRenderer,
     }),
@@ -130,11 +151,11 @@ const AddSalesOrder = ({ setTab, payloadData }: { setTab: React.Dispatch<React.S
             </CardHeader>
             <CardContent className="mt-[20px] flex flex-col gap-[10px] text-slate-600">
               <h3 className="font-[500]">Name</h3>
-              <p className="text-[14px]">Flipkart</p>
+              <p className="text-[14px]">{formData?.bill_name}</p>
               <h3 className="font-[500]">Address</h3>
-              <p className="text-[14px]">Noida sector 135</p>
+              <p className="text-[14px]">{formData?.customer_address1} { formData?.customer_address2}</p>
               <h3 className="font-[500]">GSTIN</h3>
-              <p className="text-[14px]">29AACCF0683K1ZD</p>
+              <p className="text-[14px]">{formData?.customer_gstin}</p>
             </CardContent>
           </Card>
           <Card className="rounded-sm shadow-sm shadow-slate-500">

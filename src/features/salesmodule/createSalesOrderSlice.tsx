@@ -21,7 +21,7 @@ import {
   State2,
   StateResponse,
 } from "@/types/createSalesOrderTypes";
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState: ClientState = {
   clientDetails: null,
@@ -29,8 +29,10 @@ const initialState: ClientState = {
   client: null,
   projectDescription: null,
   countries: null,
+  createOrderForm: {},
   states: null,
   billingAddressList: null,
+  productDetails: null,
   clientAddressDetail: null,
   componentDetails: null,
   loading: false,
@@ -48,7 +50,7 @@ export const fetchClientDetails = createAsyncThunk<Client[], string>(
         throw new Error("Failed to fetch client details");
       }
       // Assuming there is only one client in the data array
-      console.log(response.data.data)
+      console.log(response.data.data);
       return response.data.data;
     } catch (error) {
       if (error instanceof Error) {
@@ -102,35 +104,31 @@ export const fetchBillingAddress = createAsyncThunk<
   }
 });
 
-
 export const fetchClient = createAsyncThunk<
   GeneralResponse, // Return type on success
   { clientCode: string } // The argument type passed to the thunk
->(
-  "client/fetchClient",
-  async ({ clientCode }, { rejectWithValue }) => {
-    try {
-      console.log(clientCode);
-      const response = await spigenAxios.post<GeneralResponse>(
-        "/client/getClient",
-        { channel: clientCode }
-      );
+>("client/fetchClient", async ({ clientCode }, { rejectWithValue }) => {
+  try {
+    console.log(clientCode);
+    const response = await spigenAxios.post<GeneralResponse>(
+      "/client/getClient",
+      { channel: clientCode }
+    );
 
-      if (!response.data) {
-        throw new Error('No data received');
-      }
-
-      // Return the entire response as expected by the fulfilled case
-      return response.data;
-    } catch (error) {
-      if (error instanceof Error) {
-        // Handle error using rejectWithValue
-        return rejectWithValue(error.message);
-      }
-      return rejectWithValue('An unknown error occurred');
+    if (!response.data) {
+      throw new Error("No data received");
     }
+
+    // Return the entire response as expected by the fulfilled case
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      // Handle error using rejectWithValue
+      return rejectWithValue(error.message);
+    }
+    return rejectWithValue("An unknown error occurred");
   }
-);
+});
 // Define the async thunk for fetching countries
 export const fetchCountries = createAsyncThunk<Country2[], void>(
   "client/fetchCountries",
@@ -209,10 +207,8 @@ export const fetchComponentDetail = createAsyncThunk<
   { search: string }
 >("client/fetchComponentDetail", async ({ search }) => {
   const response = await spigenAxios.post<ComponentDetailResponse>(
-    `/backend/getComponentByNameAndNo`,
-    {
-      params: { search },
-    }
+    `/backend/getProductByNameAndNo`,
+    { search }
   );
   if (response.data.success) {
     return response.data.data;
@@ -223,11 +219,42 @@ export const fetchComponentDetail = createAsyncThunk<
     );
   }
 });
+
+export const fetchProductData = createAsyncThunk<
+  ComponentDetail[],
+  { product_key: string }
+>("client/fetchProductData", async ({ product_key }) => {
+  const response = await spigenAxios.post<ComponentDetailResponse>(
+    `/products/fetchProductData`,
+    { product_key }
+  );
+  if (response.data.success) {
+    return response.data.data;
+  } else {
+    // Redux Toolkit will automatically handle the error
+    throw new Error(
+      response.data.message || "Failed to fetch component details"
+    );
+  }
+});
+
 // Create the slice
 const clientSlice = createSlice({
   name: "client",
   initialState,
-  reducers: {},
+  reducers: {
+    setFormData: (state, action: PayloadAction<any>) => {
+      state.createOrderForm = action.payload;
+    },
+    // Action to update specific fields in the form data
+    updateFormData: (state, action: PayloadAction<Partial<any>>) => {
+      state.createOrderForm = { ...state.createOrderForm, ...action.payload };
+    },
+    // Optional: Action to clear form data
+    clearFormData: (state) => {
+      state.createOrderForm = {};
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchClientDetails.pending, (state) => {
@@ -261,7 +288,7 @@ const clientSlice = createSlice({
       })
       .addCase(fetchClient.fulfilled, (state, action) => {
         state.loading = false;
-        state.client = action.payload.data?.[0]||null;
+        state.client = action.payload.data?.[0] || null;
       })
       .addCase(fetchClient.rejected, (state, action) => {
         state.loading = false;
@@ -348,8 +375,23 @@ const clientSlice = createSlice({
         state.loading = false;
         state.error =
           action.error.message || "Failed to fetch component details";
+      })
+      .addCase(fetchProductData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProductData.fulfilled, (state, action) => {
+        state.loading = false;
+        state.productDetails = action.payload;
+      })
+      .addCase(fetchProductData.rejected, (state, action) => {
+        state.loading = false;
+        state.error =
+          action.error.message || "Failed to fetch component details";
       });
   },
 });
 
+export const { setFormData, updateFormData, clearFormData } =
+  clientSlice.actions;
 export default clientSlice.reducer;

@@ -22,6 +22,7 @@ export const columnDefs= [
   { headerName: "Index", valueGetter: "node.rowIndex + 1",maxWidth: 100 },
   { headerName: "Type", field: "type", cellEditor: "selectEditor", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
   { headerName: "Material", field: "material", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
+  { headerName: "Material Description	", field: "materialDescription", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 300  },
   { headerName: "ASIN Number", field: "asinNumber", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
   { headerName: "Order Qty", field: "orderQty", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
   { headerName: "Rate", field: "rate", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },

@@ -146,10 +146,12 @@ export interface ClientAddressDetail {
   export interface ClientState {
     clientDetails: Client[] | null;
     client: General | null;
+    productDetails: any[]|null;
     billingAddress: BillingAddress | null;
     projectDescription:ProjectDescription | null ;
     billingAddressList: BillingAddressListItem[] | null;
     clientAddressDetail: ClientAddressDetail | null;
+    createOrderForm:any;
     componentDetails:ComponentDetail[]| null,
     loading: boolean;
     error: string | null;

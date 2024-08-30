@@ -17,6 +17,7 @@ import {
   fetchClientDetails,
   fetchCountries,
   fetchStates,
+  updateFormData,
 } from "@/features/salesmodule/createSalesOrderSlice";
 import { fetchBillingAddressList } from "../../features/salesmodule/createSalesOrderSlice";
 import {
@@ -91,6 +92,9 @@ const CreateSalesOrder: React.FC<Props> = ({
     dispatch(fetchStates());
   }, []);
 
+  useEffect(()=>{
+    dispatch(updateFormData(form.control._formValues));
+  },[form])
   const handleClientCahnge = (e: any) => {
     form.setValue("customer", e.value);
     console.log(e.value, "++++++");
@@ -217,7 +221,7 @@ const CreateSalesOrder: React.FC<Props> = ({
     }
   }, [channel]);
 
-  console.log(form.control._formValues, "channel", form.getValues("channels"));
+  console.log(form.control._formValues, "channel",);
   return (
     <div className="h-[calc(100vh-150px)]">
       {data.loading && <FullPageLoading />}
@@ -1265,7 +1269,11 @@ const CreateSalesOrder: React.FC<Props> = ({
           </div>
           <div className="h-[50px] w-full flex justify-end items-center px-[20px] bg-white shadow-md border-t border-slate-300">
             <Button
-              // onClick={() => setTab("add")}
+              onClick={() => {
+                setTab("add")
+                dispatch(updateFormData(form.control._formValues));
+
+              }}
               className={`${primartButtonStyle} flex gap-[10px]`}
               type="submit"
               // disabled={!isValid}

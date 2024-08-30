@@ -28,12 +28,24 @@ const frameworks = [
     label: "Add PO",
   },
 ];
+
+const type =[
+  {
+    value:"product",
+    label:"Product"
+  },
+  {
+    value:"component",
+    label:"Component"
+  }
+]
 const TextInputCellRenderer = (props: any) => {
   const [open, setOpen] = useState(false);
   const { value, colDef, data, api, column } = props;
 
   const handleChange = (value: string) => {
     const newValue = value;
+    console.log(newValue)
     data[colDef.field] = newValue; // update the data
     api.refreshCells({ rowNodes: [props.node], columns: [column] }); // refresh the cell to show the new value
     setOpen(false);
@@ -44,7 +56,7 @@ const TextInputCellRenderer = (props: any) => {
     api.refreshCells({ rowNodes: [props.node], columns: [column] }); // refresh the cell to show the new value
  
   };
-
+console.log("props.componentDetails",props.componentDetails)
   const renderContent = () => {
     switch (colDef.field) {
       case "material": 
@@ -58,17 +70,17 @@ const TextInputCellRenderer = (props: any) => {
             </PopoverTrigger>
             <PopoverContent className="w-[250px] p-0  ">
               <Command>
-                <CommandInput placeholder="Search..." onChangeCapture={(e:any )=>{data[colDef.field]= e.target.value ;  api.refreshCells({ rowNodes: [props.node], columns: [column] }) }} onKeyDown={(e:any)=>{e.key === 'Enter' && setOpen(false)}}/>
+                <CommandInput placeholder="Search..." onChangeCapture={(e:any )=>{data[colDef.field]= e.target.value ;  api.refreshCells({ rowNodes: [props.node], columns: [column] }) }} onKeyDown={(e:any)=>{e.key === 'Enter' && setOpen(false)}} onValueChange={(e) => props.setSearch(e)}/>
                 <CommandEmpty>No {colDef.headerName} found.</CommandEmpty>
                 <CommandList className="max-h-[400px] overflow-y-auto">
-                  {frameworks.map((framework) => (
+                  {props.componentDetails?.map((framework:any) => (
                     <CommandItem
-                      key={framework.value}
-                      value={framework.value}
+                      key={framework.id}
+                      value={framework.id}
                       className="data-[disabled]:opacity-100 aria-selected:bg-cyan-600 aria-selected:text-white data-[disabled]:pointer-events-auto flex items-center gap-[10px]"
                       onSelect={(currentValue) => handleChange(currentValue)}
                     >
-                      {framework.label}
+                      {framework.text}
                     </CommandItem>
                   ))}
                 </CommandList>
@@ -179,12 +191,13 @@ const TextInputCellRenderer = (props: any) => {
             <CommandInput placeholder="Search..." />
             <CommandEmpty>No {colDef.headerName} found.</CommandEmpty>
             <CommandList className="max-h-[400px] overflow-y-auto">
-              {frameworks.map((framework) => (
+              {type.map((framework) => (
                 <CommandItem
                   key={framework.value}
-                  value={framework.value}
+                  value={framework.label}
                   className="data-[disabled]:opacity-100 aria-selected:bg-cyan-600 aria-selected:text-white data-[disabled]:pointer-events-auto flex items-center gap-[10px]"
                   onSelect={(currentValue) => handleChange(currentValue)}
+                  defaultValue={type[0].value}
                 >
                   {framework.label}
                 </CommandItem>
