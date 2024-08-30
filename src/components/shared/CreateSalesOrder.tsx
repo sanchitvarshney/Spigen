@@ -93,40 +93,41 @@ const CreateSalesOrder: React.FC<Props> = ({
 
   const handleClientCahnge = (e: any) => {
     form.setValue("customer", e.value);
-    console.log(e.value);
+    console.log(e.value, "++++++");
     setSelectedCustomer(e);
-    dispatch(fetchClientDetails(e!.value)).then((response: any) => {
-      console.log(response);
-      if (response.meta.requestStatus === "fulfilled") {
-        // setOptions([
-        //   {
-        //     label: response.payload.city.name,
-        //     value: response.payload.city.name,
-        //   },
-        // ]);
-        dispatch(
-          fetchClientAddressDetail({ addressID: response.payload[0].addressID })
-        ).then((response: any) => {
-          if (response.meta.requestStatus === "fulfilled") {
-            const data = response.payload[0];
-            form.setValue("customer_branch", data.label);
-            form.setValue("customer_gstin", data.gst);
-            form.setValue("place_of_supply", data.state?.label);
-            form.setValue("customer_address1", data.addressLine1);
-            form.setValue("customer_address2", data.addressLine2);
-            form.setValue("shipping_id", data?.shipmentAddress?.Company);
-            form.setValue("shipping_pan", data?.shipmentAddress?.Pan);
-            form.setValue("shipping_gstin", data?.shipmentAddress?.Gstin);
-            form.setValue("shipping_state", data?.shipmentAddress?.State?.value);
-            form.setValue("shipping_pinCode", data?.shipmentAddress?.Pin);
-            form.setValue("shipping_address1", data?.shipmentAddress?.Address1);
-            form.setValue("shipping_address2", data?.shipmentAddress?.Address2);
-            form.setValue("bill_from_gst", data.gstin);
-            form.setValue("bill_pan", data.pan);
-          }
-        });
+    // dispatch(fetchClientDetails(e!.value)).then((response: any) => {
+    //   console.log(response);
+    //   if (response.meta.requestStatus === "fulfilled") {
+    // setOptions([
+    //   {
+    //     label: response.payload.city.name,
+    //     value: response.payload.city.name,
+    //   },
+    // ]);
+    dispatch(fetchClientAddressDetail({ addressID: e.value })).then(
+      (response: any) => {
+        console.log(response, "res");
+        if (response.meta.requestStatus === "fulfilled") {
+          const data = response.payload;
+          form.setValue("customer_branch", data.label);
+          form.setValue("customer_gstin", data.gst);
+          form.setValue("place_of_supply", data.state?.label);
+          form.setValue("customer_address1", data.addressLine1);
+          form.setValue("customer_address2", data.addressLine2);
+          form.setValue("shipping_id", data?.shipmentAddress?.Company);
+          form.setValue("shipping_pan", data?.shipmentAddress?.Pan);
+          form.setValue("shipping_gstin", data?.shipmentAddress?.Gstin);
+          form.setValue("shipping_state", data?.shipmentAddress?.State?.value);
+          form.setValue("shipping_pinCode", data?.shipmentAddress?.Pin);
+          form.setValue("shipping_address1", data?.shipmentAddress?.Address1);
+          form.setValue("shipping_address2", data?.shipmentAddress?.Address2);
+          form.setValue("bill_from_gst", data.gstin);
+          form.setValue("bill_pan", data.pan);
+        }
       }
-    });
+    );
+    //   }
+    // });
   };
 
   const handleBillingAddressChange = (e: any) => {
@@ -157,23 +158,25 @@ const CreateSalesOrder: React.FC<Props> = ({
   ) => {
     if (e.target.checked) {
       form.setValue("isSameClientAdd", "Y");
-      form.setValue("shipping_id", form.getValues("bill_to_label"));
-      form.setValue("shipping_pan", form.getValues("bill_pan"));
-      form.setValue("shipping_gstin", form.getValues("bill_from_gst"));
-      form.setValue("shipping_state", form.getValues("place_of_supply"));
+      form.setValue("shipping_id", form.getValues("bill_name"));
+      form.setValue("shipping_pan", "");
+      form.setValue("shipping_pinCode", "");
+      form.setValue("shipping_gstin", form.getValues("customer_gstin"));
+      // form.setValue("shipping_state", form.getValues("place_of_supply"));
       form.setValue("shipping_address1", form.getValues("customer_address1"));
       form.setValue("shipping_address2", form.getValues("customer_address2"));
     }
   };
 
   const handleClientSelected = (e: any) => {
+    form.setValue("bill_name", e.label);
     const bill_to_name = e.value;
     form.setValue("bill_id", bill_to_name);
 
     dispatch(fetchClientDetails(bill_to_name)).then((response: any) => {
       if (response.meta.requestStatus === "fulfilled") {
         const data = response.payload[0];
-        form.setValue("customer_branch", data.label);
+        form.setValue("customer_branch", data.addressID);
         form.setValue("customer_gstin", data.gst);
         form.setValue("place_of_supply", data.state?.label);
         form.setValue("customer_address1", data.addressLine1);
@@ -203,7 +206,7 @@ const CreateSalesOrder: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    form.setValue("channels", channel?.value || "");
+    form.setValue("channels", channel?.value);
     if (channel?.value) {
       // Ensure dispatch is called with an object containing clientCode
       dispatch(fetchClient({ clientCode: channel.value })).then(
@@ -512,7 +515,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                       </div>
                       <FormField
                         control={form.control}
-                        name="customer"
+                        name="bill_id"
                         render={() => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
@@ -981,6 +984,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                                 onChange={(e: any) =>
                                   form.setValue("shipping_state", e.value)
                                 }
+                                value={form.getValues("shipping_state")}
                               />
                             </FormControl>
                             <FormMessage />
@@ -1261,7 +1265,7 @@ const CreateSalesOrder: React.FC<Props> = ({
           </div>
           <div className="h-[50px] w-full flex justify-end items-center px-[20px] bg-white shadow-md border-t border-slate-300">
             <Button
-              onClick={() => setTab("add")}
+              // onClick={() => setTab("add")}
               className={`${primartButtonStyle} flex gap-[10px]`}
               type="submit"
               // disabled={!isValid}

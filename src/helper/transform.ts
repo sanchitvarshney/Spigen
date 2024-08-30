@@ -14,7 +14,7 @@ export const transformOptionData = (data: any[]) => {
   }));
 };
 export const transformPlaceData = (data: any[]) => {
-  return data.map((item) => ({
+  return data?.map((item) => ({
     label: item.name,
     value: item.code.toString(),
   }));
@@ -29,6 +29,6 @@ export const transformClientTds = (data: any[]) => {
 export const transformClientData = (data: any[]) => {
   return data.map((item) => ({
     label: item.label,
-    value: item.clientCode,
+    value: item.addressID,
   }));
 };
