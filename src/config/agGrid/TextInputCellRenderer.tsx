@@ -2,9 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandInput, CommandItem } from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { fetchProductData } from "@/features/salesmodule/createSalesOrderSlice";
+import { AppDispatch } from "@/store";
 import { CommandList } from "cmdk";
 import { useState } from "react";
 import { FaSortDown } from "react-icons/fa6";
+import { useDispatch } from "react-redux";
 
 const frameworks = [
   {
@@ -40,11 +43,13 @@ const type =[
   }
 ]
 const TextInputCellRenderer = (props: any) => {
+  const dispatch = useDispatch<AppDispatch>()
   const [open, setOpen] = useState(false);
   const { value, colDef, data, api, column } = props;
 
   const handleChange = (value: string) => {
     const newValue = value;
+    dispatch(fetchProductData({"product_key":value}))
     console.log(newValue)
     data[colDef.field] = newValue; // update the data
     api.refreshCells({ rowNodes: [props.node], columns: [column] }); // refresh the cell to show the new value

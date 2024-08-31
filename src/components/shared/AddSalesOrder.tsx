@@ -16,12 +16,9 @@ import { commonAgGridConfig } from "@/config/agGrid/commongridoption";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
 
-import { fetchComponentDetail, updateFormData } from "@/features/salesmodule/createSalesOrderSlice";
+import { fetchComponentDetail, } from "@/features/salesmodule/createSalesOrderSlice";
 import { createSellRequest } from "@/features/salesmodule/SalesSlice";
-import { createSalesFormSchema } from "@/schema/salesorder/createsalesordeschema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+
 // interface Props{
 //   setTab:Dispatch<SetStateAction<string>>;
 // }

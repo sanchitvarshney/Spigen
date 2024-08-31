@@ -7,19 +7,14 @@ import { Textarea } from "@/components/ui/textarea";
 import DropdownIndicator from "@/config/reactSelect/DropdownIndicator";
 import { Badge } from "@/components/ui/badge";
 import styled from "styled-components";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
 import {
   fetchBillingAddress,
-  fetchClient,
-  fetchClientAddressDetail,
   fetchClientDetails,
-  fetchCountries,
-  fetchStates,
   updateFormData,
 } from "@/features/salesmodule/createSalesOrderSlice";
-import { fetchBillingAddressList } from "../../features/salesmodule/createSalesOrderSlice";
 import {
   transformClientData,
   transformCustomerData,
@@ -35,8 +30,6 @@ import {
   LableStyle,
   primartButtonStyle,
 } from "@/constants/themeContants";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import {
@@ -49,90 +42,31 @@ import {
 } from "@/components/ui/form";
 import { createSalesFormSchema } from "@/schema/salesorder/createsalesordeschema";
 
-interface OptionType {
-  value: string;
-  label: string;
-}
 interface Props {
   setTab: Dispatch<SetStateAction<string>>;
   setPayloadData: Dispatch<SetStateAction<any>>;
+  channel: any;
+  setChannel: Dispatch<SetStateAction<any>>;
+  data: any;
+  form: any;
+  handleClientChange: any;
 }
 type CreateSalesOrderForm = z.infer<typeof createSalesFormSchema>;
 const CreateSalesOrder: React.FC<Props> = ({
   setTabvalue,
   setTab,
   setPayloadData,
+  channel,
+  setChannel,
+  data,
+  form,
+  handleClientChange,
 }: any) => {
-  const form = useForm<z.infer<typeof createSalesFormSchema>>({
-    resolver: zodResolver(createSalesFormSchema),
-    mode: "onBlur",
-  });
-  // const {
-  //   control,
-  //   handleSubmit,
-  //   register,
-  //   setValue,
-  //   formState: { errors },
-  // } = form;
-  const [selectedCustomer, setSelectedCustomer] = useState<{
-    label: string;
-    value: string;
-  } | null>(null);
-  const [channel, setChannel] = useState<{
-    label: string;
-    value: string;
-  } | null>(null);
-  const [options, setOptions] = useState<OptionType[]>([]);
   const dispatch = useDispatch<AppDispatch>();
-  const data = useSelector((state: RootState) => state.createSalesOrder);
-  useEffect(() => {
-    dispatch(fetchBillingAddress({ billing_code: "R26331LI" }));
-    dispatch(fetchBillingAddressList({ search: "" }));
-    dispatch(fetchCountries());
-    dispatch(fetchStates());
-  }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(updateFormData(form.control._formValues));
-  },[form])
-  const handleClientCahnge = (e: any) => {
-    form.setValue("customer", e.value);
-    console.log(e.value, "++++++");
-    setSelectedCustomer(e);
-    // dispatch(fetchClientDetails(e!.value)).then((response: any) => {
-    //   console.log(response);
-    //   if (response.meta.requestStatus === "fulfilled") {
-    // setOptions([
-    //   {
-    //     label: response.payload.city.name,
-    //     value: response.payload.city.name,
-    //   },
-    // ]);
-    dispatch(fetchClientAddressDetail({ addressID: e.value })).then(
-      (response: any) => {
-        console.log(response, "res");
-        if (response.meta.requestStatus === "fulfilled") {
-          const data = response.payload;
-          form.setValue("customer_branch", data.label);
-          form.setValue("customer_gstin", data.gst);
-          form.setValue("place_of_supply", data.state?.label);
-          form.setValue("customer_address1", data.addressLine1);
-          form.setValue("customer_address2", data.addressLine2);
-          form.setValue("shipping_id", data?.shipmentAddress?.Company);
-          form.setValue("shipping_pan", data?.shipmentAddress?.Pan);
-          form.setValue("shipping_gstin", data?.shipmentAddress?.Gstin);
-          form.setValue("shipping_state", data?.shipmentAddress?.State?.value);
-          form.setValue("shipping_pinCode", data?.shipmentAddress?.Pin);
-          form.setValue("shipping_address1", data?.shipmentAddress?.Address1);
-          form.setValue("shipping_address2", data?.shipmentAddress?.Address2);
-          form.setValue("bill_from_gst", data.gstin);
-          form.setValue("bill_pan", data.pan);
-        }
-      }
-    );
-    //   }
-    // });
-  };
+  }, [form]);
 
   const handleBillingAddressChange = (e: any) => {
     form.setValue("bill_to_label", e.label);
@@ -209,19 +143,19 @@ const CreateSalesOrder: React.FC<Props> = ({
     }
   };
 
-  useEffect(() => {
-    form.setValue("channels", channel?.value);
-    if (channel?.value) {
-      // Ensure dispatch is called with an object containing clientCode
-      dispatch(fetchClient({ clientCode: channel.value })).then(
-        (response: any) => {
-          console.log("Fetch Client Response:", response);
-        }
-      );
-    }
-  }, [channel]);
+  // useEffect(() => {
+  //   form.setValue("channels", channel?.value);
+  //   if (channel?.value) {
+  //     // Ensure dispatch is called with an object containing clientCode
+  //     dispatch(fetchClient({ clientCode: channel.value })).then(
+  //       (response: any) => {
+  //         console.log("Fetch Client Response:", response);
+  //       }
+  //     );
+  //   }
+  // }, [channel]);
 
-  console.log(form.control._formValues, "channel",);
+  console.log(form.control._formValues, "channel");
   return (
     <div className="h-[calc(100vh-150px)]">
       {data.loading && <FullPageLoading />}
@@ -590,7 +524,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                                   className="border-0 basic-single"
                                   classNamePrefix="select border-0"
                                   components={{ DropdownIndicator }}
-                                  onChange={handleClientCahnge}
+                                  onChange={handleClientChange}
                                   isDisabled={false}
                                   isClearable={true}
                                   isSearchable={true}
@@ -873,6 +807,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                       <input
                         type="checkbox"
                         onChange={handleSameAsClientAddressChange}
+                        value={form.getValues("isSameClientAdd")}
                       />
                       <span className="slider"></span>
                     </label>
@@ -1270,9 +1205,8 @@ const CreateSalesOrder: React.FC<Props> = ({
           <div className="h-[50px] w-full flex justify-end items-center px-[20px] bg-white shadow-md border-t border-slate-300">
             <Button
               onClick={() => {
-                setTab("add")
+                setTab("add");
                 dispatch(updateFormData(form.control._formValues));
-
               }}
               className={`${primartButtonStyle} flex gap-[10px]`}
               type="submit"
