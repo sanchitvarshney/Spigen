@@ -1,7 +1,7 @@
-
 export interface RowData {
   type?: string;
   material?: string;
+  materialDescription?: string;
   asinNumber?: string;
   orderQty?: number;
   rate?: number;
@@ -18,15 +18,17 @@ export interface RowData {
   isNew?: boolean;
 }
 
+
 export const columnDefs= [
+  { headerName: "", valueGetter: "node.rowIndex + 1",cellRenderer: "textInputCellRenderer",maxWidth: 100,field:"delete" },
   { headerName: "Index", valueGetter: "node.rowIndex + 1",maxWidth: 100 },
   { headerName: "Type", field: "type", cellEditor: "selectEditor", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
-  { headerName: "Material", field: "material", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
-  { headerName: "Material Description	", field: "materialDescription", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 300  },
-  { headerName: "ASIN Number", field: "asinNumber", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
+  { headerName: "Material", field: "material", editable: false, flex: 4, cellRenderer: "textInputCellRenderer", minWidth: 500 },
+  { headerName: "Material Description	", field: "materialDescription", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 300 },
+  // { headerName: "ASIN Number", field: "asinNumber", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
   { headerName: "Order Qty", field: "orderQty", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
   { headerName: "Rate", field: "rate", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
-  { headerName: "Currency", field: "currency", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 250 },
+  // { headerName: "Currency", field: "currency", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 250 },
   { headerName: "GST Rate", field: "gstRate", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
   { headerName: "GST Type", field: "gstType", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
   { headerName: "Local Value", field: "localValue", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },

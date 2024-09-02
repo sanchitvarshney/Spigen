@@ -7,6 +7,7 @@ import {
   fetchClient,
   fetchClientAddressDetail,
   fetchCountries,
+  fetchcurrency,
   fetchStates,
 } from "@/features/salesmodule/createSalesOrderSlice";
 import { createSalesFormSchema } from "@/schema/salesorder/createsalesordeschema";
@@ -16,6 +17,7 @@ import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { RowData } from "@/config/agGrid/SalseOrderCreateTableColumns";
 
 const CreateSalesOrderPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -26,6 +28,7 @@ const CreateSalesOrderPage = () => {
     label: string;
     value: string;
   } | null>(null);
+  const [rowData, setRowData] = useState<RowData[]>([]);
   // type CreateSalesOrderForm = z.infer<typeof createSalesFormSchema>;
   const data = useSelector((state: RootState) => state.createSalesOrder);
   const form = useForm<z.infer<typeof createSalesFormSchema>>({
@@ -77,6 +80,7 @@ const CreateSalesOrderPage = () => {
     dispatch(fetchBillingAddressList({ search: "" }));
     dispatch(fetchCountries());
     dispatch(fetchStates());
+    dispatch(fetchcurrency());
   }, []);
 
   return (
@@ -94,7 +98,13 @@ const CreateSalesOrderPage = () => {
           />
         </TabsContent>
         <TabsContent value="add" className="p-0 m-0">
-          <AddSalesOrder setTab={setTabvalue} payloadData={payloadData} />
+          <AddSalesOrder
+            setTab={setTabvalue}
+            payloadData={payloadData}
+            form={form}
+            rowData={rowData}
+            setRowData={setRowData}
+          />
         </TabsContent>
       </Tabs>
     </div>

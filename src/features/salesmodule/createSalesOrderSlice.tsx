@@ -15,6 +15,8 @@ import {
   ComponentDetailResponse,
   Country2,
   CountryResponse,
+  Currency,
+  CurrencyResponse,
   GeneralResponse,
   ProjectDescription,
   ProjectDescriptionResponse,
@@ -30,6 +32,7 @@ const initialState: ClientState = {
   projectDescription: null,
   countries: null,
   createOrderForm: {},
+  currency:null,
   states: null,
   billingAddressList: null,
   productDetails: null,
@@ -147,6 +150,23 @@ export const fetchCountries = createAsyncThunk<Country2[], void>(
   }
 );
 
+export const fetchcurrency = createAsyncThunk<Currency[], void>(
+  "client/fetchCurrency",
+  async () => {
+    try {
+      const response = await spigenAxios.get<CurrencyResponse>(
+        "/backend/fetchAllCurrecy"
+      );
+      return response.data.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error("An unknown error occurred");
+    }
+  }
+);
+
 // Define the async thunk for fetching states
 export const fetchStates = createAsyncThunk<State2[], void>(
   "client/fetchStates",
@@ -228,7 +248,8 @@ export const fetchProductData = createAsyncThunk<
     `/products/fetchProductData`,
     { product_key }
   );
-  if (response.data.success) {
+  console.log(response.data,"++++++++++")
+  if (response.data.status==="success") {
     return response.data.data;
   } else {
     // Redux Toolkit will automatically handle the error
@@ -318,6 +339,18 @@ const clientSlice = createSlice({
         state.countries = action.payload;
       })
       .addCase(fetchCountries.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to fetch countries";
+      })
+      .addCase(fetchcurrency.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchcurrency.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currency = action.payload;
+      })
+      .addCase(fetchcurrency.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Failed to fetch countries";
       })
