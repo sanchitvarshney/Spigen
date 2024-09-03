@@ -14,7 +14,7 @@ import {
 import { fetchProductData } from "@/features/salesmodule/createSalesOrderSlice";
 import { AppDispatch, RootState } from "@/store";
 import { CommandList } from "cmdk";
-import {  useState } from "react";
+import { useState } from "react";
 import { FaSortDown, FaTrash } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -91,14 +91,18 @@ const TextInputCellRenderer = (props: any) => {
       remove: [api.getDisplayedRowAtIndex(rowIndex).data],
     });
   };
-
+  const updateData = (newData: any) => {
+    api.applyTransaction({ update: [newData] });
+    api.refreshCells({ rowNodes: [props.node], columns: [column] });
+  };
   const idToTextMap = new Map(
     componentDetails?.map((item: any) => [item.id, item.text])
   );
   const handleChange = (value: string) => {
-    debugger
+    debugger;
     const text = idToTextMap.get(value) || "";
     const newValue = value;
+    data[colDef.field] = value; // Save ID in the data
     if (colDef.field === "material") {
       dispatch(fetchProductData({ product_key: value })).then(
         (response: any) => {
@@ -109,21 +113,46 @@ const TextInputCellRenderer = (props: any) => {
             ] = ` ASIN - ${materialData?.asin}\n FNSKU -  ${materialData?.fnsku} \nFSNID - ${materialData?.fsnid} \nItem Code - ${materialData?.item_code} \nCroma Code - ${materialData?.croma_code}`;
             data["hsnCode"] = materialData?.hsn;
           }
+          updateData(data);
         }
       );
     }
-    data[colDef.field] = value; // Save ID in the data
+    let cgst = 0;
+    let sgst = 0;
+    let igst = 0;
+    const calculation = (data.localValue * data.gstRate) / 100;
+    if (data.gstType === "L") {
+      // Intra-State
+      cgst = calculation / 2;
+      sgst = calculation / 2; // Same as CGST
+      igst = 0;
+      data.cgst = cgst.toFixed(2);
+      data.sgst = sgst.toFixed(2);
+      data.igst = igst.toFixed(2);
+      console.log(cgst, igst, sgst, "ccaall");
+      // data.inrValue = (rate * quantity).toFixed(2);
+    } else if (data.gstType === "I") {
+      // Inter-State
+      igst = calculation;
+      cgst = 0;
+      sgst = 0;
+      data.cgst = cgst.toFixed(2);
+      data.sgst = sgst.toFixed(2);
+      data.igst = igst.toFixed(2);
+      // data.inrValue = (rate * quantity).toFixed(2);
+    }
     setDisplayText(text);
-    console.log(newValue);
     data[colDef.field] = newValue; // update the data
     api.refreshCells({ rowNodes: [props.node], columns: [column] }); // refresh the cell to show the new value
     api.applyTransaction({ update: [data] });
     setOpen(false);
+    updateData(data);
   };
-  console.log(data);
+
   const handleInputChange = (e: any) => {
-    debugger
+    // debugger
     const newValue = e.target.value;
+    data[colDef.field] = newValue; // update the data
     if (colDef.field === "rate") {
       data["localValue"] = newValue * parseFloat(data.orderQty);
     }
@@ -167,9 +196,9 @@ const TextInputCellRenderer = (props: any) => {
       data["igst"] = igst.toFixed(2); // Update the IGST field in data
     }
 
-    data[colDef.field] = newValue; // update the data
     api.refreshCells({ rowNodes: [props.node], columns: [column] }); // refresh the cell to show the new value
     api.applyTransaction({ update: [data] });
+    updateData(data);
   };
 
   const renderContent = () => {
@@ -353,7 +382,7 @@ const TextInputCellRenderer = (props: any) => {
                   <CommandInput placeholder="Search..." />
                   <CommandEmpty>No {colDef.headerName} found.</CommandEmpty>
                   <CommandList className="max-h-[400px] overflow-y-auto">
-                    {currency.map((framework:any) => (
+                    {currency.map((framework: any) => (
                       <CommandItem
                         key={framework.currency_id}
                         value={framework.currency_id}

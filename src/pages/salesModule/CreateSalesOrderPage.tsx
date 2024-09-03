@@ -35,13 +35,12 @@ const CreateSalesOrderPage = () => {
     resolver: zodResolver(createSalesFormSchema),
     mode: "onBlur",
   });
-  console.log("formdata", payloadData);
+  // console.log("formdata", payloadData);
 
   const handleClientChange = (e: any) => {
     form.setValue("customer", e.value);
     dispatch(fetchClientAddressDetail({ addressID: e.value })).then(
       (response: any) => {
-        console.log(response, "res");
         if (response.meta.requestStatus === "fulfilled") {
           const data = response.payload;
           form.setValue("customer_branch", data.label);

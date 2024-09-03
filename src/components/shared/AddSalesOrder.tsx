@@ -111,7 +111,7 @@ const AddSalesOrder = ({
       dispatch(fetchComponentDetail({ search }));
     }
   }, [search]);
-  console.log(componentDetails);
+
   const defaultColDef = useMemo<ColDef>(() => {
     return {
       floatingFilter: false,
@@ -308,7 +308,7 @@ const AddSalesOrder = ({
               statusBar={statusBar}
               components={components}
               pagination={true}
-              paginationPageSize={10}
+              paginationPageSize={100}
               animateRows={true}
               gridOptions={commonAgGridConfig}
               suppressCellFocus={false}
