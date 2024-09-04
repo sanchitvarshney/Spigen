@@ -18,7 +18,8 @@ import { useState } from "react";
 import { FaSortDown, FaTrash } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { Select } from "antd";
-import { transformOptionData } from "@/helper/transform";
+import { transformCurrencyData, transformOptionData } from "@/helper/transform";
+import CurrencyRateDialog from "@/components/ui/CurrencyRateDialog";
 const frameworks = [
   {
     value: "/",
@@ -70,6 +71,7 @@ const TextInputCellRenderer = (props: any) => {
   const { componentDetails } = useSelector(
     (state: RootState) => state.createSalesOrder
   );
+  const [openCurrencyDialog, setOpenCurrencyDialog] = useState(false);
 
   const handleDelete = () => {
     const rowIndex = props.node.rowIndex;
@@ -81,6 +83,11 @@ const TextInputCellRenderer = (props: any) => {
     api.applyTransaction({ update: [newData] });
     api.refreshCells({ rowNodes: [props.node], columns: [column] });
   };
+
+  const handleCurrencyChange = (value:any) => {
+    data["currency"] = value
+    setOpenCurrencyDialog(true);
+  }
 
   const handleChange = (value: string) => {
     // debugger;
@@ -129,7 +136,7 @@ const TextInputCellRenderer = (props: any) => {
     setOpen(false);
     updateData(data);
   };
-  // console.log(data, "rowData");
+  console.log(data, "data");
   const handleInputChange = (e: any) => {
     const newValue = e.target.value;
     data[colDef.field] = newValue; // Update the data object
@@ -297,44 +304,17 @@ const TextInputCellRenderer = (props: any) => {
               placeholder={colDef.headerName}
               className="w-[100%]  text-slate-600  border-slate-400 shadow-none mt-[2px]"
             />
-            <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={open}
-                  className="w-[90px] justify-between  text-slate-600 items-center  border-slate-400 shadow-none px-[3px]"
-                >
-                  {value === "" ? (
-                    <p className="text-slate-500 font-[400]">
-                      {colDef.headerName}
-                    </p>
-                  ) : (
-                    `${data.currencySymbol || "₹"}` // Display the currency symbol
-                  )}
-                  <FaSortDown className="w-5 h-5  mb-[5px] opacity-50 shrink-0" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[250px] p-0  ">
-                <Command>
-                  <CommandInput placeholder="Search..." />
-                  <CommandEmpty>No {colDef.headerName} found.</CommandEmpty>
-                  <CommandList className="max-h-[400px] overflow-y-auto">
-                    {currency.map((framework: any) => (
-                      <CommandItem
-                        key={framework.currency_id}
-                        value={framework.currency_id}
-                        className="data-[disabled]:opacity-100 aria-selected:bg-cyan-600 aria-selected:text-white data-[disabled]:pointer-events-auto flex items-center gap-[10px]"
-                        onSelect={(currentValue) => handleChange(currentValue)}
-                        defaultValue={currency[0]?.currency_id}
-                      >
-                        {framework.currency_symbol}
-                      </CommandItem>
-                    ))}
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
+            <Select
+              className="w-1/3"
+              labelInValue
+              filterOption={false}
+              placeholder="Currency"
+              defaultValue={{ value: "364907247", label: "₹" }}
+              options={transformCurrencyData(currency || [])}
+              onChange={(e) => handleCurrencyChange(e.value)}
+              // value={value}
+            />
+                  <CurrencyRateDialog open={openCurrencyDialog} onClose={() => setOpenCurrencyDialog(false)} />
           </>
         );
       case "type":

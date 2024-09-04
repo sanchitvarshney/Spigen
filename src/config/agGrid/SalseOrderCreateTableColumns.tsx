@@ -16,6 +16,8 @@ export interface RowData {
   dueDate?: string;
   hsnCode?: string;
   isNew?: boolean;
+  remark?: string;
+  exchangeRate?: number;
 }
 
 
@@ -38,6 +40,7 @@ export const columnDefs= [
   { headerName: "IGST", field: "igst", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
   { headerName: "Due Date", field: "dueDate", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
   { headerName: "HSN Code", field: "hsnCode", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
+  { headerName: "Remark", field: "remark", editable: true, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
 ];
 
 export const dummyData: RowData[] = [

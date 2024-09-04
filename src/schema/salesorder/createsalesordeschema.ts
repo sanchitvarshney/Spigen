@@ -51,7 +51,7 @@ import { z } from "zod";
 // });
 
 const baseSchema = z.object({
-  channels: z.string({ required_error: "Please select a channel name" }),
+  channel: z.string({ required_error: "Please select a channel name" }),
   bill_id: z.string({ required_error: "Please select Billing Address" }),
   billing_address1: z.string({ required_error: "Please add your Billing Address (Description must be between 10 and 100 characters)" }),
   billing_address2: z.string({ required_error: "Please add your Billing Address (Description must be between 10 and 100 characters)" }),

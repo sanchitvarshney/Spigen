@@ -20,6 +20,7 @@ import { AppDispatch, RootState } from "@/store";
 
 import { fetchComponentDetail } from "@/features/salesmodule/createSalesOrderSlice";
 import { createSellRequest } from "@/features/salesmodule/SalesSlice";
+import CurrencyRateDialog from "@/components/ui/CurrencyRateDialog";
 
 const AddSalesOrder = ({
   setTab,
@@ -41,6 +42,7 @@ const AddSalesOrder = ({
   const [sgstTotal, setSgstTotal] = useState(0);
   const [igstTotal, setIgstTotal] = useState(0);
   const [search, setSearch] = useState("");
+  const [openCurrencyDialog, setOpenCurrencyDialog] = useState(true);
   const dispatch = useDispatch<AppDispatch>();
   const { productDetails } = useSelector(
     (state: RootState) => state.createSalesOrder
@@ -63,13 +65,13 @@ const AddSalesOrder = ({
 
   const addNewRow = () => {
     const newRow: RowData = {
-      type: "Product",
+      type: "product",
       material: "",
       materialDescription: "",
       // asinNumber: "B01N1SE4EP",
       orderQty: 1,
       // rate: 0,
-      currency: "USD",
+      currency: "364907247",
       // gstRate: 18,
       gstType: "I",
       localValue: 0.0,
@@ -77,30 +79,41 @@ const AddSalesOrder = ({
       cgst: 0,
       sgst: 0,
       igst: 0,
-      dueDate: "2024-07-25",
+      dueDate: "__-__-____",
       // hsnCode: "123456",
       isNew: true,
     };
     setRowData((prevData: any) => [...prevData, newRow]);
   };
 
+  const handleCurrencyChange = () => {
+    // Open the currency rate dialog
+    setOpenCurrencyDialog(true);
+  };
+
   useEffect(() => {
-    const cgstSum = rowData.reduce(
-      (sum: number, item: any) => sum + (parseFloat(item.cgst) || 0),
-      0
-    );
-    const sgstSum = rowData.reduce(
-      (sum: number, item: any) => sum + (parseFloat(item.sgst) || 0),
-      0
-    );
-    const igstSum = rowData.reduce(
-      (sum: number, item: any) => sum + (parseFloat(item.igst) || 0),
-      0
-    );
-  
-    setCgstTotal(cgstSum);
-    setSgstTotal(sgstSum);
-    setIgstTotal(igstSum);
+    const intervalId = setInterval(() => {
+      if (rowData && rowData.length > 0) {
+        const cgstSum = rowData.reduce(
+          (sum: number, item: any) => sum + (parseFloat(item.cgst) || 0),
+          0
+        );
+        const sgstSum = rowData.reduce(
+          (sum: number, item: any) => sum + (parseFloat(item.sgst) || 0),
+          0
+        );
+        const igstSum = rowData.reduce(
+          (sum: number, item: any) => sum + (parseFloat(item.igst) || 0),
+          0
+        );
+
+        setCgstTotal(cgstSum);
+        setSgstTotal(sgstSum);
+        setIgstTotal(igstSum);
+      }
+    }, 5000);
+
+    return () => clearInterval(intervalId); // Clean up on unmount
   }, [rowData]);
 
   useEffect(() => {
@@ -137,6 +150,7 @@ const AddSalesOrder = ({
           setSearch={setSearch}
           search={search}
           currency={currency}
+          handleCurrencyChange={handleCurrencyChange}
         />
       ),
       datePickerCellRenderer: DatePickerCellRenderer,
@@ -152,30 +166,50 @@ const AddSalesOrder = ({
   useEffect(() => {
     addNewRow();
   }, []);
-  // useEffect(() => {
-  //   dispatch(fetchComponentDetail({ search: "" }));
-  // }, []);
+
+  const materials = {
+    so_type: rowData.map((component: RowData) => component.type || ""),
+    items: rowData.map((component: RowData) => component.material || ""),
+    qty: rowData.map((component: RowData) =>
+      component.orderQty === ""
+        ? null
+        : +Number(+Number(component.orderQty).toFixed(2))
+    ),
+    hsn: rowData.map((component: RowData) => component.hsnCode || ""),
+    price: rowData.map((component: RowData) => Number(component.rate) || 0),
+    gst_rate: rowData.map(
+      (component: RowData) => Number(component.gstRate) || 0
+    ),
+    gst_type: rowData.map((component: RowData) => component.gstType || ""),
+    currency: rowData.map((component: RowData) => component.currency || ""),
+    exchange_rate: rowData.map(
+      (component: RowData) => Number(component.exchangeRate) || 1
+    ),
+    due_date: rowData.map((component: RowData) => component.dueDate || ""),
+    remark: rowData.map((component: RowData) => component.remark || ""),
+  };
+  const payloadData2 = {
+    ...form.getValues(),
+    materials,
+  };
+  console.log(materials, "ddaattaa", form.getValues(), payloadData2);
 
   const handleSubmit = () => {
-    console.log("Payload Data:", payloadData); // Debugging log
-    if (!payloadData || Object.keys(payloadData).length === 0) {
+    console.log("Payload Data:", payloadData2); // Debugging log
+    if (!payloadData2 || Object.keys(payloadData2).length === 0) {
       console.error("Payload data is missing or undefined.");
       // Handle error, e.g., show a message to the user
       return;
     }
 
     try {
-      dispatch(createSellRequest(payloadData));
+      dispatch(createSellRequest(payloadData2));
       setTab("create");
     } catch (error) {
       console.error("Error submitting data:", error);
       // Handle error, e.g., show a message to the user
     }
   };
-useEffect(() => {
-console.log(rowData, "rowData"); 
-}, [rowData]);
-  
 
   const totalSum = rowData.reduce((sum: number, item: any) => {
     // Convert rate and orderQty to numbers
@@ -265,7 +299,14 @@ console.log(rowData, "rowData");
                       </h3>
                     </div>
                     <div>
-                      <p className="text-[14px]">{roundedTotalSum+cgstTotal+sgstTotal+igstTotal}</p>
+                      <p className="text-[14px]">
+                        {(
+                          roundedTotalSum +
+                          cgstTotal +
+                          sgstTotal +
+                          igstTotal
+                        ).toFixed(2)}
+                      </p>
                     </div>
                   </li>
                 </ul>

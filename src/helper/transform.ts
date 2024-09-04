@@ -32,3 +32,10 @@ export const transformClientData = (data: any[]) => {
     value: item.addressID,
   }));
 };
+
+export const transformCurrencyData = (data: any[]) => {
+  return data.map((item) => ({
+    label: item.currency_symbol,
+    value: item.currency_id,
+  }));
+};

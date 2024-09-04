@@ -63,7 +63,7 @@ const CreateSalesOrderPage = () => {
   };
 
   useEffect(() => {
-    channel?.value && form.setValue("channels", channel?.value);
+    channel?.value && form.setValue("channel", channel?.value);
     if (channel?.value) {
       // Ensure dispatch is called with an object containing clientCode
       dispatch(fetchClient({ clientCode: channel.value })).then(
