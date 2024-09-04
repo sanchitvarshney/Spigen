@@ -17,7 +17,8 @@ import { CommandList } from "cmdk";
 import { useState } from "react";
 import { FaSortDown, FaTrash } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
-
+import { Select } from "antd";
+import { transformOptionData } from "@/helper/transform";
 const frameworks = [
   {
     value: "/",
@@ -69,22 +70,7 @@ const TextInputCellRenderer = (props: any) => {
   const { componentDetails } = useSelector(
     (state: RootState) => state.createSalesOrder
   );
-  // console.log(
-  //   value,
-  //   "value",
-  //   colDef,
-  //   "colDef",
-  //   data,
-  //   "data",
-  //   api,
-  //   "api",
-  //   column,
-  //   "column",props.node
-  // );
-  const [displayText, setDisplayText] = useState(value);
-  const calculateIGST = (rate: number, quantity: number, gstRate: number) => {
-    return (rate * quantity * gstRate) / 100;
-  };
+
   const handleDelete = () => {
     const rowIndex = props.node.rowIndex;
     api.applyTransaction({
@@ -95,12 +81,9 @@ const TextInputCellRenderer = (props: any) => {
     api.applyTransaction({ update: [newData] });
     api.refreshCells({ rowNodes: [props.node], columns: [column] });
   };
-  const idToTextMap = new Map(
-    componentDetails?.map((item: any) => [item.id, item.text])
-  );
+
   const handleChange = (value: string) => {
-    debugger;
-    const text = idToTextMap.get(value) || "";
+    // debugger;
     const newValue = value;
     data[colDef.field] = value; // Save ID in the data
     if (colDef.field === "material") {
@@ -112,8 +95,8 @@ const TextInputCellRenderer = (props: any) => {
               "materialDescription"
             ] = ` ASIN - ${materialData?.asin}\n FNSKU -  ${materialData?.fnsku} \nFSNID - ${materialData?.fsnid} \nItem Code - ${materialData?.item_code} \nCroma Code - ${materialData?.croma_code}`;
             data["hsnCode"] = materialData?.hsn;
+            updateData(data);
           }
-          updateData(data);
         }
       );
     }
@@ -130,7 +113,6 @@ const TextInputCellRenderer = (props: any) => {
       data.sgst = sgst.toFixed(2);
       data.igst = igst.toFixed(2);
       console.log(cgst, igst, sgst, "ccaall");
-      // data.inrValue = (rate * quantity).toFixed(2);
     } else if (data.gstType === "I") {
       // Inter-State
       igst = calculation;
@@ -139,64 +121,64 @@ const TextInputCellRenderer = (props: any) => {
       data.cgst = cgst.toFixed(2);
       data.sgst = sgst.toFixed(2);
       data.igst = igst.toFixed(2);
-      // data.inrValue = (rate * quantity).toFixed(2);
     }
-    setDisplayText(text);
+    // setDisplayText(text);
     data[colDef.field] = newValue; // update the data
     api.refreshCells({ rowNodes: [props.node], columns: [column] }); // refresh the cell to show the new value
     api.applyTransaction({ update: [data] });
     setOpen(false);
     updateData(data);
   };
-
+  // console.log(data, "rowData");
   const handleInputChange = (e: any) => {
-    // debugger
     const newValue = e.target.value;
-    data[colDef.field] = newValue; // update the data
+    data[colDef.field] = newValue; // Update the data object
+
+    // Update localValue if the rate is changed
     if (colDef.field === "rate") {
       data["localValue"] = newValue * parseFloat(data.orderQty);
     }
-    const rate = parseFloat(data.rate) || 0;
-    const quantity = parseFloat(data.orderQty) || 1;
+
+    // Calculate GST based on the updated values
     const gstRate = parseFloat(data.gstRate) || 0;
     let cgst = 0;
     let sgst = 0;
     let igst = 0;
-    const calculation = (data.localValue * data.gstRate) / 100;
-    console.log(calculation, "ccaall", rate, quantity, gstRate);
-    if (data.gstType === "L") {
-      // Intra-State
-      cgst = calculation / 2;
-      sgst = calculation / 2; // Same as CGST
-      igst = 0;
-      data.cgst = cgst.toFixed(2);
-      data.sgst = sgst.toFixed(2);
-      data.igst = igst.toFixed(2);
-      console.log(cgst, igst, sgst, "ccaall");
-      // data.inrValue = (rate * quantity).toFixed(2);
-    } else if (data.gstType === "I") {
-      // Inter-State
-      igst = calculation;
-      cgst = 0;
-      sgst = 0;
-      data.cgst = cgst.toFixed(2);
-      data.sgst = sgst.toFixed(2);
-      data.igst = igst.toFixed(2);
-      // data.inrValue = (rate * quantity).toFixed(2);
-    }
+
+    // Perform GST calculation only if the relevant fields are updated
     if (
       colDef.field === "rate" ||
       colDef.field === "orderQty" ||
       colDef.field === "gstRate"
     ) {
-      const igst = calculateIGST(rate, quantity, gstRate);
-      console.log(igst, "iigsstt", rate, quantity, gstRate);
-      data["cgst"] = 0;
-      data["sgst"] = 0;
-      data["igst"] = igst.toFixed(2); // Update the IGST field in data
+      const calculation = (data.localValue * gstRate) / 100;
+
+      if (data.gstType === "L") {
+        // Intra-State
+        cgst = calculation / 2;
+        sgst = calculation / 2; // Same as CGST
+        igst = 0;
+        data.cgst = cgst.toFixed(2);
+        data.sgst = sgst.toFixed(2);
+        data.igst = igst.toFixed(2);
+      } else if (data.gstType === "I") {
+        // Inter-State
+        igst = calculation;
+        cgst = 0;
+        sgst = 0;
+        data.cgst = cgst.toFixed(2);
+        data.sgst = sgst.toFixed(2);
+        data.igst = igst.toFixed(2);
+      }
+
+      // Update IGST for all cases where relevant fields change
+      data["cgst"] = cgst.toFixed(2);
+      data["sgst"] = sgst.toFixed(2);
+      data["igst"] = igst.toFixed(2);
     }
 
-    api.refreshCells({ rowNodes: [props.node], columns: [column] }); // refresh the cell to show the new value
+    // Update the cell data and re-render
+    api.refreshCells({ rowNodes: [props.node], columns: [column] });
     api.applyTransaction({ update: [data] });
     updateData(data);
   };
@@ -217,57 +199,17 @@ const TextInputCellRenderer = (props: any) => {
         );
       case "material":
         return (
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={open}
-                className="w-[100%] justify-between text-slate-600 items-center  border-slate-400 shadow-none"
-              >
-                {displayText === "" ? (
-                  <p className="text-slate-500 font-[400]">
-                    {colDef.headerName}
-                  </p>
-                ) : (
-                  displayText
-                )}
-                <FaSortDown className="w-5 h-5 ml-2 mb-[5px] opacity-50 shrink-0" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[250px] p-0  ">
-              <Command>
-                <CommandInput
-                  placeholder="Search..."
-                  onChangeCapture={(e: any) => {
-                    data[colDef.field] = e.target.value;
-                    api.refreshCells({
-                      rowNodes: [props.node],
-                      columns: [column],
-                    });
-                    api.applyTransaction({ update: [data] });
-                  }}
-                  onKeyDown={(e: any) => {
-                    e.key === "Enter" && setOpen(false);
-                  }}
-                  onValueChange={(e) => props.setSearch(e)}
-                />
-                <CommandEmpty>No {colDef.headerName} found.</CommandEmpty>
-                <CommandList className="max-h-[400px] overflow-y-auto">
-                  {componentDetails?.map((framework: any) => (
-                    <CommandItem
-                      key={framework.id}
-                      value={framework.id}
-                      className="data-[disabled]:opacity-100 aria-selected:bg-cyan-600 aria-selected:text-white data-[disabled]:pointer-events-auto flex items-center gap-[10px]"
-                      onSelect={(currentValue) => handleChange(currentValue)}
-                    >
-                      {framework.text}
-                    </CommandItem>
-                  ))}
-                </CommandList>
-              </Command>
-            </PopoverContent>
-          </Popover>
+          <Select
+            className="w-full"
+            labelInValue
+            filterOption={false}
+            showSearch
+            placeholder="Select Material"
+            onSearch={(e) => props.setSearch(e)}
+            options={transformOptionData(componentDetails || [])}
+            onChange={(e) => handleChange(e.value)}
+            value={value}
+          />
         );
       case "asinNumber":
         return (
@@ -319,13 +261,9 @@ const TextInputCellRenderer = (props: any) => {
                 aria-expanded={open}
                 className="w-[100%] justify-between  text-slate-600 items-center  border-slate-400 shadow-none"
               >
-                {value === "" ? (
-                  <p className="text-slate-500 font-[400]">
-                    {colDef.headerName}
-                  </p>
-                ) : (
-                  value
-                )}
+                {value
+                  ? gstType.find((option) => option.value === value)?.label
+                  : colDef.headerName}
                 <FaSortDown className="w-5 h-5 ml-2 mb-[5px] opacity-50 shrink-0" />
               </Button>
             </PopoverTrigger>
@@ -353,11 +291,11 @@ const TextInputCellRenderer = (props: any) => {
         return (
           <>
             <Input
-              type="number"
-              className="w-[100%]  text-slate-600  border-slate-400 shadow-none mt-[2px] mr-2"
-              placeholder={colDef.headerName}
-              value={value}
               onChange={handleInputChange}
+              value={value}
+              type="text"
+              placeholder={colDef.headerName}
+              className="w-[100%]  text-slate-600  border-slate-400 shadow-none mt-[2px]"
             />
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
@@ -372,7 +310,7 @@ const TextInputCellRenderer = (props: any) => {
                       {colDef.headerName}
                     </p>
                   ) : (
-                    "$" // Display the currency symbol
+                    `${data.currencySymbol || "₹"}` // Display the currency symbol
                   )}
                   <FaSortDown className="w-5 h-5  mb-[5px] opacity-50 shrink-0" />
                 </Button>
@@ -409,13 +347,7 @@ const TextInputCellRenderer = (props: any) => {
                 aria-expanded={open}
                 className="w-[100%] justify-between  text-slate-600 items-center  border-slate-400 shadow-none"
               >
-                {value === "" ? (
-                  <p className="text-slate-500 font-[400]">
-                    {colDef.headerName}
-                  </p>
-                ) : (
-                  value
-                )}
+                {value || colDef.headerName}
                 <FaSortDown className="w-5 h-5 ml-2 mb-[5px] opacity-50 shrink-0" />
               </Button>
             </PopoverTrigger>
@@ -502,7 +434,7 @@ const TextInputCellRenderer = (props: any) => {
     return renderContent();
   }
 
-  return <span>{displayText}</span>;
+  return <span>{value}</span>;
 };
 
 export default TextInputCellRenderer;

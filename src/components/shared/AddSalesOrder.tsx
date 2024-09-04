@@ -21,9 +21,6 @@ import { AppDispatch, RootState } from "@/store";
 import { fetchComponentDetail } from "@/features/salesmodule/createSalesOrderSlice";
 import { createSellRequest } from "@/features/salesmodule/SalesSlice";
 
-// interface Props{
-//   setTab:Dispatch<SetStateAction<string>>;
-// }
 const AddSalesOrder = ({
   setTab,
   payloadData,
@@ -100,7 +97,7 @@ const AddSalesOrder = ({
       (sum: number, item: any) => sum + (parseFloat(item.igst) || 0),
       0
     );
-
+  
     setCgstTotal(cgstSum);
     setSgstTotal(sgstSum);
     setIgstTotal(igstSum);
@@ -175,8 +172,10 @@ const AddSalesOrder = ({
       // Handle error, e.g., show a message to the user
     }
   };
-
-  console.log(rowData, "rowData");
+useEffect(() => {
+console.log(rowData, "rowData"); 
+}, [rowData]);
+  
 
   const totalSum = rowData.reduce((sum: number, item: any) => {
     // Convert rate and orderQty to numbers
@@ -209,7 +208,7 @@ const AddSalesOrder = ({
               <p className="text-[14px]">{form.getValues("bill_name")}</p>
               <h3 className="font-[500]">Address</h3>
               <p className="text-[14px]">
-                {form.getValues("customer_address1")}{" "}
+                {form.getValues("customer_address1")}
                 {form.getValues("customer_address2")}
               </p>
               <h3 className="font-[500]">GSTIN</h3>
@@ -266,7 +265,7 @@ const AddSalesOrder = ({
                       </h3>
                     </div>
                     <div>
-                      <p className="text-[14px]">(+)0.00</p>
+                      <p className="text-[14px]">{roundedTotalSum+cgstTotal+sgstTotal+igstTotal}</p>
                     </div>
                   </li>
                 </ul>
