@@ -53,25 +53,52 @@ import { z } from "zod";
 const baseSchema = z.object({
   channel: z.string({ required_error: "Please select a channel name" }),
   bill_id: z.string({ required_error: "Please select Billing Address" }),
-  billing_address1: z.string({ required_error: "Please add your Billing Address (Description must be between 10 and 100 characters)" }),
-  billing_address2: z.string({ required_error: "Please add your Billing Address (Description must be between 10 and 100 characters)" }),
-  bill_from_gst: z.string({ required_error: "Please enter Billing GSTIN Number" }),
+  billing_address1: z.string({
+    required_error:
+      "Please add your Billing Address (Description must be between 10 and 100 characters)",
+  }),
+  billing_address2: z.string({
+    required_error:
+      "Please add your Billing Address (Description must be between 10 and 100 characters)",
+  }),
+  bill_from_gst: z.string({
+    required_error: "Please enter Billing GSTIN Number",
+  }),
   bill_pan: z.string({ required_error: "Plenter Billing PAN Number" }),
-  customer_address1: z.string({ required_error: "Please add your Billing Address (Description must be between 10 and 100 characters)" }),
-  customer_address2: z.string({ required_error: "Please add your Billing Address (Description must be between 10 and 100 characters)" }),
-  customer: z.string({ required_error: "Please select client Name" }),
+  customer_address1: z.string({
+    required_error:
+      "Please add your Billing Address (Description must be between 10 and 100 characters)",
+  }),
+  customer_address2: z.string({
+    required_error:
+      "Please add your Billing Address (Description must be between 10 and 100 characters)",
+  }),
   customer_gstin: z.string({ required_error: "Please provide GST" }),
-  isSameClientAdd: z.string({ required_error: "Please specify if the client's address is the same" }),
+  isSameClientAdd: z.string().optional(),
   customer_branch: z.string({ required_error: "Please select Vendor Branch" }),
-  shipping_gstin: z.string({ required_error: "Please enter Shipping GSTIN Number" }),
-  shipping_pinCode: z.string({ required_error: "Please enter Shipping Pincode" }),
+  shipping_gstin: z.string({
+    required_error: "Please enter Shipping GSTIN Number",
+  }),
+  shipping_pinCode: z.string({
+    required_error: "Please enter Shipping Pincode",
+  }),
   shipping_id: z.string({ required_error: "Please select Shipping Address" }),
-  shipping_address1: z.string({ required_error: "Please add your Shipping Address (Description must be between 10 and 100 characters)" }),
-  shipping_address2: z.string({ required_error: "Please add your Shipping Address (Description must be between 10 and 100 characters)" }),
+  shipping_address1: z.string({
+    required_error:
+      "Please add your Shipping Address (Description must be between 10 and 100 characters)",
+  }),
+  shipping_address2: z.string({
+    required_error:
+      "Please add your Shipping Address (Description must be between 10 and 100 characters)",
+  }),
   shipping_state: z.string({ required_error: "Please select Shipping State" }),
-  shipping_pan: z.string({ required_error: "Please enter Shipping PAN Number" }),
-  place_of_supply: z.string({ required_error: "Please provide place of supply" }),
-  bill_name:z.string(),
+  shipping_pan: z.string({
+    required_error: "Please enter Shipping PAN Number",
+  }),
+  place_of_supply: z.string({
+    required_error: "Please provide place of supply",
+  }),
+  bill_name: z.string(),
   // Optional fields
   bill_to_label: z.string().optional(),
   terms_condition: z.string().optional(),
@@ -83,7 +110,6 @@ const baseSchema = z.object({
   project: z.string().optional(),
 });
 
-
 const channelSchemas = z.discriminatedUnion("channel", [
   z.object({
     channel: z.literal("BLK"),
@@ -92,25 +118,35 @@ const channelSchemas = z.discriminatedUnion("channel", [
   }),
   z.object({
     channel: z.literal("AMZ"),
-    fba_shipment_id: z.string({ required_error: "Please enter FBA Shipment" }),
-    fba_appointment_id: z.string({ required_error: "Please enter FBA Appointment" }),
-    hawb_number: z.string({ required_error: "Please enter HAWB number" }),
+    amz_fba_ship_id: z.string({ required_error: "Please enter FBA Shipment" }),
+    amz_fba_app: z.string({ required_error: "Please enter FBA Appointment" }),
+    amz_hawb: z.string({ required_error: "Please enter HAWB number" }),
+    customer: z.string({ required_error: "Please select client Name" }),
+  }),
+  z.object({
+    channel: z.literal("AMZ_IMP"),
+    amz_fba_ship_id: z.string({ required_error: "Please enter FBA Shipment" }),
+    amz_fba_app: z.string({ required_error: "Please enter FBA Appointment" }),
+    customer: z.string({ required_error: "Please select client Name" }),
   }),
   z.object({
     channel: z.literal("FLK"),
-    consignment_id: z.string({ required_error: "Please enter Consignment Id" }),
+    flk_consg_id: z.string({ required_error: "Please enter Consignment Id" }),
+    customer: z.string({ required_error: "Please select client Name" }),
   }),
   z.object({
     channel: z.literal("FLK_VC"),
     po_number: z.string({ required_error: "Please enter PO number" }),
+    customer: z.string({ required_error: "Please select client Name" }),
   }),
   z.object({
     channel: z.literal("CROMA"),
     po_number: z.string({ required_error: "Please enter PO number" }),
+    customer: z.string({ required_error: "Please select client Name" }),
   }),
   z.object({
     channel: z.literal("B2B"),
-    order_id: z.string({ required_error: "Please enter Order Id" }),
+    b2b_order_id: z.string({ required_error: "Please enter Order Id" }),
   }),
 ]);
 
@@ -118,7 +154,9 @@ const createSalesFormSchema = z.intersection(baseSchema, channelSchemas);
 
 // Define schema for "materials" with custom error messages
 const materialsSchema = z.object({
-  so_type: z.array(z.string()).min(1, { message: "At least one SO Type is required" }),
+  so_type: z
+    .array(z.string())
+    .min(1, { message: "At least one SO Type is required" }),
   items: z.array(z.string()).optional().nullable(),
   qty: z.array(z.number()).optional().nullable(),
   hsn: z.array(z.string()).optional().nullable(),
@@ -130,6 +168,5 @@ const materialsSchema = z.object({
   due_date: z.array(z.string()).optional().nullable(), // Ensure format validation as needed
   remark: z.array(z.string()).optional().nullable(),
 });
-
 
 export { createSalesFormSchema, materialsSchema };

@@ -363,6 +363,7 @@ const TextInputCellRenderer = (props: any) => {
           />
         );
       case "hsnCode":
+        case"remark":
         return (
           <Input
             onChange={handleInputChange}

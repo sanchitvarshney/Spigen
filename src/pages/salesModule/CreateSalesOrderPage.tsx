@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RowData } from "@/config/agGrid/SalseOrderCreateTableColumns";
+import { ChannelType } from "@/types/createSalesOrderTypes";
 
 const CreateSalesOrderPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -36,7 +37,8 @@ const CreateSalesOrderPage = () => {
     mode: "onBlur",
   });
   // console.log("formdata", payloadData);
-
+  const { formState: { errors } } = form;
+  console.log(errors,"err")
   const handleClientChange = (e: any) => {
     form.setValue("customer", e.value);
     dispatch(fetchClientAddressDetail({ addressID: e.value })).then(
@@ -55,7 +57,7 @@ const CreateSalesOrderPage = () => {
           form.setValue("shipping_pinCode", data?.shipmentAddress?.Pin);
           form.setValue("shipping_address1", data?.shipmentAddress?.Address1);
           form.setValue("shipping_address2", data?.shipmentAddress?.Address2);
-          form.setValue("bill_from_gst", data.gstin);
+          form.setValue("bill_from_gst", data?.gst);
           form.setValue("bill_pan", data.pan);
         }
       }
@@ -63,7 +65,7 @@ const CreateSalesOrderPage = () => {
   };
 
   useEffect(() => {
-    channel?.value && form.setValue("channel", channel?.value);
+    channel?.value && form.setValue("channel", channel?.value as ChannelType);
     if (channel?.value) {
       // Ensure dispatch is called with an object containing clientCode
       dispatch(fetchClient({ clientCode: channel.value })).then(

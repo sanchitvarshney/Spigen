@@ -248,7 +248,7 @@ export const fetchProductData = createAsyncThunk<
     `/products/fetchProductData`,
     { product_key }
   );
-  console.log(response.data,"++++++++++")
+
   if (response.data.status==="success") {
     return response.data.data;
   } else {

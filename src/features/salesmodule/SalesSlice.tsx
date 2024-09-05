@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { spigenAxios } from "@/axiosIntercepter";
-
+import { toast } from "@/components/ui/use-toast";
 
 interface SellRequestPayload {
   headers: {
@@ -18,7 +18,7 @@ interface SellRequestPayload {
     shipping_address1: string;
     shipping_address2: string;
     shipping_pinCode: string;
-    [key: string]: any; 
+    [key: string]: any;
   };
   materials: {
     items: string[];
@@ -44,13 +44,31 @@ export interface ApiResponse<T> {
   message?: string | null;
 }
 
-
 export const createSellRequest = createAsyncThunk<
   ApiResponse<any>,
   SellRequestPayload
 >("/sellRequest/createSellRequest", async (payload) => {
-  const response = await spigenAxios.post("/sellRequest/createSellRequest", payload);
-  return response.data;
+  try {
+    const response = await spigenAxios.post(
+      "/sellRequest/createSellRequest",
+      payload
+    );
+    if (!response.data.success) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: response.data.message,
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: response.data.message,
+      });
+    }
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 interface SellRequest {
@@ -72,7 +90,6 @@ interface SellRequest {
   status: string;
 }
 
-
 interface SellRequestState {
   data: SellRequest[];
   loading: boolean;
@@ -89,12 +106,14 @@ interface FetchSellRequestPayload {
   data: string;
 }
 
-
 export const fetchSellRequestList = createAsyncThunk<
   ApiResponse<SellRequest[]>,
   FetchSellRequestPayload
 >("sellRequest/fetchSellRequestList", async (payload) => {
-  const response = await spigenAxios.post("sellRequest/fetchSellRequestList", payload);
+  const response = await spigenAxios.post(
+    "sellRequest/fetchSellRequestList",
+    payload
+  );
   return response.data;
 });
 
@@ -102,13 +121,12 @@ export const fetchSalesOrderShipmentList = createAsyncThunk<
   ApiResponse<any>,
   { data: string; wise: any }
 >("sellRequest/fetchSalesOrderShipmentList", async (payload) => {
-  const response = await spigenAxios.post("so_challan_shipment/fetchSalesOrderShipmentList", payload);
+  const response = await spigenAxios.post(
+    "so_challan_shipment/fetchSalesOrderShipmentList",
+    payload
+  );
   return response.data;
 });
-
-
-
-
 
 const sellRequestSlice = createSlice({
   name: "sellRequest",
@@ -129,14 +147,12 @@ const sellRequestSlice = createSlice({
         state.error = action.error.message || "Failed to create sell request";
       })
 
-      
-
       .addCase(fetchSellRequestList.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchSellRequestList.fulfilled, (state, action) => {
-        console.log("Data received in slice:", action.payload.data); 
-        state.data = action.payload.data; 
+        console.log("Data received in slice:", action.payload.data);
+        state.data = action.payload.data;
         state.loading = false;
       })
       .addCase(fetchSellRequestList.rejected, (state, action) => {
@@ -144,8 +160,7 @@ const sellRequestSlice = createSlice({
         state.error = action.error?.message || null;
         state.loading = false;
       })
-      
-     
+
       .addCase(fetchSalesOrderShipmentList.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -155,20 +170,18 @@ const sellRequestSlice = createSlice({
           state.data = action.payload.data;
           state.error = null;
         } else {
-          state.error = action.payload.message || "Failed to fetch sales order shipment list";
+          state.error =
+            action.payload.message ||
+            "Failed to fetch sales order shipment list";
         }
         state.loading = false;
       })
       .addCase(fetchSalesOrderShipmentList.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Failed to fetch sales order shipment list";
-      })
-
-
-      
-  
+        state.error =
+          action.error.message || "Failed to fetch sales order shipment list";
+      });
   },
 });
-
 
 export default sellRequestSlice.reducer;

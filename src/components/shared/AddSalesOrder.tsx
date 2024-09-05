@@ -79,7 +79,7 @@ const AddSalesOrder = ({
       cgst: 0,
       sgst: 0,
       igst: 0,
-      dueDate: "__-__-____",
+      dueDate: "",
       // hsnCode: "123456",
       isNew: true,
     };
@@ -171,7 +171,7 @@ const AddSalesOrder = ({
     so_type: rowData.map((component: RowData) => component.type || ""),
     items: rowData.map((component: RowData) => component.material || ""),
     qty: rowData.map((component: RowData) =>
-      component.orderQty === ""
+      component?.orderQty === undefined
         ? null
         : +Number(+Number(component.orderQty).toFixed(2))
     ),
@@ -187,12 +187,15 @@ const AddSalesOrder = ({
     ),
     due_date: rowData.map((component: RowData) => component.dueDate || ""),
     remark: rowData.map((component: RowData) => component.remark || ""),
+    cgst: rowData.map((component: RowData) => component.cgst || 0),
+    sgst: rowData.map((component: RowData) => component.sgst || 0),
+    igst: rowData.map((component: RowData) => component.igst || 0), 
   };
   const payloadData2 = {
-    ...form.getValues(),
+    headers: { ...form?.getValues() },
     materials,
   };
-  console.log(materials, "ddaattaa", form.getValues(), payloadData2);
+  // console.log(materials, "ddaattaa", form.getValues(), payloadData2);
 
   const handleSubmit = () => {
     console.log("Payload Data:", payloadData2); // Debugging log

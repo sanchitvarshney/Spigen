@@ -164,3 +164,5 @@ export interface ClientState {
   states: State2[] | null;
   currency: Currency[] | null;
 }
+
+export type ChannelType = "BLK" | "AMZ" | "AMZ_IMP" | "FLK" | "FLK_VC" | "CROMA" | "B2B";
