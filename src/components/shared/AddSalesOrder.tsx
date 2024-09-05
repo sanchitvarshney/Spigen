@@ -20,11 +20,10 @@ import { AppDispatch, RootState } from "@/store";
 
 import { fetchComponentDetail } from "@/features/salesmodule/createSalesOrderSlice";
 import { createSellRequest } from "@/features/salesmodule/SalesSlice";
-import CurrencyRateDialog from "@/components/ui/CurrencyRateDialog";
+import { useNavigate } from "react-router-dom";
 
 const AddSalesOrder = ({
   setTab,
-  payloadData,
   form,
   rowData,
   setRowData,
@@ -42,7 +41,6 @@ const AddSalesOrder = ({
   const [sgstTotal, setSgstTotal] = useState(0);
   const [igstTotal, setIgstTotal] = useState(0);
   const [search, setSearch] = useState("");
-  const [openCurrencyDialog, setOpenCurrencyDialog] = useState(true);
   const dispatch = useDispatch<AppDispatch>();
   const { productDetails } = useSelector(
     (state: RootState) => state.createSalesOrder
@@ -50,6 +48,7 @@ const AddSalesOrder = ({
   const { componentDetails, currency } = useSelector(
     (state: RootState) => state.createSalesOrder
   );
+  const navigate = useNavigate();
   console.log(form.getValues(), "ddddddd", productDetails);
 
   const gridRef = useRef<AgGridReact<RowData>>(null);
@@ -84,11 +83,6 @@ const AddSalesOrder = ({
       isNew: true,
     };
     setRowData((prevData: any) => [...prevData, newRow]);
-  };
-
-  const handleCurrencyChange = () => {
-    // Open the currency rate dialog
-    setOpenCurrencyDialog(true);
   };
 
   useEffect(() => {
@@ -150,7 +144,6 @@ const AddSalesOrder = ({
           setSearch={setSearch}
           search={search}
           currency={currency}
-          handleCurrencyChange={handleCurrencyChange}
         />
       ),
       datePickerCellRenderer: DatePickerCellRenderer,
@@ -206,8 +199,13 @@ const AddSalesOrder = ({
     }
 
     try {
-      dispatch(createSellRequest(payloadData2));
-      setTab("create");
+      dispatch(createSellRequest(payloadData2)).then(
+        (response: any) => {
+          if (response.meta.requestStatus === "fulfilled") {
+            navigate("/sales/order/create");
+          }
+        })
+      // setTab("create");
     } catch (error) {
       console.error("Error submitting data:", error);
       // Handle error, e.g., show a message to the user

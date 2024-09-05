@@ -189,7 +189,11 @@ const TextInputCellRenderer = (props: any) => {
     api.applyTransaction({ update: [data] });
     updateData(data);
   };
-
+  const submitCurrencyRate = (field: string, value: any, rowId?: any) => {
+    data[field] = value?.rate;
+    console.log(`Updating ${field} with`, value, `for rowId ${rowId}`);
+  };
+  
   const renderContent = () => {
     switch (colDef.field) {
       case "delete":
@@ -314,7 +318,14 @@ const TextInputCellRenderer = (props: any) => {
               onChange={(e) => handleCurrencyChange(e.value)}
               // value={value}
             />
-                  <CurrencyRateDialog open={openCurrencyDialog} onClose={() => setOpenCurrencyDialog(false)} />
+              <CurrencyRateDialog
+              open={openCurrencyDialog}
+              onClose={() => setOpenCurrencyDialog(false)}
+              currency={data.currency || ""}
+              price={parseFloat(data.rate) || 0}
+              inputHandler={submitCurrencyRate}
+              rowId={data.rowId}
+            />
           </>
         );
       case "type":
