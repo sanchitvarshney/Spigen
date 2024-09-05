@@ -125,6 +125,18 @@ const router = createBrowserRouter([
     ),
     path: "/sales/order/create",
   },
+  {
+    element: (
+      <Protected authentication>
+        <MainLayout>
+          <SOLayout>
+           <CreateSalesOrderPage/>
+          </SOLayout>
+        </MainLayout>
+      </Protected>
+    ),
+    path: "/sales/order/update/:id",
+  },
   
   {
     element: (

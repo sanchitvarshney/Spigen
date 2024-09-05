@@ -1,7 +1,8 @@
 export interface RowData {
-    // id: number;
+    index: number;
     req_id: string;
     customer_code: string;
+    channel: string;
     customer: string;
     cost_center: string;
     delivery_term: string;

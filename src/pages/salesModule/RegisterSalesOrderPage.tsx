@@ -16,6 +16,7 @@ import { RootState } from "@/store";
 import CustomLoadingCellRenderer from "@/config/agGrid/CustomLoadingCellRenderer";
 import { columnDefs } from "@/config/agGrid/SalesOrderRegisterTableColumns";
 import { useToast } from "@/components/ui/use-toast";
+import FullPageLoading from "@/components/shared/FullPageLoading";
 
 const { RangePicker } = DatePicker;
 const dateFormat = "YYYY/MM/DD";
@@ -39,7 +40,7 @@ const RegisterSalesOrderPage: React.FC = () => {
   const { toast } = useToast();
   const [wise, setWise] = useState<string>("DATE");
   const dispatch = useDispatch();
- const { data: rowData,  } = useSelector((state: RootState) => state.sellRequest);
+ const { data: rowData, loading } = useSelector((state: RootState) => state.sellRequest);
 
 
 
@@ -88,21 +89,22 @@ const RegisterSalesOrderPage: React.FC = () => {
       console.log("Dispatching fetchSellRequestList");
       dispatch(fetchSellRequestList({ wise, data: "" }) as any);
     }
-  }, [wise, dispatch]);
+  }, [wise]);
   
   
   const loadingCellRenderer = useCallback(CustomLoadingCellRenderer, []);
 
-  useEffect(() => {
-    if (wise === "DATE") {
-      dispatch(fetchSellRequestList({ wise, data: "" }) as any);
-    }
-  }, [wise, dispatch]);
+  // useEffect(() => {
+  //   if (wise === "DATE") {
+  //     dispatch(fetchSellRequestList({ wise, data: "" }) as any);
+  //   }
+  // }, [wise]);
 
  
  
   return (
     <Wrapper className="h-[calc(100vh-100px)] grid grid-cols-[350px_1fr]">
+      {loading && <FullPageLoading />}
       <div className="bg-[#fff]">
         <div className="h-[49px] border-b border-slate-300 flex items-center gap-[10px] text-slate-600 font-[600] bg-hbg px-[10px]">
           <Filter className="h-[20px] w-[20px]" />
@@ -174,6 +176,7 @@ const RegisterSalesOrderPage: React.FC = () => {
           pagination={true}
           paginationPageSize={10}
           paginationAutoPageSize={true}
+          suppressCellFocus={true}
         />
       </div>
     </Wrapper>

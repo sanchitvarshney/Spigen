@@ -90,7 +90,6 @@ const TextInputCellRenderer = (props: any) => {
   }
 
   const handleChange = (value: string) => {
-    // debugger;
     const newValue = value;
     data[colDef.field] = value; // Save ID in the data
     if (colDef.field === "material") {
@@ -193,7 +192,7 @@ const TextInputCellRenderer = (props: any) => {
     data[field] = value?.rate;
     console.log(`Updating ${field} with`, value, `for rowId ${rowId}`);
   };
-  
+
   const renderContent = () => {
     switch (colDef.field) {
       case "delete":

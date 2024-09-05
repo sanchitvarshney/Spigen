@@ -61,3 +61,11 @@
   align-items: center; /* Center vertically */
   height: 100%; /* Ensure full height for vertical centering */
 }
+
+.css-dev-only-do-not-override-p8b6i.ant-btn.ant-btn-icon-only {
+  border: none;
+}
+
+.ant-select-selector {
+  border-color: rgb(148 163 184) !important;
+}

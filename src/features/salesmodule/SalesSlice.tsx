@@ -58,11 +58,13 @@ export const createSellRequest = createAsyncThunk<
         variant: "destructive",
         title: "Error",
         description: response.data.message,
+        className: "bg-red-600 text-white items-center",
       });
     } else {
       toast({
         title: "Success",
         description: response.data.message,
+        className: "bg-green-600 text-white items-center",
       });
     }
     return response.data;
@@ -72,6 +74,7 @@ export const createSellRequest = createAsyncThunk<
 });
 
 interface SellRequest {
+  index: number;
   hasInvoice: boolean;
   req_id: string;
   channel: string;
@@ -92,18 +95,27 @@ interface SellRequest {
 
 interface SellRequestState {
   data: SellRequest[];
+  updateData: [];
+  sellRequestDetails: [];
   loading: boolean;
   error: string | null;
 }
 
 const initialState: SellRequestState = {
   data: [],
+  updateData: [],
+  sellRequestDetails: [],
   loading: false,
   error: null,
 };
 interface FetchSellRequestPayload {
   wise: any;
   data: string;
+}
+
+interface CancelPayload {
+  remark: string;
+  so: string;
 }
 
 export const fetchSellRequestList = createAsyncThunk<
@@ -116,6 +128,88 @@ export const fetchSellRequestList = createAsyncThunk<
   );
   return response.data;
 });
+
+export const fetchDataForUpdate = createAsyncThunk(
+  "client/fetchData",
+  async ({ clientCode }: { clientCode: string }, { rejectWithValue }) => {
+    try {
+      console.log(clientCode);
+      const response = await spigenAxios.post<any>(
+        "/sellRequest/fetchData4Update",
+        { sono: clientCode }
+      );
+
+      if (!response.data) {
+        throw new Error("No data received");
+      }
+
+      // Return the entire response as expected by the fulfilled case
+      return response.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        // Handle error using rejectWithValue
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("An unknown error occurred");
+    }
+  }
+);
+
+export const cancelSalesOrder = createAsyncThunk(
+  "client/cancelSalesOrder",
+  async (payload: CancelPayload, { rejectWithValue }) => {
+    try {
+      const response = (await spigenAxios.post<any>(
+        "/sellRequest/cancelSO",
+        payload
+      )) as any;
+
+      if (response?.data?.success) {
+        toast({
+          title: response?.data?.message,
+          className: "bg-green-600 text-white items-center",
+        });
+      } else {
+        toast({
+          title: response.data.message,
+          className: "bg-red-600 text-white items-center",
+        });
+      }
+
+      return response.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("An unknown error occurred");
+    }
+  }
+);
+
+export const fetchSellRequestDetails = createAsyncThunk(
+  "client/fetchSellRequestDetails",
+  async ({ req_id }: { req_id: string }, { rejectWithValue }) => {
+    try {
+      const response = await spigenAxios.post<any>(
+        "/sellRequest/fetchSellRequestDetails",
+        { req_id }
+      );
+
+      if (!response.data) {
+        throw new Error("No data received");
+      }
+
+      // Return the entire response as expected by the fulfilled case
+      return response.data?.message;
+    } catch (error) {
+      if (error instanceof Error) {
+        // Handle error using rejectWithValue
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("An unknown error occurred");
+    }
+  }
+);
 
 export const fetchSalesOrderShipmentList = createAsyncThunk<
   ApiResponse<any>,
@@ -157,6 +251,42 @@ const sellRequestSlice = createSlice({
       })
       .addCase(fetchSellRequestList.rejected, (state, action) => {
         console.error("Fetch failed:", action.error);
+        state.error = action.error?.message || null;
+        state.loading = false;
+      })
+
+      .addCase(fetchDataForUpdate.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchDataForUpdate.fulfilled, (state, action) => {
+        state.updateData = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(fetchDataForUpdate.rejected, (state, action) => {
+        state.error = action.error?.message || null;
+        state.loading = false;
+      })
+
+      .addCase(cancelSalesOrder.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(cancelSalesOrder.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(cancelSalesOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+
+      .addCase(fetchSellRequestDetails.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchSellRequestDetails.fulfilled, (state, action) => {
+        state.sellRequestDetails = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchSellRequestDetails.rejected, (state, action) => {
         state.error = action.error?.message || null;
         state.loading = false;
       })
