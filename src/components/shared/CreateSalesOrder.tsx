@@ -68,18 +68,18 @@ const CreateSalesOrder: React.FC<Props> = ({
   }, [form]);
 
   const handleBillingAddressChange = (e: any) => {
-    form.setValue("bill_to_label", e.label);
+    form.setValue("bill_to_label", e.label, { shouldValidate: true, shouldDirty: true });
     const billingCode = e.value;
-    form.setValue("bill_id", billingCode);
+    form.setValue("bill_id", billingCode, { shouldValidate: true, shouldDirty: true });
 
     dispatch(fetchBillingAddress({ billing_code: billingCode })).then(
       (response: any) => {
         if (response.meta.requestStatus === "fulfilled") {
           const billingData = response.payload;
-          form.setValue("billing_address1", billingData.billing_address1);
-          form.setValue("billing_address2", billingData.billing_address2);
-          form.setValue("bill_from_gst", billingData.gstin);
-          form.setValue("bill_pan", billingData.pan);
+          form.setValue("billing_address1", billingData.billing_address1, { shouldValidate: true, shouldDirty: true });
+          form.setValue("billing_address2", billingData.billing_address2, { shouldValidate: true, shouldDirty: true });
+          form.setValue("bill_from_gst", billingData.gstin, { shouldValidate: true, shouldDirty: true });
+          form.setValue("bill_pan", billingData.pan, { shouldValidate: true, shouldDirty: true });
         }
       }
     );
@@ -95,39 +95,39 @@ const CreateSalesOrder: React.FC<Props> = ({
   ) => {
     if (e.target.checked) {
       form.setValue("isSameClientAdd", "Y");
-      form.setValue("shipping_id", form.getValues("bill_name"));
-      form.setValue("shipping_pan", "");
-      form.setValue("shipping_pinCode", "");
-      form.setValue("shipping_gstin", form.getValues("customer_gstin"));
+      form.setValue("shipping_id", form.getValues("bill_name"), { shouldValidate: true, shouldDirty: true });
+      form.setValue("shipping_pan", "", { shouldValidate: true, shouldDirty: true });
+      form.setValue("shipping_pinCode", "", { shouldValidate: true, shouldDirty: true });
+      form.setValue("shipping_gstin", form.getValues("customer_gstin"), { shouldValidate: true, shouldDirty: true });
       // form.setValue("shipping_state", form.getValues("place_of_supply"));
-      form.setValue("shipping_address1", form.getValues("customer_address1"));
-      form.setValue("shipping_address2", form.getValues("customer_address2"));
+      form.setValue("shipping_address1", form.getValues("customer_address1"), { shouldValidate: true, shouldDirty: true });
+      form.setValue("shipping_address2", form.getValues("customer_address2"), { shouldValidate: true, shouldDirty: true });
     }
   };
 
   const handleClientSelected = (e: any) => {
-    form.setValue("bill_name", e.label);
+    form.setValue("bill_name", e.label, { shouldValidate: true, shouldDirty: true });
     const bill_to_name = e.value;
-    form.setValue("bill_id", bill_to_name);
+    form.setValue("bill_id", bill_to_name, { shouldValidate: true, shouldDirty: true });
 
     dispatch(fetchClientDetails(bill_to_name)).then((response: any) => {
       if (response.meta.requestStatus === "fulfilled") {
         const data = response.payload[0];
-        form.setValue("customer", data.clientCode);
-        form.setValue("customer_branch", data.addressID);
-        form.setValue("customer_gstin", data.gst);
-        form.setValue("place_of_supply", data.state?.label);
-        form.setValue("customer_address1", data.addressLine1);
-        form.setValue("customer_address2", data.addressLine2);
-        form.setValue("shipping_id", data?.shipmentAddress?.Company);
-        form.setValue("shipping_pan", data?.shipmentAddress?.Pan);
-        form.setValue("shipping_gstin", data?.shipmentAddress?.Gstin);
-        form.setValue("shipping_state", data?.shipmentAddress?.State?.value);
-        form.setValue("shipping_pinCode", data?.shipmentAddress?.Pin);
-        form.setValue("shipping_address1", data?.shipmentAddress?.Address1);
-        form.setValue("shipping_address2", data?.shipmentAddress?.Address2);
-        form.setValue("bill_from_gst", data.gstin);
-        form.setValue("bill_pan", data.pan);
+        form.setValue("customer", data.clientCode, { shouldValidate: true, shouldDirty: true });
+        form.setValue("customer_branch", data.addressID, { shouldValidate: true, shouldDirty: true });
+        form.setValue("customer_gstin", data.gst, { shouldValidate: true, shouldDirty: true });
+        form.setValue("place_of_supply", data.state?.label, { shouldValidate: true, shouldDirty: true });
+        form.setValue("customer_address1", data.addressLine1, { shouldValidate: true, shouldDirty: true });
+        form.setValue("customer_address2", data.addressLine2, { shouldValidate: true, shouldDirty: true });
+        form.setValue("shipping_id", data?.shipmentAddress?.Company, { shouldValidate: true, shouldDirty: true });
+        form.setValue("shipping_pan", data?.shipmentAddress?.Pan, { shouldValidate: true, shouldDirty: true });
+        form.setValue("shipping_gstin", data?.shipmentAddress?.Gstin, { shouldValidate: true, shouldDirty: true });
+        form.setValue("shipping_state", data?.shipmentAddress?.State?.value, { shouldValidate: true, shouldDirty: true });
+        form.setValue("shipping_pinCode", data?.shipmentAddress?.Pin, { shouldValidate: true, shouldDirty: true });
+        form.setValue("shipping_address1", data?.shipmentAddress?.Address1, { shouldValidate: true, shouldDirty: true });
+        form.setValue("shipping_address2", data?.shipmentAddress?.Address2, { shouldValidate: true, shouldDirty: true });
+        form.setValue("bill_from_gst", data.gstin, { shouldValidate: true, shouldDirty: true });
+        form.setValue("bill_pan", data.pan, { shouldValidate: true, shouldDirty: true });
         form.setValue("isSameClientAdd", "N");
       }
     });

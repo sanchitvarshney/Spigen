@@ -42,8 +42,6 @@ const RegisterSalesOrderPage: React.FC = () => {
   const dispatch = useDispatch();
  const { data: rowData, loading } = useSelector((state: RootState) => state.sellRequest);
 
-
-
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });

@@ -25,13 +25,13 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
   const { sellRequestDetails } = useSelector(
     (state: RootState) => state.sellRequest
   );
-  
-console.log(sellRequestDetails,"rr")
+
   const handleUpdate = (row: any) => {
-    const soId = row.req_id; // Replace with actual key for employee ID
+    const soId = row?.req_id; // Replace with actual key for employee ID
     window.open(`/sales/order/update/${soId.replaceAll("/", "_")}`, "_blank");
     dispatch(fetchDataForUpdate({ clientCode: soId }));
   };
+
   const showCancelModal = () => {
     setIsModalVisible(true);
   };
@@ -39,6 +39,7 @@ console.log(sellRequestDetails,"rr")
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+
   const handleMaterialListModalClose = () =>
     setIsMaterialListModalVisible(false);
 
@@ -46,8 +47,7 @@ console.log(sellRequestDetails,"rr")
     dispatch(fetchSellRequestDetails({ req_id: row.req_id }));
     setIsMaterialListModalVisible(true);
   };
-  const data = useSelector((state: RootState) => state);
-  console.log(data.sellRequest);
+
   const handleOk = () => {
     form
       .validateFields()
@@ -67,21 +67,34 @@ console.log(sellRequestDetails,"rr")
 
   const menu = (
     <Menu>
-      <Menu.Item key="update" onClick={() => handleUpdate(row)}>
-        Update
-      </Menu.Item>
-      <Menu.Item key="cancel" onClick={showCancelModal}>
-        Cancel
-      </Menu.Item>
-      <Menu.Item key="print" onClick={() => handleshowMaterialList(row)}>
-        Material List
-      </Menu.Item>
-      <Menu.Item key="createInvoice" onClick={() => console.log("print", row)}>
-        Create Invoice
-      </Menu.Item>
-      <Menu.Item key="otherAction" onClick={() => console.log("print", row)}>
-        Print
-      </Menu.Item>
+      {row.status === "Cancelled" ? (
+        <>
+          <Menu.Item key="materialList" onClick={() => handleshowMaterialList(row)}>
+            Material List
+          </Menu.Item>
+          <Menu.Item key="print" onClick={() => console.log("Print", row)}>
+            Print
+          </Menu.Item>
+        </>
+      ) : (
+        <>
+          <Menu.Item key="update" onClick={() => handleUpdate(row)}>
+            Update
+          </Menu.Item>
+          <Menu.Item key="cancel" onClick={showCancelModal}>
+            Cancel
+          </Menu.Item>
+          <Menu.Item key="materialList" onClick={() => handleshowMaterialList(row)}>
+            Material List
+          </Menu.Item>
+          <Menu.Item key="createInvoice" onClick={() => console.log("Create Invoice", row)}>
+            Create Invoice
+          </Menu.Item>
+          <Menu.Item key="print" onClick={() => console.log("Print", row)}>
+            Print
+          </Menu.Item>
+        </>
+      )}
     </Menu>
   );
 
@@ -121,6 +134,9 @@ console.log(sellRequestDetails,"rr")
     </>
   );
 };
+
+export default ActionMenu;
+
 export const columnDefs: ColDef<RowData>[] = [
   {
     headerName: "Actions",

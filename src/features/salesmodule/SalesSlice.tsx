@@ -142,7 +142,6 @@ export const fetchDataForUpdate = createAsyncThunk(
       if (!response.data) {
         throw new Error("No data received");
       }
-
       // Return the entire response as expected by the fulfilled case
       return response.data;
     } catch (error) {
@@ -259,7 +258,7 @@ const sellRequestSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchDataForUpdate.fulfilled, (state, action) => {
-        state.updateData = action.payload.data;
+        state.updateData = action.payload?.data;
         state.loading = false;
       })
       .addCase(fetchDataForUpdate.rejected, (state, action) => {

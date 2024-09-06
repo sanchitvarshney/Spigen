@@ -17,7 +17,7 @@ const MaterialListModal: React.FC<MaterialListModalProps> = ({
   const columnDefs: ColDef[] = [
     { headerName: "#", valueGetter: "node.rowIndex + 1", maxWidth: 50 },
     { headerName: "Item Type", field: "so_type" },
-    { headerName: "Item Name", field: "item_name" ,maxWidth:650},
+    { headerName: "Item Name", field: "item_name" ,maxWidth:800},
     { headerName: "Item Details", field: "item_details" },
     { headerName: "SKU Code", field: "item_code" },
     { headerName: "Qty", field: "qty" },
@@ -27,7 +27,7 @@ const MaterialListModal: React.FC<MaterialListModalProps> = ({
     { headerName: "HSN SAC", field: "hsn_sac" },
     { headerName: "Remark", field: "remark" },
   ];
-  console.log(sellRequestDetails);
+
   return (
     <Modal
       title="Material List"
@@ -35,6 +35,7 @@ const MaterialListModal: React.FC<MaterialListModalProps> = ({
       onCancel={onClose}
       footer={null}
       width={2000} // Adjust modal width as needed
+      height={400}
     >
       <div className="ag-theme-quartz h-[calc(100vh-140px)]">
         <AgGridReact

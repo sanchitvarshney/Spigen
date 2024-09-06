@@ -19,55 +19,63 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RowData } from "@/config/agGrid/SalseOrderCreateTableColumns";
 import { ChannelType } from "@/types/createSalesOrderTypes";
+import { useParams } from "react-router-dom";
+import { fetchDataForUpdate } from "@/features/salesmodule/SalesSlice";
 
 const CreateSalesOrderPage = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const params = useParams();
+  const pathname = window.location.pathname;
   const [tabvalue, setTabvalue] = useState<string>("create");
-  // const [data, setData] = useState<any>();
   const [payloadData, setPayloadData] = useState<any>(null);
   const [channel, setChannel] = useState<{
     label: string;
     value: string;
   } | null>(null);
   const [rowData, setRowData] = useState<RowData[]>([]);
-  // type CreateSalesOrderForm = z.infer<typeof createSalesFormSchema>;
   const data = useSelector((state: RootState) => state.createSalesOrder);
+  const updateData= useSelector((state: RootState) => state);
+  console.log(updateData,"dd")
   const form = useForm<z.infer<typeof createSalesFormSchema>>({
     resolver: zodResolver(createSalesFormSchema),
     mode: "onBlur",
   });
-  // console.log("formdata", payloadData);
-  const { formState: { errors } } = form;
-  console.log(errors,"err")
+
   const handleClientChange = (e: any) => {
-    form.setValue("customer", e.value);
+    form.setValue("customer", e.value, { shouldValidate: true, shouldDirty: true });
     dispatch(fetchClientAddressDetail({ addressID: e.value })).then(
       (response: any) => {
         if (response.meta.requestStatus === "fulfilled") {
           const data = response.payload;
-          form.setValue("customer_branch", data.label);
-          form.setValue("customer_gstin", data.gst);
-          form.setValue("place_of_supply", data.state?.label);
-          form.setValue("customer_address1", data.addressLine1);
-          form.setValue("customer_address2", data.addressLine2);
-          form.setValue("shipping_id", data?.shipmentAddress?.Company);
-          form.setValue("shipping_pan", data?.shipmentAddress?.Pan);
-          form.setValue("shipping_gstin", data?.shipmentAddress?.Gstin);
-          form.setValue("shipping_state", data?.shipmentAddress?.State?.value);
-          form.setValue("shipping_pinCode", data?.shipmentAddress?.Pin);
-          form.setValue("shipping_address1", data?.shipmentAddress?.Address1);
-          form.setValue("shipping_address2", data?.shipmentAddress?.Address2);
-          form.setValue("bill_from_gst", data?.gst);
-          form.setValue("bill_pan", data.pan);
+          form.setValue("customer_branch", data.label, { shouldValidate: true, shouldDirty: true });
+          form.setValue("customer_gstin", data.gst, { shouldValidate: true, shouldDirty: true });
+          form.setValue("place_of_supply", data.state?.label, { shouldValidate: true, shouldDirty: true });
+          form.setValue("customer_address1", data.addressLine1, { shouldValidate: true, shouldDirty: true });
+          form.setValue("customer_address2", data.addressLine2, { shouldValidate: true, shouldDirty: true });
+          form.setValue("shipping_id", data?.shipmentAddress?.Company, { shouldValidate: true, shouldDirty: true });
+          form.setValue("shipping_pan", data?.shipmentAddress?.Pan, { shouldValidate: true, shouldDirty: true });
+          form.setValue("shipping_gstin", data?.shipmentAddress?.Gstin, { shouldValidate: true, shouldDirty: true });
+          form.setValue("shipping_state", data?.shipmentAddress?.State?.value, { shouldValidate: true, shouldDirty: true });
+          form.setValue("shipping_pinCode", data?.shipmentAddress?.Pin, { shouldValidate: true, shouldDirty: true });
+          form.setValue("shipping_address1", data?.shipmentAddress?.Address1, { shouldValidate: true, shouldDirty: true });
+          form.setValue("shipping_address2", data?.shipmentAddress?.Address2, { shouldValidate: true, shouldDirty: true });
+          form.setValue("bill_from_gst", data?.gst, { shouldValidate: true, shouldDirty: true });
+          form.setValue("bill_pan", data.pan, { shouldValidate: true, shouldDirty: true });
         }
       }
     );
   };
 
+useEffect(() => {
+  if (pathname?.includes("update") && params?.id) {
+    const soId = (params.id as string).replace(/_/g, "/");
+    dispatch(fetchDataForUpdate({ clientCode: soId }));
+  }
+}, [pathname,params]);
+
   useEffect(() => {
-    channel?.value && form.setValue("channel", channel?.value as ChannelType);
+    channel?.value && form.setValue("channel", channel?.value as ChannelType, { shouldValidate: true, shouldDirty: true });
     if (channel?.value) {
-      // Ensure dispatch is called with an object containing clientCode
       dispatch(fetchClient({ clientCode: channel.value })).then(
         (response: any) => {
           console.log("Fetch Client Response:", response);
