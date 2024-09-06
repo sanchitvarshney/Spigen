@@ -11,7 +11,7 @@ import styled from "styled-components";
 import { DatePicker, Space } from "antd";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { fetchSellRequestList } from "@/features/salesmodule/SalesSlice";
+import { fetchSellRequestList, setDateRange } from "@/features/salesmodule/SalesSlice";
 import { RootState } from "@/store"; 
 import CustomLoadingCellRenderer from "@/config/agGrid/CustomLoadingCellRenderer";
 import { columnDefs } from "@/config/agGrid/SalesOrderRegisterTableColumns";
@@ -54,8 +54,10 @@ const RegisterSalesOrderPage: React.FC = () => {
       const startDate = dateRange[0].toLocaleDateString("en-GB").split("/").reverse().join("-");
       const endDate = dateRange[1].toLocaleDateString("en-GB").split("/").reverse().join("-");
       dataString = `${startDate}-${endDate}`;
+      dispatch(setDateRange(dataString as any));
     } else if (wise === "SONO" && soWise) {
       dataString = soWise;
+      dispatch(setDateRange(dataString as any));
     }
   
     try {

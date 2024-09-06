@@ -11,6 +11,7 @@ export interface RowData {
     create_by: string;
     create_dt:string;
     bill_id: string;
+    hasInvoice: boolean
   }
 export type Payload = {
   wise: string;

@@ -9,6 +9,7 @@ import {
   createInvoice,
   fetchDataForUpdate,
   fetchSellRequestDetails,
+  fetchSellRequestList,
   printSellOrder,
 } from "@/features/salesmodule/SalesSlice";
 import { useState } from "react";
@@ -30,6 +31,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
   const { sellRequestDetails } = useSelector(
     (state: RootState) => state.sellRequest
   );
+  const dateRange = useSelector((state: RootState) => state.sellRequest.dateRange);
 
   const handleUpdate = (row: any) => {
     const soId = row?.req_id; // Replace with actual key for employee ID
@@ -64,6 +66,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
         dispatch(cancelSalesOrder(payload));
         setIsModalVisible(false);
         form.resetFields(); // Clear the form fields after submission
+        dispatch(fetchSellRequestList({ wise:"DATE", data: dateRange }) as any);
       })
       .catch((errorInfo) => {
         console.error("Validation Failed:", errorInfo);
@@ -88,6 +91,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
         };
         dispatch(createInvoice(payload));
         setIsInvoiceModalVisible(false);
+        dispatch(fetchSellRequestList({ wise:"DATE", data: dateRange }) as any);
         invoiceForm.resetFields();
       })
       .catch((errorInfo) => {
@@ -123,7 +127,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
         </>
       ) : (
         <>
-          <Menu.Item key="update" onClick={() => handleUpdate(row)}>
+          <Menu.Item key="update" onClick={() => handleUpdate(row)} disabled={row.hasInvoice == true}>
             Update
           </Menu.Item>
           <Menu.Item key="cancel" onClick={showCancelModal}>
@@ -135,7 +139,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
           >
             Material List
           </Menu.Item>
-          <Menu.Item key="createInvoice" onClick={showInvoiceModal}>
+          <Menu.Item key="createInvoice" onClick={showInvoiceModal} disabled={row.hasInvoice == true}>
             Create Invoice
           </Menu.Item>
           <Menu.Item key="print" onClick={() => handlePrintOrder(row?.req_id)}>

@@ -97,6 +97,7 @@ interface SellRequestState {
   data: SellRequest[];
   updateData: [];
   sellRequestDetails: [];
+  dateRange: any;
   loading: boolean;
   error: string | null;
 }
@@ -105,6 +106,7 @@ const initialState: SellRequestState = {
   data: [],
   updateData: [],
   sellRequestDetails: [],
+  dateRange: null,
   loading: false,
   error: null,
 };
@@ -294,7 +296,11 @@ export const createInvoice = createAsyncThunk<ApiResponse<any>, InvoicePayload>(
 const sellRequestSlice = createSlice({
   name: "sellRequest",
   initialState,
-  reducers: {},
+  reducers: {
+    setDateRange(state, action: any) {
+      state.dateRange = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createSellRequest.pending, (state) => {
@@ -314,7 +320,6 @@ const sellRequestSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchSellRequestList.fulfilled, (state, action) => {
-        console.log("Data received in slice:", action.payload.data);
         state.data = action.payload.data;
         state.loading = false;
       })
@@ -405,4 +410,5 @@ const sellRequestSlice = createSlice({
   },
 });
 
+export const { setDateRange } = sellRequestSlice.actions;
 export default sellRequestSlice.reducer;

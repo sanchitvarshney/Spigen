@@ -34,7 +34,7 @@ const CreateSalesOrderPage = () => {
   } | null>(null);
   const [rowData, setRowData] = useState<RowData[]>([]);
   const data = useSelector((state: RootState) => state.createSalesOrder);
-  const updateData= useSelector((state: RootState) => state);
+  const {updateData}= useSelector((state: RootState) => state.sellRequest);
   console.log(updateData,"dd")
   const form = useForm<z.infer<typeof createSalesFormSchema>>({
     resolver: zodResolver(createSalesFormSchema),
@@ -65,6 +65,101 @@ const CreateSalesOrderPage = () => {
       }
     );
   };
+
+  useEffect(() => {
+    if (updateData) {
+      const {
+        channel,
+        client, // Default to empty array if client is undefined
+        bill,
+        ship,
+        materials
+      }:any = updateData;
+      console.log(channel,"channel",client,"client",bill,"bill",ship,"ship")
+      // Set channel value
+      form.setValue("channel", channel?.channel, { shouldValidate: true, shouldDirty: true });
+      form.setValue("amz_fba_app", channel?.amz_fba_app, { shouldValidate: true, shouldDirty: true });
+      form.setValue("amz_fba_ship_id", channel?.amz_fba_ship_id, { shouldValidate: true, shouldDirty: true });
+      form.setValue("amz_hawb", channel?.amz_hawb, { shouldValidate: true, shouldDirty: true });
+      form.setValue("b2b_order_id", channel?.b2b_order_id, { shouldValidate: true, shouldDirty: true });
+      form.setValue("blkt_vendor_code", channel?.blkt_vendor_code, { shouldValidate: true, shouldDirty: true });
+      form.setValue("flk_consg_id", channel?.flk_consg_id, { shouldValidate: true, shouldDirty: true });
+      form.setValue("po_number", channel?.po_number, { shouldValidate: true, shouldDirty: true });
+
+      if (client?.length > 0) {
+        const clientData = client[0];
+        form.setValue("bill_name", clientData.clientname, { shouldValidate: true, shouldDirty: true });
+        form.setValue("bill_id", clientData.clientcode?.value  , { shouldValidate: true, shouldDirty: true });
+        form.setValue("customer", clientData.clientcode?.value  , { shouldValidate: true, shouldDirty: true });
+        form.setValue("customer_branch", clientData.clientbranch?.value  , { shouldValidate: true, shouldDirty: true });
+        form.setValue("customer_address1", clientData.clientaddress1  , { shouldValidate: true, shouldDirty: true });
+        form.setValue("customer_address2", clientData.clientaddress2  , { shouldValidate: true, shouldDirty: true });
+        form.setValue("customer_gstin", clientData.clientgst  , { shouldValidate: true, shouldDirty: true });
+        form.setValue("place_of_supply", clientData.place_of_supply  , { shouldValidate: true, shouldDirty: true });
+      }
+          form.setValue("bill_to_label", bill?.addrbillname, { shouldValidate: true, shouldDirty: true });
+          form.setValue("bill_id", bill?.addrbillid, { shouldValidate: true, shouldDirty: true });
+          form.setValue("billing_address1", bill?.billaddress1, { shouldValidate: true, shouldDirty: true });
+          form.setValue("billing_address2", bill?.billaddress2, { shouldValidate: true, shouldDirty: true });
+          form.setValue("bill_from_gst", bill?.billgstid, { shouldValidate: true, shouldDirty: true });
+          form.setValue("bill_pan", bill?.billpanno, { shouldValidate: true, shouldDirty: true });
+      if (ship?.isSameClientAdd === "Y") {
+        form.setValue("isSameClientAdd", "Y", { shouldValidate: true, shouldDirty: true });
+        form.setValue("shipping_address1", form.getValues("customer_address1")  , { shouldValidate: true, shouldDirty: true });
+        form.setValue("shipping_address2", form.getValues("customer_address2")  , { shouldValidate: true, shouldDirty: true });
+        form.setValue("shipping_gstin", form.getValues("customer_gstin")  , { shouldValidate: true, shouldDirty: true });
+      } else {
+        form.setValue("isSameClientAdd", "N", { shouldValidate: true, shouldDirty: true });
+        form.setValue("shipping_id", ship?.addrshipid  , { shouldValidate: true, shouldDirty: true });
+        form.setValue("shipping_pan", ship?.shippanno  , { shouldValidate: true, shouldDirty: true });
+        form.setValue("shipping_address1", ship?.shipaddress1  , { shouldValidate: true, shouldDirty: true });
+        form.setValue("shipping_address2", ship?.shipaddress2  , { shouldValidate: true, shouldDirty: true });
+        form.setValue("shipping_gstin", ship?.shipgstid  , { shouldValidate: true, shouldDirty: true });
+        form.setValue("shipping_pinCode", ship?.pin  , { shouldValidate: true, shouldDirty: true });
+        form.setValue("shipping_state", ship?.state?.value  , { shouldValidate: true, shouldDirty: true });
+      }
+    
+    const updatedData: RowData[] = materials?.map((material: any) => ({
+      type: material.so_type?.value || "product",
+      material: material.item_code || "",
+      materialDescription: material.item_name || "",
+      orderQty: material.orderqty || 1,
+      currency: material.currency || "364907247",
+      gstType: material.gsttype?.[0]?.id || "I",
+      localValue: parseFloat(material.taxablevalue) || 0.0,
+      foreignValue: parseFloat(material.exchangerate) || 0,
+      cgst: parseFloat(material.cgst) || 0,
+      sgst: parseFloat(material.sgst) || 0,
+      igst: parseFloat(material.igst) || 0,
+      dueDate: material.due_date || "",
+      isNew: false,
+    }));
+    setRowData(updatedData);
+  }
+  }, [updateData, form]);
+
+  // useEffect(() => {
+  //   // Update rowData when productDetails or any other relevant data changes
+  //   if (updateData?.materials) {
+  //     const updatedData: RowData[] = updateData.materials.map((material: any) => ({
+  //       type: material.so_type?.value || "product",
+  //       material: material.item_code || "",
+  //       materialDescription: material.item_name || "",
+  //       orderQty: material.orderqty || 1,
+  //       currency: material.currency || "364907247",
+  //       gstType: material.gsttype?.[0]?.id || "I",
+  //       localValue: parseFloat(material.taxablevalue) || 0.0,
+  //       foreignValue: parseFloat(material.exchangerate) || 0,
+  //       cgst: parseFloat(material.cgst) || 0,
+  //       sgst: parseFloat(material.sgst) || 0,
+  //       igst: parseFloat(material.igst) || 0,
+  //       dueDate: material.due_date || "",
+  //       isNew: false,
+  //     }));
+
+  //     setRowData(updatedData);
+  //   }
+  // }, [productDetails, setRowData]);
 
 useEffect(() => {
   if (pathname?.includes("update") && params?.id) {
