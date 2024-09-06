@@ -10,6 +10,7 @@ export interface RowData {
     status: string;
     create_by: string;
     create_dt:string;
+    bill_id: string;
   }
 export type Payload = {
   wise: string;

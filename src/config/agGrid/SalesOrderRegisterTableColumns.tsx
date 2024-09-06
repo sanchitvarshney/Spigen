@@ -6,11 +6,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
 import {
   cancelSalesOrder,
+  createInvoice,
   fetchDataForUpdate,
   fetchSellRequestDetails,
+  printSellOrder,
 } from "@/features/salesmodule/SalesSlice";
 import { useState } from "react";
 import MaterialListModal from "@/config/agGrid/registerModule/MaterialListModal";
+import { printFunction } from "@/General";
 
 interface ActionMenuProps {
   row: RowData; // Use the RowData type here
@@ -19,9 +22,11 @@ interface ActionMenuProps {
 const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isInvoiceModalVisible, setIsInvoiceModalVisible] = useState(false);
   const [isMaterialListModalVisible, setIsMaterialListModalVisible] =
     useState(false);
   const [form] = Form.useForm();
+  const [invoiceForm] = Form.useForm(); // Form instance for the invoice modal
   const { sellRequestDetails } = useSelector(
     (state: RootState) => state.sellRequest
   );
@@ -64,12 +69,52 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
         console.error("Validation Failed:", errorInfo);
       });
   };
+  const showInvoiceModal = () => {
+    setIsInvoiceModalVisible(true);
+  };
+  const handleInvoiceModalOk = () => {
+    invoiceForm
+      .validateFields()
+      .then((values) => {
+        const payload = {
+          bill_id: row.bill_id,
+          client_addr_id: values.client_addr_id,
+          client_id: row.customer_code,
+          invoice_no: values.invoice_no,
+          nos_of_boxes: values.nos_of_boxes,
+          remark: values.remark,
+          shipment_id: [row.req_id],
+          so_id: [row.req_id],
+        };
+        dispatch(createInvoice(payload));
+        setIsInvoiceModalVisible(false);
+        invoiceForm.resetFields();
+      })
+      .catch((errorInfo) => {
+        console.error("Validation Failed:", errorInfo);
+      });
+  };
 
+  const handleInvoiceModalCancel = () => {
+    setIsInvoiceModalVisible(false);
+  };
+
+  const handlePrintOrder = async (orderId: string) => {
+    dispatch(printSellOrder({ so_id: orderId })).then((response: any) => {
+      console.log(response, "print");
+      if (response?.payload?.success) {
+        printFunction(response?.payload?.data.buffer.data);
+      }
+    });
+  };
   const menu = (
     <Menu>
       {row.status === "Cancelled" ? (
         <>
-          <Menu.Item key="materialList" onClick={() => handleshowMaterialList(row)}>
+          <Menu.Item
+            key="materialList"
+            onClick={() => handleshowMaterialList(row)}
+          >
             Material List
           </Menu.Item>
           <Menu.Item key="print" onClick={() => console.log("Print", row)}>
@@ -84,13 +129,16 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
           <Menu.Item key="cancel" onClick={showCancelModal}>
             Cancel
           </Menu.Item>
-          <Menu.Item key="materialList" onClick={() => handleshowMaterialList(row)}>
+          <Menu.Item
+            key="materialList"
+            onClick={() => handleshowMaterialList(row)}
+          >
             Material List
           </Menu.Item>
-          <Menu.Item key="createInvoice" onClick={() => console.log("Create Invoice", row)}>
+          <Menu.Item key="createInvoice" onClick={showInvoiceModal}>
             Create Invoice
           </Menu.Item>
-          <Menu.Item key="print" onClick={() => console.log("Print", row)}>
+          <Menu.Item key="print" onClick={() => handlePrintOrder(row?.req_id)}>
             Print
           </Menu.Item>
         </>
@@ -123,6 +171,42 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
               rows={4} // Increase the number of rows for larger input area
               placeholder="Enter remarks here"
             />
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal
+        title="Create Invoice"
+        open={isInvoiceModalVisible}
+        onOk={handleInvoiceModalOk}
+        onCancel={handleInvoiceModalCancel}
+        okText="Yes"
+        cancelText="No"
+        width={600}
+      >
+        <Form form={invoiceForm} layout="vertical">
+          <p className="pb-5 text-[18px]">
+            Are you sure you want to create an invoice for SO {row.req_id}?
+          </p>
+          <Form.Item
+            name="nos_of_boxes"
+            label="Number of Boxes (will be displayed in the print sheet)"
+            rules={[
+              { required: true, message: "Please enter the number of boxes!" },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="invoice_no"
+            label="Invoice Number"
+            rules={[
+              { required: true, message: "Please enter the invoice number!" },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item name="remark" label="Remark">
+            <Input.TextArea rows={4} />
           </Form.Item>
         </Form>
       </Modal>

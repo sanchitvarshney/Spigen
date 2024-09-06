@@ -20,6 +20,7 @@ import { RootState } from "@/store";
 import { fetchSalesOrderInvoiceList } from "@/features/salesmodule/salesInvoiceSlice";
 import { useDispatch, useSelector } from "react-redux";
 import CustomLoadingCellRenderer from "@/config/agGrid/CustomLoadingCellRenderer";
+import FullPageLoading from "@/components/shared/FullPageLoading";
 
 const { RangePicker } = DatePicker;
 const dateFormat = "YYYY/MM/DD";
@@ -44,9 +45,12 @@ const SalesInvoicePage: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const dispatch = useDispatch();
   const [wise] = useState<any>("datwwise");
-  const { data: rowData } = useSelector((state: RootState) => state.sellInvoice);
+  const { data: rowData,loading } = useSelector((state: RootState) => state.sellInvoice);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      wise: "datewise" // Set default value for 'wise'
+    }
   });
 
   const onSubmit = async (formData: z.infer<typeof FormSchema>) => {
@@ -94,13 +98,10 @@ const SalesInvoicePage: React.FC = () => {
     }
   }, [wise, dispatch]);
 
-
- 
-
-
-
+  
   return (
     <Wrapper className="h-[calc(100vh-100px)] grid grid-cols-[350px_1fr] ">
+      {loading && <FullPageLoading />}
       <div className=" bg-[#fff]">
         <Card className="border-none rounded shadow-none">
           <CardHeader className="bg-hbg p-0 h-[49px] border-b border-slate-300 flex justify-center pl-[10px]">

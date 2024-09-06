@@ -128,8 +128,6 @@ export const updateSOshipment = createAsyncThunk<
 });
 
 
-
-
 const sellShipmentSlice = createSlice({
     name: "shipment",
     initialState,

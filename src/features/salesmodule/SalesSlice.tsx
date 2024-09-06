@@ -118,6 +118,23 @@ interface CancelPayload {
   so: string;
 }
 
+interface InvoicePayload {
+  bill_id: string;
+  client_addr_id: string;
+  client_id: string;
+  invoice_no: string;
+  nos_of_boxes: string;
+  remark: string;
+  shipment_id: string[];
+  so_id: string[];
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string | null;
+}
+
 export const fetchSellRequestList = createAsyncThunk<
   ApiResponse<SellRequest[]>,
   FetchSellRequestPayload
@@ -137,6 +154,30 @@ export const fetchDataForUpdate = createAsyncThunk(
       const response = await spigenAxios.post<any>(
         "/sellRequest/fetchData4Update",
         { sono: clientCode }
+      );
+
+      if (!response.data) {
+        throw new Error("No data received");
+      }
+      // Return the entire response as expected by the fulfilled case
+      return response.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        // Handle error using rejectWithValue
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("An unknown error occurred");
+    }
+  }
+);
+
+export const printSellOrder = createAsyncThunk(
+  "client/printSellOrder",
+  async ({ so_id }: { so_id: string }, { rejectWithValue }) => {
+    try {
+      const response = await spigenAxios.post<any>(
+        "/sellRequest/printSellOrder",
+        { so_id: so_id }
       );
 
       if (!response.data) {
@@ -221,6 +262,35 @@ export const fetchSalesOrderShipmentList = createAsyncThunk<
   return response.data;
 });
 
+export const createInvoice = createAsyncThunk<ApiResponse<any>, InvoicePayload>(
+  "/invoice/createInvoice",
+  async (payload) => {
+    try {
+      const response = await spigenAxios.post(
+        "/so_challan_shipment/createDeliveryChallan",
+        payload
+      );
+      if (!response.data.success) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: response.data.message,
+          className: "bg-red-600 text-white items-center",
+        });
+      } else {
+        toast({
+          title: "Invoice Created",
+          description: response.data.message,
+          className: "bg-green-600 text-white items-center",
+        });
+      }
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
 const sellRequestSlice = createSlice({
   name: "sellRequest",
   initialState,
@@ -262,6 +332,16 @@ const sellRequestSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchDataForUpdate.rejected, (state, action) => {
+        state.error = action.error?.message || null;
+        state.loading = false;
+      })
+      .addCase(printSellOrder.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(printSellOrder.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(printSellOrder.rejected, (state, action) => {
         state.error = action.error?.message || null;
         state.loading = false;
       })
@@ -309,6 +389,18 @@ const sellRequestSlice = createSlice({
         state.loading = false;
         state.error =
           action.error.message || "Failed to fetch sales order shipment list";
+      })
+      // Handle the createInvoice action
+      .addCase(createInvoice.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createInvoice.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(createInvoice.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to create invoice";
       });
   },
 });
