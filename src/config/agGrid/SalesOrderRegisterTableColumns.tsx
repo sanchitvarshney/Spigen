@@ -31,7 +31,9 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
   const { sellRequestDetails } = useSelector(
     (state: RootState) => state.sellRequest
   );
-  const dateRange = useSelector((state: RootState) => state.sellRequest.dateRange);
+  const dateRange = useSelector(
+    (state: RootState) => state.sellRequest.dateRange
+  );
 
   const handleUpdate = (row: any) => {
     const soId = row?.req_id; // Replace with actual key for employee ID
@@ -66,7 +68,9 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
         dispatch(cancelSalesOrder(payload));
         setIsModalVisible(false);
         form.resetFields(); // Clear the form fields after submission
-        dispatch(fetchSellRequestList({ wise:"DATE", data: dateRange }) as any);
+        dispatch(
+          fetchSellRequestList({ wise: "DATE", data: dateRange }) as any
+        );
       })
       .catch((errorInfo) => {
         console.error("Validation Failed:", errorInfo);
@@ -91,7 +95,9 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
         };
         dispatch(createInvoice(payload));
         setIsInvoiceModalVisible(false);
-        dispatch(fetchSellRequestList({ wise:"DATE", data: dateRange }) as any);
+        dispatch(
+          fetchSellRequestList({ wise: "DATE", data: dateRange }) as any
+        );
         invoiceForm.resetFields();
       })
       .catch((errorInfo) => {
@@ -111,42 +117,34 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
       }
     });
   };
+
+  const isDisabled = row.hasInvoice === true || row.status === "Cancelled";
+
   const menu = (
     <Menu>
-      {row.status === "Cancelled" ? (
-        <>
-          <Menu.Item
-            key="materialList"
-            onClick={() => handleshowMaterialList(row)}
-          >
-            Material List
-          </Menu.Item>
-          <Menu.Item key="print" onClick={() => console.log("Print", row)}>
-            Print
-          </Menu.Item>
-        </>
-      ) : (
-        <>
-          <Menu.Item key="update" onClick={() => handleUpdate(row)} disabled={row.hasInvoice == true}>
-            Update
-          </Menu.Item>
-          <Menu.Item key="cancel" onClick={showCancelModal}>
-            Cancel
-          </Menu.Item>
-          <Menu.Item
-            key="materialList"
-            onClick={() => handleshowMaterialList(row)}
-          >
-            Material List
-          </Menu.Item>
-          <Menu.Item key="createInvoice" onClick={showInvoiceModal} disabled={row.hasInvoice == true}>
-            Create Invoice
-          </Menu.Item>
-          <Menu.Item key="print" onClick={() => handlePrintOrder(row?.req_id)}>
-            Print
-          </Menu.Item>
-        </>
-      )}
+      <Menu.Item
+        key="update"
+        onClick={() => handleUpdate(row)}
+        disabled={isDisabled}
+      >
+        Update
+      </Menu.Item>
+      <Menu.Item key="cancel" onClick={showCancelModal} disabled={isDisabled}>
+        Cancel
+      </Menu.Item>
+      <Menu.Item key="materialList" onClick={() => handleshowMaterialList(row)}>
+        Material List
+      </Menu.Item>
+      <Menu.Item
+        key="createInvoice"
+        onClick={showInvoiceModal}
+        disabled={isDisabled}
+      >
+        Create Invoice
+      </Menu.Item>
+      <Menu.Item key="print" onClick={() => handlePrintOrder(row?.req_id)}>
+        Print
+      </Menu.Item>
     </Menu>
   );
 
