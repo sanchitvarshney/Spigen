@@ -108,13 +108,16 @@ const CreateSalesOrder: React.FC<Props> = ({
   const handleClientSelected = (e: any) => {
     form.setValue("bill_name", e.label, { shouldValidate: true, shouldDirty: true });
     const bill_to_name = e.value;
-    form.setValue("bill_id", bill_to_name, { shouldValidate: true, shouldDirty: true });
+    form.setValue("customer", e, { shouldValidate: true, shouldDirty: true });
 
     dispatch(fetchClientDetails(bill_to_name)).then((response: any) => {
       if (response.meta.requestStatus === "fulfilled") {
         const data = response.payload[0];
         form.setValue("customer", data.clientCode, { shouldValidate: true, shouldDirty: true });
-        form.setValue("customer_branch", data.addressID, { shouldValidate: true, shouldDirty: true });
+        // form.setValue("customer_branch",({
+        //   label: data?.label || "",
+        //   value: data?.addressID || ""
+        // }), { shouldValidate: true, shouldDirty: true });
         form.setValue("customer_gstin", data.gst, { shouldValidate: true, shouldDirty: true });
         form.setValue("place_of_supply", data.state?.label, { shouldValidate: true, shouldDirty: true });
         form.setValue("customer_address1", data.addressLine1, { shouldValidate: true, shouldDirty: true });
@@ -193,6 +196,8 @@ const CreateSalesOrder: React.FC<Props> = ({
                       />
                     </div>
                     {channel?.value === "AMZ" ||
+                    channel === "AMZ" ||
+                    channel === "AMZ_IMP" ||
                     channel?.value === "AMZ_IMP" ? (
                       <>
                         <div className="">
@@ -268,7 +273,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                           />
                         </div>
                       </>
-                    ) : channel?.value === "FLK" ? (
+                    ) : channel?.value === "FLK" || channel === "FLK" ? (
                       <div className="">
                         <FormField
                           control={form.control}
@@ -293,7 +298,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                           )}
                         />
                       </div>
-                    ) : channel?.value === "FLK_VC" ? (
+                    ) : channel?.value === "FLK_VC" || channel === "FLK_VC" ? (
                       <div className="">
                         <FormField
                           control={form.control}
@@ -318,7 +323,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                           )}
                         />
                       </div>
-                    ) : channel?.value === "BLK" ? (
+                    ) : channel?.value === "BLK" || channel === "BLK" ? (
                       <>
                         <div className="">
                           <FormField
@@ -369,7 +374,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                           />
                         </div>
                       </>
-                    ) : channel?.value === "CROMA" ? (
+                    ) : channel?.value === "CROMA" || channel === "CROMA" ? (
                       <div className="">
                         <FormField
                           control={form.control}
@@ -394,7 +399,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                           )}
                         />
                       </div>
-                    ) : channel?.value === "B2B" ? (
+                    ) : channel?.value === "B2B" || channel === "B2B" ? (
                       <div className="">
                         <FormField
                           control={form.control}
@@ -445,7 +450,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                       <FormField
                         control={form.control}
                         name="bill_id"
-                        render={() => (
+                        render={({field}) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
                               Name
@@ -471,6 +476,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                                     ? transformCustomerData([data.client]) // Wrap single object into an array
                                     : [] // Fallback to empty array if data.client is null or undefined
                                 }
+                                value={field.value}
                               />
                             </FormControl>
                             <FormMessage />
@@ -478,7 +484,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                         )}
                       />
                     </div>
-                    {channel?.value !== "BLK" && channel?.value !== "B2B" && (
+                    {channel?.value !== "BLK" && channel?.value !== "B2B" && channel!=="BLK" && channel!=="B2B" && (
                       <div>
                         <div className="flex justify-end">
                           <Badge className="p-0 text-[13px] bg-transparent border-none shadow-none font-[400] max-h-max text-cyan-600 py-[3px] px-[10px] cursor-pointer hover:bg-blue-100 hover:shadow shadow-slate-500 rounded-full">

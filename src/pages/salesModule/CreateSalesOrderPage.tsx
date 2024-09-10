@@ -77,6 +77,11 @@ const CreateSalesOrderPage = () => {
       }:any = updateData;
       console.log(channel,"channel",client,"client",bill,"bill",ship,"ship")
       // Set channel value
+      setChannel({
+        label: channel?.channel || "",
+        value: channel?.channel || ""
+      });      
+      
       form.setValue("channel", channel?.channel, { shouldValidate: true, shouldDirty: true });
       form.setValue("amz_fba_app", channel?.amz_fba_app, { shouldValidate: true, shouldDirty: true });
       form.setValue("amz_fba_ship_id", channel?.amz_fba_ship_id, { shouldValidate: true, shouldDirty: true });
@@ -89,7 +94,7 @@ const CreateSalesOrderPage = () => {
       if (client?.length > 0) {
         const clientData = client[0];
         form.setValue("bill_name", clientData.clientname, { shouldValidate: true, shouldDirty: true });
-        form.setValue("bill_id", clientData.clientcode?.value  , { shouldValidate: true, shouldDirty: true });
+        // form.setValue("bill_id", clientData.clientcode  , { shouldValidate: true, shouldDirty: true });
         form.setValue("customer", clientData.clientcode?.value  , { shouldValidate: true, shouldDirty: true });
         form.setValue("customer_branch", clientData.clientbranch?.value  , { shouldValidate: true, shouldDirty: true });
         form.setValue("customer_address1", clientData.clientaddress1  , { shouldValidate: true, shouldDirty: true });

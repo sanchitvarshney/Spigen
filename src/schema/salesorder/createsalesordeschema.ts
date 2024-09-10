@@ -76,6 +76,10 @@ const baseSchema = z.object({
   customer_gstin: z.string({ required_error: "Please provide GST" }),
   isSameClientAdd: z.string().optional(),
   customer_branch: z.string({ required_error: "Please select Vendor Branch" }),
+  // customr_branch:z.object({
+  //   value: z.string({ required_error: "Customer Branch is required" }),
+  //   label: z.string({ required_error: "Customer Branch is required" }),
+  // }),
   shipping_gstin: z.string({
     required_error: "Please enter Shipping GSTIN Number",
   }),
