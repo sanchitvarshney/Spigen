@@ -121,7 +121,7 @@ const CreateSalesOrderPage = () => {
     
     const updatedData: RowData[] = materials?.map((material: any) => ({
       type: material.so_type?.value || "product",
-      material: material.item_code || "",
+      items: material.item_code || "",
       materialDescription: material.item_name || "",
       orderQty: material.orderqty || 1,
       currency: material.currency || "364907247",

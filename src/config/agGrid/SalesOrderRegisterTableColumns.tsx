@@ -15,6 +15,8 @@ import {
 import { useState } from "react";
 import MaterialListModal from "@/config/agGrid/registerModule/MaterialListModal";
 import { printFunction } from "@/General";
+import { ConfirmCancellationDialog } from "@/config/agGrid/registerModule/ConfirmCancellationDialog";
+import { CreateInvoiceDialog } from "@/config/agGrid/registerModule/CreateInvoiceDialog";
 
 interface ActionMenuProps {
   row: RowData; // Use the RowData type here
@@ -153,65 +155,21 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
       <Dropdown overlay={menu} trigger={["click"]}>
         <Button icon={<MoreOutlined />} />
       </Dropdown>
-      <Modal
-        title="Confirm Cancellation"
-        open={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        okText="Confirm"
-        cancelText="Cancel"
-        width={600} // Adjust modal width as needed
-      >
-        <Form form={form} layout="vertical">
-          <p>Are you sure you want to cancel this SO {row.req_id}?</p>
-          <Form.Item
-            name="remark"
-            label="Remarks"
-            rules={[{ required: true, message: "Please enter remarks!" }]}
-          >
-            <Input.TextArea
-              rows={4} // Increase the number of rows for larger input area
-              placeholder="Enter remarks here"
-            />
-          </Form.Item>
-        </Form>
-      </Modal>
-      <Modal
-        title="Create Invoice"
-        open={isInvoiceModalVisible}
-        onOk={handleInvoiceModalOk}
-        onCancel={handleInvoiceModalCancel}
-        okText="Yes"
-        cancelText="No"
-        width={600}
-      >
-        <Form form={invoiceForm} layout="vertical">
-          <p className="pb-5 text-[18px]">
-            Are you sure you want to create an invoice for SO {row.req_id}?
-          </p>
-          <Form.Item
-            name="nos_of_boxes"
-            label="Number of Boxes (will be displayed in the print sheet)"
-            rules={[
-              { required: true, message: "Please enter the number of boxes!" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="invoice_no"
-            label="Invoice Number"
-            rules={[
-              { required: true, message: "Please enter the invoice number!" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item name="remark" label="Remark">
-            <Input.TextArea rows={4} />
-          </Form.Item>
-        </Form>
-      </Modal>
+      <ConfirmCancellationDialog
+        isDialogVisible={isModalVisible}
+        handleOk={handleOk}
+        handleCancel={handleCancel}
+        row={{req_id:row.req_id}}
+        form={form}
+
+      />
+       <CreateInvoiceDialog
+        isDialogVisible={isInvoiceModalVisible}
+        handleOk={handleInvoiceModalOk}
+        handleCancel={handleInvoiceModalCancel}
+        row={{ req_id: row.req_id }}
+        form={invoiceForm}
+      />
       <MaterialListModal
         visible={isMaterialListModalVisible}
         onClose={handleMaterialListModalClose}

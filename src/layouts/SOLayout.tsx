@@ -9,27 +9,22 @@ const SOLayout = (props: { children: React.ReactNode }) => {
         <ul className="group flex items-center  h-[50px] ">
           <li className="h-[50px]">
             <NavLink to={"/sales/order/create"} className={({ isActive }) => `${navLinkStyle} ${isActive && navlinkActiveStyle}`}>
-              Create
+              Create Sales order
             </NavLink>
           </li>
           <li className="h-[50px]">
             <NavLink to={"/sales/order/register"} className={({ isActive }) => `${navLinkStyle} ${isActive && navlinkActiveStyle}`}>
-              Register
-            </NavLink>
-          </li>
-          <li className="h-[50px]">
-            <NavLink to={"/sales/order/shipments"} className={({ isActive }) => `${navLinkStyle} ${isActive && navlinkActiveStyle}`}>
-              Shipment
+              Sales Order Register
             </NavLink>
           </li>
           <li className="h-[50px]">
             <NavLink to={"/sales/order/invoice"} className={({ isActive }) => `${navLinkStyle} ${isActive && navlinkActiveStyle}`}>
-              Invoice
+              Invoice Register
             </NavLink>
           </li>
           <li className="h-[50px]">
             <NavLink to={"/sales/order/allocated"} className={({ isActive }) => `${navLinkStyle} ${isActive && navlinkActiveStyle}`}>
-              Allocated Invoice
+              CN/DN Register
             </NavLink>
           </li>
           <li className="h-[50px]">

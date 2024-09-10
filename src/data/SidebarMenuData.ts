@@ -52,7 +52,6 @@ export const sidebarMenulinklist: SidebarMenuLinkType[] = [
         subMenu: [
           { name: "Create", path: "/sales/order/create" },
           { name: "Register", path: "/sales/order/register" },
-          { name: "Shipment", path: "/sales/order/shipments" },
           { name: "Invoice", path: "/sales/order/invoice" },
           { name: "Allocated Invoices", path: "/sales/order/allocated" },
           { name: "E Transaction Invoices", path: "/sales/order/e.transaction-register" },
@@ -154,7 +153,7 @@ export const materialmenu = [
     subMenu: [
       { name: "Create", path: "/sales/order/create" },
       { name: "Register", path: "/sales/order/register" },
-      { name: "Shipment", path: "/sales/order/shipments" },
+      // { name: "Shipment", path: "/sales/order/shipments" },
       { name: "Invoice", path: "/sales/order/invoice" },
       { name: "Allocated Invoices", path: "/sales/order/allocated" },
       { name: "E Transaction Invoices", path: "/sales/order/e-transaction-register" },

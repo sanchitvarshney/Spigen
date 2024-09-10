@@ -18,7 +18,7 @@ import "@ag-grid-community/styles/ag-theme-quartz.css";
 import "./font.css";
 import Protected from "./components/Protected";
 import Custom404Page from "./pages/Custom404Page";
-import SalesShipmentPage from "./pages/salesModule/SalesShipmentPage";
+// import SalesShipmentPage from "./pages/salesModule/SalesShipmentPage";
 import SalesInvoicePage from "./pages/salesModule/SalesInvoicePage";
 import AllocatedInvoicesPage from "./pages/salesModule/AllocatedInvoicesPage";
 import SalesETransactionRegisterPage from "./pages/salesModule/SalesETransactionRegisterPage";
@@ -149,18 +149,6 @@ const router = createBrowserRouter([
       </Protected>
     ),
     path: "/sales/order/register",
-  },
-  {
-    element: (
-      <Protected authentication>
-        <MainLayout>
-          <SOLayout>
-            <SalesShipmentPage />
-          </SOLayout>
-        </MainLayout>
-      </Protected>
-    ),
-    path: "/sales/order/shipments",
   },
   {
     element: (

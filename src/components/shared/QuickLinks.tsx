@@ -37,10 +37,6 @@ const frameworks = [
     label: " Sales Order Register",
   },
   {
-    value: "/sales/order/shipments",
-    label: "Shipments",
-  },
-  {
     value: "/sales/order/invoice",
     label: "Invoice",
   },
