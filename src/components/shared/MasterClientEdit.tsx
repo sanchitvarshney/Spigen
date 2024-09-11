@@ -50,7 +50,6 @@ const MasterClientEdit: React.FC<Props> = ({
     },
   });
 
-  console.log("client data", clientData);
 
   useEffect(() => {
     if (clientEdit && clientId) {

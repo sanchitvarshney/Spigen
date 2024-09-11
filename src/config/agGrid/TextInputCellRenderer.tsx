@@ -118,7 +118,6 @@ const TextInputCellRenderer = (props: any) => {
       data.cgst = cgst.toFixed(2);
       data.sgst = sgst.toFixed(2);
       data.igst = igst.toFixed(2);
-      console.log(cgst, igst, sgst, "ccaall");
     } else if (data.gstType === "I") {
       // Inter-State
       igst = calculation;
@@ -135,7 +134,6 @@ const TextInputCellRenderer = (props: any) => {
     setOpen(false);
     updateData(data);
   };
-  console.log(data, "data");
 
   const handleInputChange = (e: any) => {
     const newValue = e.target.value;
@@ -189,9 +187,8 @@ const TextInputCellRenderer = (props: any) => {
     api.applyTransaction({ update: [data] });
     updateData(data);
   };
-  const submitCurrencyRate = (field: string, value: any, rowId?: any) => {
+  const submitCurrencyRate = (field: string, value: any) => {
     data[field] = value?.rate;
-    console.log(`Updating ${field} with`, value, `for rowId ${rowId}`);
   };
 
   const renderContent = () => {

@@ -8,8 +8,8 @@ import DropdownIndicator from "@/config/reactSelect/DropdownIndicator";
 import { Badge } from "@/components/ui/badge";
 import styled from "styled-components";
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store";
 import {
   fetchBillingAddress,
   fetchClientDetails,
@@ -85,11 +85,6 @@ const CreateSalesOrder: React.FC<Props> = ({
     );
   };
 
-  const { clientAddressDetail } = useSelector(
-    (state: RootState) => state.createSalesOrder
-  );
-  console.log(clientAddressDetail, "clientDetails");
-  // Handler for the "Same as Client Address" checkbox
   const handleSameAsClientAddressChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -114,10 +109,10 @@ const CreateSalesOrder: React.FC<Props> = ({
       if (response.meta.requestStatus === "fulfilled") {
         const data = response.payload[0];
         form.setValue("customer", data.clientCode, { shouldValidate: true, shouldDirty: true });
-        form.setValue("customer_branch",({
-          label: data?.label || "",
-          value: data?.addressID || ""
-        }), { shouldValidate: true, shouldDirty: true });
+        form.setValue("customer_branch",(data?.addressID), { shouldValidate: true, shouldDirty: true });
+        //   label: data?.label || "",
+        //   value: data?.addressID || ""
+        // }), { shouldValidate: true, shouldDirty: true });
         form.setValue("customer_gstin", data.gst, { shouldValidate: true, shouldDirty: true });
         form.setValue("place_of_supply", data.state?.label, { shouldValidate: true, shouldDirty: true });
         form.setValue("customer_address1", data.addressLine1, { shouldValidate: true, shouldDirty: true });
@@ -133,10 +128,8 @@ const CreateSalesOrder: React.FC<Props> = ({
       }
     });
   };
-  console.log(form.getValues());
 
   const onSubmit = (data: CreateSalesOrderForm) => {
-    console.log("Submitted Data from CreateSalesOrder:", data); // Debugging log
     if (data) {
       setPayloadData(data);
       setTab("add"); // Switch to AddSalesOrder tab
@@ -145,7 +138,6 @@ const CreateSalesOrder: React.FC<Props> = ({
     }
   };
 
-  console.log(form.errors, "er");
   return (
     <div className="h-[calc(100vh-150px)]">
       {data.loading && <FullPageLoading />}
@@ -472,8 +464,8 @@ const CreateSalesOrder: React.FC<Props> = ({
                                     ? transformCustomerData([data.client]) // Wrap single object into an array
                                     : [] // Fallback to empty array if data.client is null or undefined
                                 }
-                                value={field.value}
-                              />
+                                value={data.client ? transformCustomerData([data.client]).find(option => option.value === field.value) : null} 
+                                />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -529,12 +521,8 @@ const CreateSalesOrder: React.FC<Props> = ({
                                       ? transformClientData(data.clientDetails)
                                       : []
                                   }
-                                  // value={
-                                  //   data.clientDetails
-                                  //     ? transformClientData(data.clientDetails).find(option => option.value === form.getValues("customer_branch"))
-                                  //     : null
-                                  // }
-                                  value={field.value}
+                                  value={data.clientDetails ? transformClientData(data.clientDetails).find(option => option.value === field.value) : null} 
+                                  // value={field.value}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -687,7 +675,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                                       )
                                     : []
                                 }
-                                value={field.value}
+                                value={data.billingAddressList ? transformOptionData(data.billingAddressList).find(option => option.value === field.value) : null} 
                               />
                             </FormControl>
                             <FormMessage />

@@ -48,8 +48,6 @@ const AddSalesOrder = ({
     (state: RootState) => state.createSalesOrder
   );
   const navigate = useNavigate();
-  console.log(form.getValues(), "ddddddd");
-
   const gridRef = useRef<AgGridReact<RowData>>(null);
   const uiState: AddPoUIStateType = {
     excelModel,
@@ -60,6 +58,10 @@ const AddSalesOrder = ({
     resetModel,
     setResetModel,
   };
+
+  useEffect(() => {
+     rowData?.length===0 && addNewRow();
+  }, []);
 
   const addNewRow = () => {
     const newRow: RowData = {
@@ -84,9 +86,7 @@ const AddSalesOrder = ({
     setRowData((prevData: any) => [...prevData, newRow]);
   };
 
-  useEffect(() => {
-    rowData?.length===0 &&addNewRow();
-  }, []);
+
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -158,10 +158,13 @@ const AddSalesOrder = ({
   const onBtExport = useCallback(() => {
     gridRef.current!.api.exportDataAsExcel();
   }, []);
-console.log(rowData)
+
   const materials = {
     so_type: rowData?.map((component: RowData) => component.type || ""),
-    items: rowData?.map((component: RowData) => (component.material as any)?.id || ""),
+    items: rowData?.map((component: RowData) => 
+      typeof component.material === 'object' && component.material !== null 
+        ? (component.material as any).id || "" 
+        : component.material || ""),
     qty: rowData?.map((component: RowData) =>
       component?.orderQty === undefined
         ? null
@@ -184,12 +187,11 @@ console.log(rowData)
     igst: rowData?.map((component: RowData) => component.igst || 0), 
     updaterow:rowData?.map((component: RowData) => component.updateid || 0),
   };
-  const soId = (params.id as string).replace(/_/g, "/");
+  const soId = (params.id as string)?.replace(/_/g, "/");
   const payloadData2 = {
     headers: { ...form?.getValues(),so_id: soId},
     materials,
   };
-console.log(payloadData2, "payloadData2");
   const handleSubmit = () => {
     if (!payloadData2 || Object.keys(payloadData2).length === 0) {
       console.error("Payload data is missing or undefined.");

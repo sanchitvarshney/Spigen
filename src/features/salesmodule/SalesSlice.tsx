@@ -181,7 +181,6 @@ export const fetchDataForUpdate = createAsyncThunk(
   "client/fetchData",
   async ({ clientCode }: { clientCode: string }, { rejectWithValue }) => {
     try {
-      console.log(clientCode);
       const response = await spigenAxios.post<any>(
         "/sellRequest/fetchData4Update",
         { sono: clientCode }

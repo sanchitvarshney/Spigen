@@ -112,7 +112,6 @@ export const fetchClient = createAsyncThunk<
   { clientCode: string } // The argument type passed to the thunk
 >("client/fetchClient", async ({ clientCode }, { rejectWithValue }) => {
   try {
-    console.log(clientCode);
     const response = await spigenAxios.post<GeneralResponse>(
       "/client/getClient",
       { channel: clientCode }

@@ -36,7 +36,6 @@ const CreateSalesOrderPage = () => {
   const [rowData, setRowData] = useState<RowData[]>([]);
   const data = useSelector((state: RootState) => state.createSalesOrder);
   const {updateData}= useSelector((state: RootState) => state.sellRequest);
-  console.log(updateData,"dd")
   const form = useForm<z.infer<typeof createSalesFormSchema>>({
     resolver: zodResolver(createSalesFormSchema),
     mode: "onBlur",
@@ -65,8 +64,9 @@ const CreateSalesOrderPage = () => {
     );
   };
 
-   useEffect(() => {
-    if (updateData) {
+
+  useEffect(() => {
+    if (Object.keys(updateData).length !== 0) {
       const {
         channel,
         client, 
@@ -94,10 +94,11 @@ const CreateSalesOrderPage = () => {
         const clientData = client[0];
         form.setValue("bill_name", clientData.clientname, { shouldValidate: true, shouldDirty: true });
         form.setValue("customer", clientData.clientcode  , { shouldValidate: true, shouldDirty: true });
-        // dispatch(fetchClientDetails(clientData?.clientcode?.value)).then((response: any) => {
+        dispatch(fetchClientDetails(clientData?.clientcode?.value))
+        // .then((response: any) => {
         //   console.log(response.meta.requestStatus==="fulfilled")
         //   if (response.meta.requestStatus!=="fulfilled") {
-            form.setValue("customer_branch", clientData.clientbranch  , { shouldValidate: true, shouldDirty: true });
+            form.setValue("customer_branch", clientData.clientbranch?.value  , { shouldValidate: true, shouldDirty: true });
         //   }
         // });
         // form.setValue("bill_id", clientData.clientcode  , { shouldValidate: true, shouldDirty: true });

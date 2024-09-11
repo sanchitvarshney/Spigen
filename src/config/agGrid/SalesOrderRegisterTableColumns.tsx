@@ -1,7 +1,7 @@
 import { RowData } from "@/types/SalesOrderRegisterType";
 import { ColDef } from "ag-grid-community";
 import { MoreOutlined } from "@ant-design/icons";
-import { Button, Menu, Dropdown, Input, Modal, Form } from "antd";
+import { Button, Menu, Dropdown, Form } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
 import {
@@ -113,7 +113,6 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
 
   const handlePrintOrder = async (orderId: string) => {
     dispatch(printSellOrder({ so_id: orderId })).then((response: any) => {
-      console.log(response, "print");
       if (response?.payload?.success) {
         printFunction(response?.payload?.data.buffer.data);
       }
