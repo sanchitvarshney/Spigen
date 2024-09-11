@@ -147,6 +147,7 @@ const AddSalesOrder = ({
           setSearch={setSearch}
           search={search}
           currency={currency}
+          setRowData={setRowData}
         />
       ),
       datePickerCellRenderer: DatePickerCellRenderer,

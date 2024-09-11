@@ -1,0 +1,53 @@
+import React from 'react';
+import { Button } from 'antd';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog'; // Ensure this path is correct
+
+interface CommonModalProps {
+  isDialogVisible: boolean;
+  handleOk: () => void;
+  handleCancel: () => void;
+  title: string; // Dynamic title
+  description: string; // Dynamic description
+}
+
+export function CommonModal({
+  isDialogVisible,
+  handleOk,
+  handleCancel,
+  title,
+  description,
+}: CommonModalProps) {
+  return (
+    <Dialog open={isDialogVisible} onOpenChange={handleCancel}>
+      <DialogContent
+        className="min-w-[800px]"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
+        <div className="p-4">
+          <p>{description}</p>
+        </div>
+        <DialogFooter>
+          <Button type="default" onClick={handleCancel} className="mr-2">
+            Cancel
+          </Button>
+          <Button
+            type="primary"
+            onClick={handleOk}
+            className="bg-teal-500 hover:bg-teal-600"
+          >
+            Confirm
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}

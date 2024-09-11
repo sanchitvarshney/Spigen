@@ -20,6 +20,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Select } from "antd";
 import { transformCurrencyData, transformOptionData } from "@/helper/transform";
 import CurrencyRateDialog from "@/components/ui/CurrencyRateDialog";
+import {
+  DeletePayload,
+  deleteProduct,
+} from "@/features/salesmodule/SalesSlice";
+import { useParams } from "react-router-dom";
+import { CommonModal } from "@/config/agGrid/registerModule/CommonModal";
 const frameworks = [
   {
     value: "/",
@@ -66,19 +72,43 @@ const gstType = [
 ];
 const TextInputCellRenderer = (props: any) => {
   const dispatch = useDispatch<AppDispatch>();
+  const params = useParams();
   const [open, setOpen] = useState(false);
-  const { value, colDef, data, api, column, currency } = props;
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
+  const { value, colDef, data, api, column, currency, setRowData } = props;
   const { componentDetails } = useSelector(
     (state: RootState) => state.createSalesOrder
   );
 
   const [openCurrencyDialog, setOpenCurrencyDialog] = useState(false);
 
-  const handleDelete = () => {
-    const rowIndex = props.node.rowIndex;
-    api.applyTransaction({
-      remove: [api.getDisplayedRowAtIndex(rowIndex).data],
-    });
+  const handleDeleteRow = (rowIndex: number) => {
+    setSelectedRowIndex(rowIndex);
+    setShowConfirmDialog(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedRowIndex !== null) {
+      setRowData((prevData: any) =>
+        prevData.filter((_: any, index: any) => index !== selectedRowIndex)
+      );
+      api.applyTransaction({
+        remove: [api.getDisplayedRowAtIndex(selectedRowIndex).data],
+      });
+
+      // Example payload for deleteProduct
+      const payload: DeletePayload = {
+        item: data?.material?.text,
+        so_id: (params.id as string).replace(/_/g, "/"),
+        updaterow: data?.updateid,
+      };
+      console.log(payload, data);
+      if (window.location.pathname.includes("update")) {
+        dispatch(deleteProduct(payload));
+      }
+    }
+    setShowConfirmDialog(false);
   };
   const updateData = (newData: any) => {
     api.applyTransaction({ update: [newData] });
@@ -197,12 +227,24 @@ const TextInputCellRenderer = (props: any) => {
         return (
           <div className="flex justify-center">
             <button
-              onClick={() => handleDelete()}
-              className="text-red-500 hover:text-red-700 pt-3"
+              onClick={() => handleDeleteRow(props.node.rowIndex)}
+              className={
+                api.getDisplayedRowCount() <= 1
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "text-red-500 hover:text-red-700 pt-3"
+              }
               aria-label="Delete"
+              disabled={api.getDisplayedRowCount() <= 1}
             >
               <FaTrash />
             </button>
+            <CommonModal
+              isDialogVisible={showConfirmDialog}
+              handleOk={handleConfirmDelete}
+              handleCancel={() => setShowConfirmDialog(false)}
+              title="Reset Details"
+              description={"Are you sure you want to remove this entry?"}
+            />
           </div>
         );
       case "material":

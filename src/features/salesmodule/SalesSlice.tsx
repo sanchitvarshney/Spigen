@@ -149,6 +149,12 @@ interface CancelPayload {
   so: string;
 }
 
+export interface DeletePayload {
+  item: string;
+  so_id: string;
+  updaterow: string;
+}
+
 interface InvoicePayload {
   bill_id: string;
   client_addr_id: string;
@@ -231,6 +237,37 @@ export const cancelSalesOrder = createAsyncThunk(
     try {
       const response = (await spigenAxios.post<any>(
         "/sellRequest/cancelSO",
+        payload
+      )) as any;
+
+      if (response?.data?.success) {
+        toast({
+          title: response?.data?.message,
+          className: "bg-green-600 text-white items-center",
+        });
+      } else {
+        toast({
+          title: response.data.message,
+          className: "bg-red-600 text-white items-center",
+        });
+      }
+
+      return response.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("An unknown error occurred");
+    }
+  }
+);
+
+export const deleteProduct = createAsyncThunk(
+  "client/deleteProduct",
+  async (payload: DeletePayload, { rejectWithValue }) => {
+    try {
+      const response = (await spigenAxios.post<any>(
+        "/sellRequest/deleteProduct",
         payload
       )) as any;
 
@@ -400,6 +437,17 @@ const sellRequestSlice = createSlice({
         state.loading = false;
       })
       .addCase(cancelSalesOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(deleteProduct.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteProduct.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(deleteProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
