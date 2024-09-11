@@ -20,7 +20,7 @@ import { AppDispatch, RootState } from "@/store";
 
 import { fetchComponentDetail } from "@/features/salesmodule/createSalesOrderSlice";
 import { createSellRequest, updateSellRequest } from "@/features/salesmodule/SalesSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const AddSalesOrder = ({
   setTab,
@@ -42,6 +42,7 @@ const AddSalesOrder = ({
   const [igstTotal, setIgstTotal] = useState(0);
   const [search, setSearch] = useState("");
   const dispatch = useDispatch<AppDispatch>();
+  const params = useParams();
 
   const { componentDetails, currency } = useSelector(
     (state: RootState) => state.createSalesOrder
@@ -157,11 +158,10 @@ const AddSalesOrder = ({
   const onBtExport = useCallback(() => {
     gridRef.current!.api.exportDataAsExcel();
   }, []);
-
-
+console.log(rowData)
   const materials = {
     so_type: rowData?.map((component: RowData) => component.type || ""),
-    items: rowData?.map((component: RowData) => component.material || ""),
+    items: rowData?.map((component: RowData) => (component.material as any)?.id || ""),
     qty: rowData?.map((component: RowData) =>
       component?.orderQty === undefined
         ? null
@@ -184,18 +184,26 @@ const AddSalesOrder = ({
     igst: rowData?.map((component: RowData) => component.igst || 0), 
     updaterow:rowData?.map((component: RowData) => component.updateid || 0),
   };
+  const soId = (params.id as string).replace(/_/g, "/");
   const payloadData2 = {
-    headers: { ...form?.getValues() },
+    headers: { ...form?.getValues(),so_id: soId},
     materials,
   };
-
+console.log(payloadData2, "payloadData2");
   const handleSubmit = () => {
     if (!payloadData2 || Object.keys(payloadData2).length === 0) {
       console.error("Payload data is missing or undefined.");
-      // Handle error, e.g., show a message to the user
       return;
     }
-
+    if(window.location.pathname.includes("update")){
+      dispatch(updateSellRequest(payloadData2)).then(
+        (response: any) => {
+          if (response.payload.success) {
+            navigate("/sales/order/update");
+          }
+        })
+    }
+else{
     try {
       dispatch(createSellRequest(payloadData2)).then(
         (response: any) => {
@@ -209,42 +217,8 @@ const AddSalesOrder = ({
       // Handle error, e.g., show a message to the user
     }
   };
-  // const handleSubmit = () => {
-  //   const navigate = useNavigate();
-  //   const dispatch = useDispatch<AppDispatch>();
-  //   const updateData = useSelector((state: RootState) => state.sellRequest.updateData); // or however you access update data
-    
-  //   if (!payloadData2 || Object.keys(payloadData2).length === 0) {
-  //     console.error("Payload data is missing or undefined.");
-  //     // Handle error, e.g., show a message to the user
-  //     return;
-  //   }
-  
-  //   const isUpdate = updateData && updateData.length > 0;
-  //   console.log(updateData && updateData.length > 0)
-  //   try {
-  //     const action = isUpdate ? updateSellRequest(payloadData2) : createSellRequest(payloadData2);
-      
-  //     dispatch(action).then((response: any) => {
-  //       if (response.meta.requestStatus === "fulfilled") {
-  //         if (isUpdate) {
-  //           console.log("Update successful");
-  //           // Optionally navigate or update UI for successful update
-  //           navigate("/sales/order/update-success"); // Adjust the route as needed
-  //         } else {
-  //           console.log("Creation successful");
-  //           navigate("/sales/order/create"); // Adjust the route as needed
-  //         }
-  //       } else {
-  //         console.error("Request failed:", response.meta.requestError);
-  //         // Handle failure, e.g., show a message to the user
-  //       }
-  //     });
-  //   } catch (error) {
-  //     console.error("Error submitting data:", error);
-  //     // Handle error, e.g., show a message to the user
-  //   }
-  // };
+}
+
   const totalSum = rowData?.reduce((sum: number, item: any) => {
     // Convert rate and orderQty to numbers
     const rate = parseFloat(item.rate);

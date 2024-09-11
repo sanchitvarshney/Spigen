@@ -6,6 +6,7 @@ import {
   fetchBillingAddressList,
   fetchClient,
   fetchClientAddressDetail,
+  fetchClientDetails,
   fetchCountries,
   fetchcurrency,
   fetchStates,
@@ -49,18 +50,16 @@ const CreateSalesOrderPage = () => {
           const data = response.payload;
           form.setValue("customer_branch", data.label, { shouldValidate: true, shouldDirty: true });
           form.setValue("customer_gstin", data.gst, { shouldValidate: true, shouldDirty: true });
-          form.setValue("place_of_supply", data.state?.label, { shouldValidate: true, shouldDirty: true });
+          form.setValue("place_of_supply", data.state?.name, { shouldValidate: true, shouldDirty: true });
           form.setValue("customer_address1", data.addressLine1, { shouldValidate: true, shouldDirty: true });
           form.setValue("customer_address2", data.addressLine2, { shouldValidate: true, shouldDirty: true });
-          form.setValue("shipping_id", data?.shipmentAddress?.Company, { shouldValidate: true, shouldDirty: true });
+          form.setValue("shipping_id", data?.shipmentAddress?.name, { shouldValidate: true, shouldDirty: true });
           form.setValue("shipping_pan", data?.shipmentAddress?.Pan, { shouldValidate: true, shouldDirty: true });
           form.setValue("shipping_gstin", data?.shipmentAddress?.Gstin, { shouldValidate: true, shouldDirty: true });
           form.setValue("shipping_state", data?.shipmentAddress?.State?.value, { shouldValidate: true, shouldDirty: true });
           form.setValue("shipping_pinCode", data?.shipmentAddress?.Pin, { shouldValidate: true, shouldDirty: true });
           form.setValue("shipping_address1", data?.shipmentAddress?.Address1, { shouldValidate: true, shouldDirty: true });
           form.setValue("shipping_address2", data?.shipmentAddress?.Address2, { shouldValidate: true, shouldDirty: true });
-          form.setValue("bill_from_gst", data?.gst, { shouldValidate: true, shouldDirty: true });
-          form.setValue("bill_pan", data.pan, { shouldValidate: true, shouldDirty: true });
         }
       }
     );
@@ -94,6 +93,13 @@ const CreateSalesOrderPage = () => {
       if (client?.length > 0) {
         const clientData = client[0];
         form.setValue("bill_name", clientData.clientname, { shouldValidate: true, shouldDirty: true });
+        form.setValue("customer", clientData.clientcode  , { shouldValidate: true, shouldDirty: true });
+        // dispatch(fetchClientDetails(clientData?.clientcode?.value)).then((response: any) => {
+        //   console.log(response.meta.requestStatus==="fulfilled")
+        //   if (response.meta.requestStatus!=="fulfilled") {
+            form.setValue("customer_branch", clientData.clientbranch  , { shouldValidate: true, shouldDirty: true });
+        //   }
+        // });
         // form.setValue("bill_id", clientData.clientcode  , { shouldValidate: true, shouldDirty: true });
         form.setValue("customer", clientData.clientcode?.value  , { shouldValidate: true, shouldDirty: true });
         form.setValue("customer_branch", clientData.clientbranch?.value  , { shouldValidate: true, shouldDirty: true });
@@ -128,12 +134,12 @@ const CreateSalesOrderPage = () => {
       {
       type: material.so_type?.value || "product",
       items: material.item_code || "",
-      material: material.item_name || "",
+      material: material.selectedItem[0] || "",
       materialDescription: material.item_deatils || "",
       rate: parseFloat(material.rate) || 0,
       orderQty: material.orderqty || 1,
       currency: material.currency || "364907247",
-      gstType: material.gsttype?.[0]?.text || "I",
+      gstType: material.gsttype?.[0]?.id || "I",
       localValue:material.exchangetaxablevalue,
       foreignValue: parseFloat(material.exchangerate) || 0,
       cgst: parseFloat(material.cgst) || 0,
@@ -142,6 +148,8 @@ const CreateSalesOrderPage = () => {
       dueDate: material.due_date || "",
       hsnCode: material.hsncode || "",
       remark: material.remark || "",
+      gstRate:material?.gstrate || 0,
+      updateid:material?.updateid || 0,
       isNew: true,
     }));
     setRowData(updatedData);

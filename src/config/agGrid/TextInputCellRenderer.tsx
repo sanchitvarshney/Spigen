@@ -71,9 +71,6 @@ const TextInputCellRenderer = (props: any) => {
   const { componentDetails } = useSelector(
     (state: RootState) => state.createSalesOrder
   );
-  const materials= useSelector(
-    (state: RootState) => state.sellRequest.updateData
-  );
 
   const [openCurrencyDialog, setOpenCurrencyDialog] = useState(false);
 
@@ -222,7 +219,7 @@ const TextInputCellRenderer = (props: any) => {
             onSearch={(e) => props.setSearch(e)}
             options={transformOptionData(componentDetails || [])}
             onChange={(e) => handleChange(e.value)}
-            value={value}
+            value={typeof value === "string" ? { value } : value?.text}
           />
         );
       case "asinNumber":

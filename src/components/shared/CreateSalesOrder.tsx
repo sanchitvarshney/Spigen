@@ -108,16 +108,16 @@ const CreateSalesOrder: React.FC<Props> = ({
   const handleClientSelected = (e: any) => {
     form.setValue("bill_name", e.label, { shouldValidate: true, shouldDirty: true });
     const bill_to_name = e.value;
-    form.setValue("customer", e, { shouldValidate: true, shouldDirty: true });
+    form.setValue("customer", bill_to_name, { shouldValidate: true, shouldDirty: true });
 
     dispatch(fetchClientDetails(bill_to_name)).then((response: any) => {
       if (response.meta.requestStatus === "fulfilled") {
         const data = response.payload[0];
         form.setValue("customer", data.clientCode, { shouldValidate: true, shouldDirty: true });
-        // form.setValue("customer_branch",({
-        //   label: data?.label || "",
-        //   value: data?.addressID || ""
-        // }), { shouldValidate: true, shouldDirty: true });
+        form.setValue("customer_branch",({
+          label: data?.label || "",
+          value: data?.addressID || ""
+        }), { shouldValidate: true, shouldDirty: true });
         form.setValue("customer_gstin", data.gst, { shouldValidate: true, shouldDirty: true });
         form.setValue("place_of_supply", data.state?.label, { shouldValidate: true, shouldDirty: true });
         form.setValue("customer_address1", data.addressLine1, { shouldValidate: true, shouldDirty: true });
@@ -129,8 +129,6 @@ const CreateSalesOrder: React.FC<Props> = ({
         form.setValue("shipping_pinCode", data?.shipmentAddress?.Pin, { shouldValidate: true, shouldDirty: true });
         form.setValue("shipping_address1", data?.shipmentAddress?.Address1, { shouldValidate: true, shouldDirty: true });
         form.setValue("shipping_address2", data?.shipmentAddress?.Address2, { shouldValidate: true, shouldDirty: true });
-        form.setValue("bill_from_gst", data.gstin, { shouldValidate: true, shouldDirty: true });
-        form.setValue("bill_pan", data.pan, { shouldValidate: true, shouldDirty: true });
         form.setValue("isSameClientAdd", "N");
       }
     });
@@ -147,9 +145,7 @@ const CreateSalesOrder: React.FC<Props> = ({
     }
   };
 
-  console.log(form.control, "errors");
-
-  console.log(form.control._formValues, "channel");
+  console.log(form.errors, "er");
   return (
     <div className="h-[calc(100vh-150px)]">
       {data.loading && <FullPageLoading />}
@@ -449,7 +445,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                       </div>
                       <FormField
                         control={form.control}
-                        name="bill_id"
+                        name="customer"
                         render={({field}) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
@@ -495,7 +491,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                         <FormField
                           control={form.control}
                           name="customer_branch"
-                          render={() => (
+                          render={({ field }) => (
                             <FormItem>
                               <FormLabel className={LableStyle}>
                                 {channel?.value == "FLK"
@@ -533,11 +529,12 @@ const CreateSalesOrder: React.FC<Props> = ({
                                       ? transformClientData(data.clientDetails)
                                       : []
                                   }
-                                  value={
-                                    data.clientDetails
-                                      ? transformClientData(data.clientDetails).find(option => option.value === form.getValues("customer_branch"))
-                                      : null
-                                  }
+                                  // value={
+                                  //   data.clientDetails
+                                  //     ? transformClientData(data.clientDetails).find(option => option.value === form.getValues("customer_branch"))
+                                  //     : null
+                                  // }
+                                  value={field.value}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -664,7 +661,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                       <FormField
                         control={form.control}
                         name="bill_id"
-                        render={() => (
+                        render={({  field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
                               Billing Name
@@ -684,12 +681,13 @@ const CreateSalesOrder: React.FC<Props> = ({
                                 isClearable={true}
                                 isSearchable={true}
                                 options={
-                                  data.billingAddressList
+                                  data?.billingAddressList
                                     ? transformOptionData(
-                                        data.billingAddressList
+                                        data?.billingAddressList
                                       )
                                     : []
                                 }
+                                value={field.value}
                               />
                             </FormControl>
                             <FormMessage />
