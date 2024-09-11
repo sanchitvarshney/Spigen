@@ -73,6 +73,35 @@ export const createSellRequest = createAsyncThunk<
   }
 });
 
+export const updateSellRequest = createAsyncThunk<
+  ApiResponse<any>,
+  SellRequestPayload
+>("/sellRequest/updateSellRequest", async (payload) => {
+  try {
+    const response = await spigenAxios.post(
+      "/sellRequest/soDataUpdate",
+      payload
+    );
+    if (!response.data.success) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: response.data.message,
+        className: "bg-red-600 text-white items-center",
+      });
+    } else {
+      toast({
+        title: "Success",
+        description: response.data.message,
+        className: "bg-green-600 text-white items-center",
+      });
+    }
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 interface SellRequest {
   index: number;
   hasInvoice: boolean;
@@ -312,6 +341,19 @@ const sellRequestSlice = createSlice({
         state.loading = false;
       })
       .addCase(createSellRequest.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to create sell request";
+      })
+
+      .addCase(updateSellRequest.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateSellRequest.fulfilled, (state, action) => {
+        state.data.push(action.payload.data);
+        state.loading = false;
+      })
+      .addCase(updateSellRequest.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Failed to create sell request";
       })

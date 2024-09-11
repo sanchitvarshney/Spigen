@@ -66,16 +66,16 @@ const CreateSalesOrderPage = () => {
     );
   };
 
-  useEffect(() => {
+   useEffect(() => {
     if (updateData) {
       const {
         channel,
-        client, // Default to empty array if client is undefined
+        client, 
         bill,
         ship,
         materials
       }:any = updateData;
-      console.log(channel,"channel",client,"client",bill,"bill",ship,"ship")
+      console.log(channel,"channel",client,"client",bill,"bill",ship,"ship",materials)
       // Set channel value
       setChannel({
         label: channel?.channel || "",
@@ -124,48 +124,31 @@ const CreateSalesOrderPage = () => {
         form.setValue("shipping_state", ship?.state?.value  , { shouldValidate: true, shouldDirty: true });
       }
     
-    const updatedData: RowData[] = materials?.map((material: any) => ({
+    const updatedData: RowData[] = materials?.map((material: any) => (
+      {
       type: material.so_type?.value || "product",
       items: material.item_code || "",
-      materialDescription: material.item_name || "",
+      material: material.item_name || "",
+      materialDescription: material.item_deatils || "",
+      rate: parseFloat(material.rate) || 0,
       orderQty: material.orderqty || 1,
       currency: material.currency || "364907247",
-      gstType: material.gsttype?.[0]?.id || "I",
-      localValue: parseFloat(material.taxablevalue) || 0.0,
+      gstType: material.gsttype?.[0]?.text || "I",
+      localValue:material.exchangetaxablevalue,
       foreignValue: parseFloat(material.exchangerate) || 0,
       cgst: parseFloat(material.cgst) || 0,
       sgst: parseFloat(material.sgst) || 0,
       igst: parseFloat(material.igst) || 0,
       dueDate: material.due_date || "",
-      isNew: false,
+      hsnCode: material.hsncode || "",
+      remark: material.remark || "",
+      isNew: true,
     }));
     setRowData(updatedData);
   }
   }, [updateData, form]);
-
-  // useEffect(() => {
-  //   // Update rowData when productDetails or any other relevant data changes
-  //   if (updateData?.materials) {
-  //     const updatedData: RowData[] = updateData.materials.map((material: any) => ({
-  //       type: material.so_type?.value || "product",
-  //       material: material.item_code || "",
-  //       materialDescription: material.item_name || "",
-  //       orderQty: material.orderqty || 1,
-  //       currency: material.currency || "364907247",
-  //       gstType: material.gsttype?.[0]?.id || "I",
-  //       localValue: parseFloat(material.taxablevalue) || 0.0,
-  //       foreignValue: parseFloat(material.exchangerate) || 0,
-  //       cgst: parseFloat(material.cgst) || 0,
-  //       sgst: parseFloat(material.sgst) || 0,
-  //       igst: parseFloat(material.igst) || 0,
-  //       dueDate: material.due_date || "",
-  //       isNew: false,
-  //     }));
-
-  //     setRowData(updatedData);
-  //   }
-  // }, [productDetails, setRowData]);
-
+  
+  
 useEffect(() => {
   if (pathname?.includes("update") && params?.id) {
     const soId = (params.id as string).replace(/_/g, "/");

@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
 
 import { fetchComponentDetail } from "@/features/salesmodule/createSalesOrderSlice";
-import { createSellRequest } from "@/features/salesmodule/SalesSlice";
+import { createSellRequest, updateSellRequest } from "@/features/salesmodule/SalesSlice";
 import { useNavigate } from "react-router-dom";
 
 const AddSalesOrder = ({
@@ -42,14 +42,12 @@ const AddSalesOrder = ({
   const [igstTotal, setIgstTotal] = useState(0);
   const [search, setSearch] = useState("");
   const dispatch = useDispatch<AppDispatch>();
-  const { productDetails } = useSelector(
-    (state: RootState) => state.createSalesOrder
-  );
+
   const { componentDetails, currency } = useSelector(
     (state: RootState) => state.createSalesOrder
   );
   const navigate = useNavigate();
-  console.log(form.getValues(), "ddddddd", productDetails);
+  console.log(form.getValues(), "ddddddd");
 
   const gridRef = useRef<AgGridReact<RowData>>(null);
   const uiState: AddPoUIStateType = {
@@ -86,17 +84,21 @@ const AddSalesOrder = ({
   };
 
   useEffect(() => {
+    rowData?.length===0 &&addNewRow();
+  }, []);
+
+  useEffect(() => {
     const intervalId = setInterval(() => {
-      if (rowData && rowData.length > 0) {
-        const cgstSum = rowData.reduce(
+      if (rowData && rowData?.length > 0) {
+        const cgstSum = rowData?.reduce(
           (sum: number, item: any) => sum + (parseFloat(item.cgst) || 0),
           0
         );
-        const sgstSum = rowData.reduce(
+        const sgstSum = rowData?.reduce(
           (sum: number, item: any) => sum + (parseFloat(item.sgst) || 0),
           0
         );
-        const igstSum = rowData.reduce(
+        const igstSum = rowData?.reduce(
           (sum: number, item: any) => sum + (parseFloat(item.igst) || 0),
           0
         );
@@ -156,42 +158,38 @@ const AddSalesOrder = ({
     gridRef.current!.api.exportDataAsExcel();
   }, []);
 
-  useEffect(() => {
-    addNewRow();
-  }, []);
 
   const materials = {
-    so_type: rowData.map((component: RowData) => component.type || ""),
-    items: rowData.map((component: RowData) => component.material || ""),
-    qty: rowData.map((component: RowData) =>
+    so_type: rowData?.map((component: RowData) => component.type || ""),
+    items: rowData?.map((component: RowData) => component.material || ""),
+    qty: rowData?.map((component: RowData) =>
       component?.orderQty === undefined
         ? null
-        : +Number(+Number(component.orderQty).toFixed(2))
+        : +Number(+Number(component.orderQty)?.toFixed(2))
     ),
-    hsn: rowData.map((component: RowData) => component.hsnCode || ""),
-    price: rowData.map((component: RowData) => Number(component.rate) || 0),
-    gst_rate: rowData.map(
+    hsn: rowData?.map((component: RowData) => component.hsnCode || ""),
+    price: rowData?.map((component: RowData) => Number(component.rate) || 0),
+    gst_rate: rowData?.map(
       (component: RowData) => Number(component.gstRate) || 0
     ),
-    gst_type: rowData.map((component: RowData) => component.gstType || ""),
-    currency: rowData.map((component: RowData) => component.currency || ""),
-    exchange_rate: rowData.map(
+    gst_type: rowData?.map((component: RowData) => component.gstType || ""),
+    currency: rowData?.map((component: RowData) => component.currency || ""),
+    exchange_rate: rowData?.map(
       (component: RowData) => Number(component.exchangeRate) || 1
     ),
-    due_date: rowData.map((component: RowData) => component.dueDate || ""),
-    remark: rowData.map((component: RowData) => component.remark || ""),
-    cgst: rowData.map((component: RowData) => component.cgst || 0),
-    sgst: rowData.map((component: RowData) => component.sgst || 0),
-    igst: rowData.map((component: RowData) => component.igst || 0), 
+    due_date: rowData?.map((component: RowData) => component.dueDate || ""),
+    remark: rowData?.map((component: RowData) => component.remark || ""),
+    cgst: rowData?.map((component: RowData) => component.cgst || 0),
+    sgst: rowData?.map((component: RowData) => component.sgst || 0),
+    igst: rowData?.map((component: RowData) => component.igst || 0), 
+    updaterow:rowData?.map((component: RowData) => component.updateid || 0),
   };
   const payloadData2 = {
     headers: { ...form?.getValues() },
     materials,
   };
-  // console.log(materials, "ddaattaa", form.getValues(), payloadData2);
 
   const handleSubmit = () => {
-    console.log("Payload Data:", payloadData2); // Debugging log
     if (!payloadData2 || Object.keys(payloadData2).length === 0) {
       console.error("Payload data is missing or undefined.");
       // Handle error, e.g., show a message to the user
@@ -211,8 +209,43 @@ const AddSalesOrder = ({
       // Handle error, e.g., show a message to the user
     }
   };
-
-  const totalSum = rowData.reduce((sum: number, item: any) => {
+  // const handleSubmit = () => {
+  //   const navigate = useNavigate();
+  //   const dispatch = useDispatch<AppDispatch>();
+  //   const updateData = useSelector((state: RootState) => state.sellRequest.updateData); // or however you access update data
+    
+  //   if (!payloadData2 || Object.keys(payloadData2).length === 0) {
+  //     console.error("Payload data is missing or undefined.");
+  //     // Handle error, e.g., show a message to the user
+  //     return;
+  //   }
+  
+  //   const isUpdate = updateData && updateData.length > 0;
+  //   console.log(updateData && updateData.length > 0)
+  //   try {
+  //     const action = isUpdate ? updateSellRequest(payloadData2) : createSellRequest(payloadData2);
+      
+  //     dispatch(action).then((response: any) => {
+  //       if (response.meta.requestStatus === "fulfilled") {
+  //         if (isUpdate) {
+  //           console.log("Update successful");
+  //           // Optionally navigate or update UI for successful update
+  //           navigate("/sales/order/update-success"); // Adjust the route as needed
+  //         } else {
+  //           console.log("Creation successful");
+  //           navigate("/sales/order/create"); // Adjust the route as needed
+  //         }
+  //       } else {
+  //         console.error("Request failed:", response.meta.requestError);
+  //         // Handle failure, e.g., show a message to the user
+  //       }
+  //     });
+  //   } catch (error) {
+  //     console.error("Error submitting data:", error);
+  //     // Handle error, e.g., show a message to the user
+  //   }
+  // };
+  const totalSum = rowData?.reduce((sum: number, item: any) => {
     // Convert rate and orderQty to numbers
     const rate = parseFloat(item.rate);
     const orderQty = item.orderQty;
@@ -225,7 +258,7 @@ const AddSalesOrder = ({
   }, 0);
 
   // Round the total sum to 2 decimal places
-  const roundedTotalSum = Number(totalSum.toFixed(2));
+  const roundedTotalSum = Number(totalSum?.toFixed(2));
 
   return (
     <Wrapper>
@@ -274,7 +307,7 @@ const AddSalesOrder = ({
                       <h3 className="font-[500]">CGST :</h3>
                     </div>
                     <div>
-                      <p className="text-[14px]">(+){cgstTotal.toFixed(2)}</p>
+                      <p className="text-[14px]">(+){cgstTotal?.toFixed(2)}</p>
                     </div>
                   </li>
                   <li className="grid grid-cols-[1fr_70px] mt-[20px]">
@@ -282,7 +315,7 @@ const AddSalesOrder = ({
                       <h3 className="font-[500]">SGST :</h3>
                     </div>
                     <div>
-                      <p className="text-[14px]">(+){sgstTotal.toFixed(2)}</p>
+                      <p className="text-[14px]">(+){sgstTotal?.toFixed(2)}</p>
                     </div>
                   </li>
                   <li className="grid grid-cols-[1fr_70px] mt-[20px]">
@@ -290,7 +323,7 @@ const AddSalesOrder = ({
                       <h3 className="font-[500]">ISGST :</h3>
                     </div>
                     <div>
-                      <p className="text-[14px]">(+){igstTotal.toFixed(2)}</p>
+                      <p className="text-[14px]">(+){igstTotal?.toFixed(2)}</p>
                     </div>
                   </li>
                   <li className="grid grid-cols-[1fr_70px] mt-[20px]">
@@ -306,7 +339,7 @@ const AddSalesOrder = ({
                           cgstTotal +
                           sgstTotal +
                           igstTotal
-                        ).toFixed(2)}
+                        )?.toFixed(2)}
                       </p>
                     </div>
                   </li>

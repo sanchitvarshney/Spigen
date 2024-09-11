@@ -18,6 +18,7 @@ export interface RowData {
   isNew?: boolean;
   remark?: string;
   exchangeRate?: number;
+  updateid?: string;
 }
 
 

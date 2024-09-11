@@ -71,6 +71,10 @@ const TextInputCellRenderer = (props: any) => {
   const { componentDetails } = useSelector(
     (state: RootState) => state.createSalesOrder
   );
+  const materials= useSelector(
+    (state: RootState) => state.sellRequest.updateData
+  );
+
   const [openCurrencyDialog, setOpenCurrencyDialog] = useState(false);
 
   const handleDelete = () => {
@@ -84,11 +88,10 @@ const TextInputCellRenderer = (props: any) => {
     api.refreshCells({ rowNodes: [props.node], columns: [column] });
   };
 
-  const handleCurrencyChange = (value:any) => {
-    data["currency"] = value
+  const handleCurrencyChange = (value: any) => {
+    data["currency"] = value;
     setOpenCurrencyDialog(true);
-  }
-
+  };
   const handleChange = (value: string) => {
     const newValue = value;
     data[colDef.field] = value; // Save ID in the data
@@ -136,6 +139,7 @@ const TextInputCellRenderer = (props: any) => {
     updateData(data);
   };
   console.log(data, "data");
+
   const handleInputChange = (e: any) => {
     const newValue = e.target.value;
     data[colDef.field] = newValue; // Update the data object
@@ -317,7 +321,7 @@ const TextInputCellRenderer = (props: any) => {
               onChange={(e) => handleCurrencyChange(e.value)}
               // value={value}
             />
-              <CurrencyRateDialog
+            <CurrencyRateDialog
               open={openCurrencyDialog}
               onClose={() => setOpenCurrencyDialog(false)}
               currency={data.currency || ""}
@@ -373,7 +377,7 @@ const TextInputCellRenderer = (props: any) => {
           />
         );
       case "hsnCode":
-        case"remark":
+      case "remark":
         return (
           <Input
             onChange={handleInputChange}
