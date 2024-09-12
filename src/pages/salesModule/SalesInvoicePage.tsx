@@ -21,6 +21,7 @@ import { fetchSalesOrderInvoiceList } from "@/features/salesmodule/salesInvoiceS
 import { useDispatch, useSelector } from "react-redux";
 import CustomLoadingCellRenderer from "@/config/agGrid/CustomLoadingCellRenderer";
 import FullPageLoading from "@/components/shared/FullPageLoading";
+import { setDateRange } from "@/features/salesmodule/SalesSlice";
 
 const { RangePicker } = DatePicker;
 const dateFormat = "YYYY/MM/DD";
@@ -61,8 +62,10 @@ const SalesInvoicePage: React.FC = () => {
       const startDate = dateRange[0].toLocaleDateString("en-GB").split("/").reverse().join("-");
       const endDate = dateRange[1].toLocaleDateString("en-GB").split("/").reverse().join("-");
       dataString = `${startDate}-${endDate}`;
+      dispatch(setDateRange(dataString as any));
     } else if (wise === "clientwise" && wise !== undefined) {
       dataString = wise;
+      dispatch(setDateRange(dataString as any));
     }
   
     try {
@@ -194,8 +197,8 @@ const SalesInvoicePage: React.FC = () => {
           pagination={true}
           paginationPageSize={10}
           paginationAutoPageSize={true}
-          gridOptions={gridOptions}
-          
+          suppressCellFocus={true}
+          gridOptions={gridOptions}          
         />
       </div>
     </Wrapper>

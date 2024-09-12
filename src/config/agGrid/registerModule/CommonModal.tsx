@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button } from 'antd';
 import {
   Dialog,
@@ -6,14 +5,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog'; // Ensure this path is correct
+} from '@/components/ui/dialog';
 
 interface CommonModalProps {
   isDialogVisible: boolean;
   handleOk: () => void;
   handleCancel: () => void;
-  title: string; // Dynamic title
-  description: string; // Dynamic description
+  title: string; 
+  description: string;
 }
 
 export function CommonModal({

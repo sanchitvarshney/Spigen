@@ -16,6 +16,7 @@ interface ConfirmCancellationDialogProps {
     req_id: string;
   };
   form: FormInstance;
+  module?: string
 }
 
 export function ConfirmCancellationDialog({
@@ -24,6 +25,7 @@ export function ConfirmCancellationDialog({
   handleCancel,
   row,
   form,
+  module
 }: ConfirmCancellationDialogProps) {
   return (
     <Dialog open={isDialogVisible} onOpenChange={handleCancel}>
@@ -35,7 +37,7 @@ export function ConfirmCancellationDialog({
           <DialogTitle>Confirm Cancellation</DialogTitle>
         </DialogHeader>
         <Form form={form} layout="vertical">
-          <p>Are you sure you want to cancel this SO {row.req_id}?</p>
+          <p> Are you sure you want to cancel this {module ? module : "SO"} {row.req_id}?</p>
           <Form.Item
             name="remark"
             label="Remarks"

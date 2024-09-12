@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { spigenAxios } from "@/axiosIntercepter";
-
+import { toast } from "@/components/ui/use-toast";
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -8,13 +8,10 @@ export interface ApiResponse<T> {
   message?: string | null;
 }
 
-
-;
-
 interface SellInvoiceData {
-  channel: string; 
+  channel: string;
   delivery_challan_dt: string;
-  so_ship_invoice_id: string; 
+  so_ship_invoice_id: string;
   client: string;
   client_code: string;
   clientaddress1: string;
@@ -25,15 +22,16 @@ interface SellInvoiceData {
   shippingaddress2: string;
 }
 
-
 interface SellShipmentState {
   data: SellInvoiceData[];
+  challanDetails: [];
   loading: boolean;
   error: string | null;
 }
 
 const initialState: SellShipmentState = {
   data: [],
+  challanDetails: [],
   loading: false,
   error: null,
 };
@@ -42,16 +40,100 @@ interface FetchSellInvoicePayload {
   data: string;
 }
 
+interface CancelPayload {
+  remark: string;
+  invoice_no: string;
+}
+
 export const fetchSalesOrderInvoiceList = createAsyncThunk<
   ApiResponse<any>,
   FetchSellInvoicePayload
-
 >("so_challan_shipment/fetchDeliveryChallan", async (payload) => {
-  const response = await spigenAxios.post("so_challan_shipment/fetchDeliveryChallan", payload);
+  const response = await spigenAxios.post(
+    "so_challan_shipment/fetchDeliveryChallan",
+    payload
+  );
   return response.data;
 });
 
+export const getchallanDetails = createAsyncThunk(
+  "so_challan_shipment/getchallanDetails",
+  async ({ challan_id }: { challan_id: string }, { rejectWithValue }) => {
+    try {
+      const response = await spigenAxios.post<any>(
+        "/so_challan_shipment/getDeliveryChallanDetails",
+        { challan_id: challan_id }
+      );
 
+      if (!response.data) {
+        throw new Error("No data received");
+      }
+      // Return the entire response as expected by the fulfilled case
+      return response.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        // Handle error using rejectWithValue
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("An unknown error occurred");
+    }
+  }
+);
+
+export const printSellInvoice = createAsyncThunk(
+  "client/printSellInvoice",
+  async ({ so_invoice }: { so_invoice: string }, { rejectWithValue }) => {
+    try {
+      const response = await spigenAxios.post<any>(
+        "/so_challan_shipment/printSellInvoice",
+        { so_invoice: so_invoice }
+      );
+
+      if (!response.data) {
+        throw new Error("No data received");
+      }
+      // Return the entire response as expected by the fulfilled case
+      return response.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        // Handle error using rejectWithValue
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("An unknown error occurred");
+    }
+  }
+);
+
+export const cancelInvoice = createAsyncThunk(
+  "client/cancelInvoice",
+  async (payload: CancelPayload, { rejectWithValue }) => {
+    try {
+      const response = (await spigenAxios.post<any>(
+        "/so_challan_shipment/cancelInvoice",
+        payload
+      )) as any;
+
+      if (response?.data?.success) {
+        toast({
+          title: response?.data?.message,
+          className: "bg-green-600 text-white items-center",
+        });
+      } else {
+        toast({
+          title: response.data.message,
+          className: "bg-red-600 text-white items-center",
+        });
+      }
+
+      return response.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("An unknown error occurred");
+    }
+  }
+);
 
 const sellInvoiceSlice = createSlice({
   name: "sellInvoice",
@@ -69,21 +151,50 @@ const sellInvoiceSlice = createSlice({
           state.data = action.payload.data;
           state.error = null;
         } else {
-          state.error = action.payload.message || "Failed to fetch invoice order shipment list";
+          state.error =
+            action.payload.message ||
+            "Failed to fetch invoice order shipment list";
         }
         state.loading = false;
       })
       .addCase(fetchSalesOrderInvoiceList.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Failed to fetch invoice order shipment list";
+        state.error =
+          action.error.message || "Failed to fetch invoice order shipment list";
+      })
+      .addCase(printSellInvoice.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(printSellInvoice.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(printSellInvoice.rejected, (state, action) => {
+        state.error = action.error?.message || null;
+        state.loading = false;
+      })
+      .addCase(cancelInvoice.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(cancelInvoice.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(cancelInvoice.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(getchallanDetails.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getchallanDetails.fulfilled, (state, action) => {
+        state.challanDetails = action.payload?.data;
+        state.loading = false;
+      })
+      .addCase(getchallanDetails.rejected, (state, action) => {
+        state.error = action.error?.message || null;
+        state.loading = false;
       });
-
-      
-      
-
-
   },
 });
-
 
 export default sellInvoiceSlice.reducer;

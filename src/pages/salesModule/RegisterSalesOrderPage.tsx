@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -84,12 +84,12 @@ const RegisterSalesOrderPage: React.FC = () => {
     }
   };
   
-  useEffect(() => {
-    if (wise === "DATE") {
-      console.log("Dispatching fetchSellRequestList");
-      dispatch(fetchSellRequestList({ wise, data: "" }) as any);
-    }
-  }, [wise]);
+  // useEffect(() => {
+  //   if (wise === "DATE") {
+  //     console.log("Dispatching fetchSellRequestList");
+  //     dispatch(fetchSellRequestList({ wise, data: "" }) as any);
+  //   }
+  // }, [wise]);
   
   
   const loadingCellRenderer = useCallback(CustomLoadingCellRenderer, []);

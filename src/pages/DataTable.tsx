@@ -31,7 +31,7 @@ const DataTable = () => {
     //   setRowData([...rowData, newRow]);
     // };
     const saveRows = (data: RowData) => {
-      const updatedData = rowData.map((row) => {
+      const updatedData = rowData?.map((row) => {
         if (row.poId === data.poId && data.poId !== "") {
           row.isNew = false;
         }
@@ -45,7 +45,7 @@ const DataTable = () => {
     };
   
     const editRow = (data: RowData) => {
-      const updatedData = rowData.map((row) => (row.poId === data.poId ? { ...row, isNew: true } : row));
+      const updatedData = rowData?.map((row) => (row.poId === data.poId ? { ...row, isNew: true } : row));
       setRowData(updatedData);
     };
   

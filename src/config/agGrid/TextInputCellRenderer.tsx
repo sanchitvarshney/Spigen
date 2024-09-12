@@ -103,7 +103,6 @@ const TextInputCellRenderer = (props: any) => {
         so_id: (params.id as string).replace(/_/g, "/"),
         updaterow: data?.updateid,
       };
-      console.log(payload, data);
       if (window.location.pathname.includes("update")) {
         dispatch(deleteProduct(payload));
       }
