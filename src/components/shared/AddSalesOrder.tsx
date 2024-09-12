@@ -19,7 +19,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
 
 import { fetchComponentDetail } from "@/features/salesmodule/createSalesOrderSlice";
-import { createSellRequest, updateSellRequest } from "@/features/salesmodule/SalesSlice";
+import {
+  createSellRequest,
+  updateSellRequest,
+} from "@/features/salesmodule/SalesSlice";
 import { useNavigate, useParams } from "react-router-dom";
 
 const AddSalesOrder = ({
@@ -60,7 +63,7 @@ const AddSalesOrder = ({
   };
 
   useEffect(() => {
-     rowData?.length===0 && addNewRow();
+    rowData?.length === 0 && addNewRow();
   }, []);
 
   const addNewRow = () => {
@@ -85,8 +88,6 @@ const AddSalesOrder = ({
     };
     setRowData((prevData: any) => [...prevData, newRow]);
   };
-
-
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -162,10 +163,11 @@ const AddSalesOrder = ({
 
   const materials = {
     so_type: rowData?.map((component: RowData) => component.type || ""),
-    items: rowData?.map((component: RowData) => 
-      typeof component.material === 'object' && component.material !== null 
-        ? (component.material as any).id || "" 
-        : component.material || ""),
+    items: rowData?.map((component: RowData) =>
+      typeof component.material === "object" && component.material !== null
+        ? (component.material as any).id || ""
+        : component.material || ""
+    ),
     qty: rowData?.map((component: RowData) =>
       component?.orderQty === undefined
         ? null
@@ -185,12 +187,12 @@ const AddSalesOrder = ({
     remark: rowData?.map((component: RowData) => component.remark || ""),
     cgst: rowData?.map((component: RowData) => component.cgst || 0),
     sgst: rowData?.map((component: RowData) => component.sgst || 0),
-    igst: rowData?.map((component: RowData) => component.igst || 0), 
-    updaterow:rowData?.map((component: RowData) => component.updateid || 0),
+    igst: rowData?.map((component: RowData) => component.igst || 0),
+    updaterow: rowData?.map((component: RowData) => component.updateid || 0),
   };
   const soId = (params.id as string)?.replace(/_/g, "/");
   const payloadData2 = {
-    headers: { ...form?.getValues(),so_id: soId},
+    headers: { ...form?.getValues(), so_id: soId },
     materials,
   };
   const handleSubmit = () => {
@@ -198,29 +200,26 @@ const AddSalesOrder = ({
       console.error("Payload data is missing or undefined.");
       return;
     }
-    if(window.location.pathname.includes("update")){
-      dispatch(updateSellRequest(payloadData2)).then(
-        (response: any) => {
-          if (response.payload.success) {
-            navigate("/sales/order/update");
-          }
-        })
-    }
-else{
-    try {
-      dispatch(createSellRequest(payloadData2)).then(
-        (response: any) => {
+    if (window.location.pathname.includes("update")) {
+      dispatch(updateSellRequest(payloadData2)).then((response: any) => {
+        if (response.payload.success) {
+          navigate("/sales/order/update");
+        }
+      });
+    } else {
+      try {
+        dispatch(createSellRequest(payloadData2)).then((response: any) => {
           if (response.meta.requestStatus === "fulfilled") {
             navigate("/sales/order/create");
           }
-        })
-      // setTab("create");
-    } catch (error) {
-      console.error("Error submitting data:", error);
-      // Handle error, e.g., show a message to the user
+        });
+        // setTab("create");
+      } catch (error) {
+        console.error("Error submitting data:", error);
+        // Handle error, e.g., show a message to the user
+      }
     }
   };
-}
 
   const totalSum = rowData?.reduce((sum: number, item: any) => {
     // Convert rate and orderQty to numbers
@@ -249,14 +248,14 @@ else{
               </CardTitle>
             </CardHeader>
             <CardContent className="mt-[20px] flex flex-col gap-[10px] text-slate-600">
-              <h3 className="font-[500]">Name</h3>
+              <h3 className="font-[600]">Name</h3>
               <p className="text-[14px]">{form.getValues("bill_name")}</p>
-              <h3 className="font-[500]">Address</h3>
+              <h3 className="font-[600]">Address</h3>
               <p className="text-[14px]">
                 {form.getValues("customer_address1")}
                 {form.getValues("customer_address2")}
               </p>
-              <h3 className="font-[500]">GSTIN</h3>
+              <h3 className="font-[600]">GSTIN</h3>
               <p className="text-[14px]">{form.getValues("customer_gstin")}</p>
             </CardContent>
           </Card>
@@ -271,7 +270,7 @@ else{
                 <ul>
                   <li className="grid grid-cols-[1fr_70px] mt-[20px]">
                     <div>
-                      <h3 className="font-[500]">
+                      <h3 className="font-[600]">
                         Sub-Total value before Taxes :
                       </h3>
                     </div>
@@ -281,7 +280,7 @@ else{
                   </li>
                   <li className="grid grid-cols-[1fr_70px] mt-[20px]">
                     <div>
-                      <h3 className="font-[500]">CGST :</h3>
+                      <h3 className="font-[600]">CGST :</h3>
                     </div>
                     <div>
                       <p className="text-[14px]">(+){cgstTotal?.toFixed(2)}</p>
@@ -289,7 +288,7 @@ else{
                   </li>
                   <li className="grid grid-cols-[1fr_70px] mt-[20px]">
                     <div>
-                      <h3 className="font-[500]">SGST :</h3>
+                      <h3 className="font-[600]">SGST :</h3>
                     </div>
                     <div>
                       <p className="text-[14px]">(+){sgstTotal?.toFixed(2)}</p>
@@ -297,7 +296,7 @@ else{
                   </li>
                   <li className="grid grid-cols-[1fr_70px] mt-[20px]">
                     <div>
-                      <h3 className="font-[500]">ISGST :</h3>
+                      <h3 className="font-[600]">ISGST :</h3>
                     </div>
                     <div>
                       <p className="text-[14px]">(+){igstTotal?.toFixed(2)}</p>

@@ -3,19 +3,21 @@ import { ColDef } from "ag-grid-community";
 import { Button, Dropdown, Form, Menu } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { cancelInvoice, fetchSalesOrderInvoiceList, getchallanDetails, printSellInvoice } from "@/features/salesmodule/salesInvoiceSlice";
+import { cancelInvoice, fetchDataNotes, fetchSalesOrderInvoiceList, getchallanDetails, printSellInvoice } from "@/features/salesmodule/salesInvoiceSlice";
 import { AppDispatch, RootState } from "@/store";
 import { useState } from "react";
 import ViewInvoiceModal from "@/config/agGrid/invoiceModule/ViewInvoiceModal";
 import { printFunction } from "@/General";
 import { ConfirmCancellationDialog } from "@/config/agGrid/registerModule/ConfirmCancellationDialog";
+import DebitNote from "@/config/agGrid/invoiceModule/DebitNote";
 
 const ActionMenu: React.FC<any> = ({ row }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [viewInvoice , setViewInvoice] = useState(false);
+  const [viewDebitNote , setViewDebitNote] = useState(false);
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
   const [form] = Form.useForm();
-  const { challanDetails }:any = useSelector(
+  const { challanDetails,dataNotes }:any = useSelector(
     (state: RootState) => state.sellInvoice
   );
   const dateRange = useSelector(
@@ -25,6 +27,11 @@ const ActionMenu: React.FC<any> = ({ row }) => {
   const handleViewInvoice = (row:any) => {
     dispatch(getchallanDetails({ challan_id: row.so_ship_invoice_id }))
     setViewInvoice(true);
+  };
+
+  const handleViewDebitNote = (row:any) => {
+    dispatch(fetchDataNotes({ sono: row.so_id }))
+    setViewDebitNote(true);
   };
 
   const handlePrintInvoice = async (orderId: string) => {
@@ -66,7 +73,7 @@ const ActionMenu: React.FC<any> = ({ row }) => {
       >
         View
       </Menu.Item>
-      <Menu.Item key="cancel" disabled={isDisabled} onClick={()=>handlePrintInvoice(row?.so_ship_invoice_id)}>
+      <Menu.Item key="cancel" onClick={()=>handlePrintInvoice(row?.so_ship_invoice_id)}>
         Download
       </Menu.Item>
       <Menu.Item key="materialList" onClick={()=> setCancelModalVisible(true)} disabled={row?.isEwayBill == "Y" || row?.isEInvoice == "Y"}>
@@ -74,8 +81,7 @@ const ActionMenu: React.FC<any> = ({ row }) => {
       </Menu.Item>
       <Menu.Item
         key="createInvoice"
-        // onClick={console.log(row)}
-        disabled={isDisabled}
+        onClick={() => handleViewDebitNote(row)}
       >
         Debit Note
       </Menu.Item>
@@ -99,6 +105,7 @@ const ActionMenu: React.FC<any> = ({ row }) => {
         form={form}
         module="Invoice"
       />
+      <DebitNote visible={viewDebitNote} onClose={() => setViewDebitNote(false)} sellRequestDetails={dataNotes} />
     </>
   );
 };

@@ -25,6 +25,7 @@ interface SellInvoiceData {
 interface SellShipmentState {
   data: SellInvoiceData[];
   challanDetails: [];
+  dataNotes:[];
   loading: boolean;
   error: string | null;
 }
@@ -32,6 +33,7 @@ interface SellShipmentState {
 const initialState: SellShipmentState = {
   data: [],
   challanDetails: [],
+  dataNotes: [],
   loading: false,
   error: null,
 };
@@ -135,6 +137,30 @@ export const cancelInvoice = createAsyncThunk(
   }
 );
 
+export const fetchDataNotes = createAsyncThunk(
+  "so_challan_shipment/fetchDataNotes",
+  async ({ sono }: { sono: string }, { rejectWithValue }) => {
+    try {
+      const response = await spigenAxios.post<any>(
+        "/soEnotes/fetchData4Notes",
+        { sono: sono }
+      );
+
+      if (!response.data) {
+        throw new Error("No data received");
+      }
+      // Return the entire response as expected by the fulfilled case
+      return response.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        // Handle error using rejectWithValue
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("An unknown error occurred");
+    }
+  }
+);
+
 const sellInvoiceSlice = createSlice({
   name: "sellInvoice",
   initialState,
@@ -191,6 +217,17 @@ const sellInvoiceSlice = createSlice({
         state.loading = false;
       })
       .addCase(getchallanDetails.rejected, (state, action) => {
+        state.error = action.error?.message || null;
+        state.loading = false;
+      })
+      .addCase(fetchDataNotes.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchDataNotes.fulfilled, (state, action) => {
+        state.dataNotes = action.payload?.data;
+        state.loading = false;
+      })
+      .addCase(fetchDataNotes.rejected, (state, action) => {
         state.error = action.error?.message || null;
         state.loading = false;
       });
