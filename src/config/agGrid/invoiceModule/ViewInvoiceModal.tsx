@@ -60,7 +60,7 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
       headerName: "Component",
       field: "item_name",
       width: 500,
-      cellStyle: cellStyle,
+      cellStyle : { 'text-overflow':'ellipsis','white-space':'nowrap', 'overflow': 'hidden', 'padding': 0 }
     },
     { headerName: "Qty", field: "item_qty" },
     { headerName: "Rate", field: "item_rate" },
@@ -276,8 +276,3 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
 
 export default ViewInvoiceModal;
 
-const cellStyle = {
-  whiteSpace: "nowrap",
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-};

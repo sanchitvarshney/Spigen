@@ -42,6 +42,7 @@ const ActionMenu: React.FC<any> = ({ row }) => {
     });
   };
 
+
   const handleOk = () => {
     form
       .validateFields()
@@ -105,7 +106,7 @@ const ActionMenu: React.FC<any> = ({ row }) => {
         form={form}
         module="Invoice"
       />
-      <DebitNote visible={viewDebitNote} onClose={() => setViewDebitNote(false)} sellRequestDetails={dataNotes} />
+      <DebitNote visible={viewDebitNote} onClose={() => setViewDebitNote(false)} sellRequestDetails={dataNotes||[]} />
     </>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { ColDef, ColGroupDef } from "ag-grid-community";
 import {
@@ -10,6 +10,10 @@ import {
 } from "@/components/ui/sheet";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import columnDefs, { RowData } from "@/config/agGrid/SalseOrderCreateTableColumns";
+import DebitTextInputCellRenderer from "@/config/agGrid/invoiceModule/DebitTextInputCellRenderer";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/store";
+import { fetchcurrency } from "@/features/salesmodule/createSalesOrderSlice";
 
 interface Item {
     item_value: number;
@@ -49,6 +53,7 @@ const DebitNote: React.FC<DebitNoteProps> = ({
   //   { headerName: "Rate", field: "item_rate" },
   // ];
   const [rowData, setRowData] = useState<RowData[]>([]);
+  const dispatch = useDispatch<AppDispatch>();
 
   const itemCGSTs = sellRequestDetails?.materials?.map(
     (item:Item) => parseFloat(item.cgst) || 0
@@ -79,7 +84,7 @@ useEffect(() => {
     {
     type: material.so_type?.value || "product",
     items: material.item_code || "",
-    material: material.selectedItem[0].id || "",
+    material: material.selectedItem?.[0].id || "",
     materialDescription: material.item_deatils || "",
     rate: parseFloat(material.rate) || 0,
     orderQty: material.orderqty || 1,
@@ -99,7 +104,31 @@ useEffect(() => {
   }));
   setRowData(updatedData);
 }, [sellRequestDetails]);
-console.log(rowData)
+
+const { currency } = useSelector(
+  (state: RootState) => state.createSalesOrder
+);
+
+const components = useMemo(
+  () => ({
+    textInputCellRenderer: (props: any) => (
+      <DebitTextInputCellRenderer
+        {...props}
+        currency={currency}
+        setRowData={setRowData}
+      />
+    ),
+    // datePickerCellRenderer: DatePickerCellRenderer,
+    // statusCellRenderer: StatusCellRenderer,
+  }),
+  []
+);
+
+useEffect(() => {
+  dispatch(fetchcurrency());
+}, []);
+
+console.log(rowData,currency)
   return (
     <Sheet open={visible} onOpenChange={onClose}>
       <SheetHeader></SheetHeader>
@@ -117,12 +146,12 @@ console.log(rowData)
               </CardHeader>
               <CardContent className="mt-4 flex flex-col gap-4 text-slate-600">
                 <h3 className="font-[600]">Client</h3>
-                <p className="text-[14px]">{sellRequestDetails?.client[0]?.clientname}</p>
+                <p className="text-[14px]">{sellRequestDetails?.client?.[0]?.clientname||"--"}</p>
                 <h3 className="font-[600]">Branch</h3>
-                <p className="text-[14px]">{sellRequestDetails?.client[0]?.clientbranch?.label}</p>
+                <p className="text-[14px]">{sellRequestDetails?.client?.[0]?.clientbranch?.label||"--"}</p>
                 <h3 className="font-[600]">Address</h3>
                 <p className="text-[14px]">
-                  {sellRequestDetails?.client[0]?.clientaddress1|| "" + sellRequestDetails?.client[0]?.clientaddress2}
+                  {sellRequestDetails?.client?.[0]?.clientaddress1|| "" + sellRequestDetails?.client?.[0]?.clientaddress2||"--"}
                 </p>
               </CardContent>
             </Card>
@@ -281,6 +310,7 @@ console.log(rowData)
               columnDefs={columnDefs as (ColDef | ColGroupDef)[]}
               pagination={true}
               suppressCellFocus={true}
+              components={components}
             />
           </div>
         </div>
