@@ -47,6 +47,11 @@ interface CancelPayload {
   invoice_no: string;
 }
 
+interface DebitNote{
+  invoice_id: string;
+  other_ref: string;
+  material:{}
+}
 export const fetchSalesOrderInvoiceList = createAsyncThunk<
   ApiResponse<any>,
   FetchSellInvoicePayload
@@ -112,6 +117,37 @@ export const cancelInvoice = createAsyncThunk(
     try {
       const response = (await spigenAxios.post<any>(
         "/so_challan_shipment/cancelInvoice",
+        payload
+      )) as any;
+
+      if (response?.data?.success) {
+        toast({
+          title: response?.data?.message,
+          className: "bg-green-600 text-white items-center",
+        });
+      } else {
+        toast({
+          title: response.data.message,
+          className: "bg-red-600 text-white items-center",
+        });
+      }
+
+      return response.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("An unknown error occurred");
+    }
+  }
+);
+
+export const createDebitNote = createAsyncThunk(
+  "client/createDebitNote",
+  async (payload: DebitNote, { rejectWithValue }) => {
+    try {
+      const response = (await spigenAxios.post<any>(
+        "/soEnotes/createDebitNote",
         payload
       )) as any;
 
@@ -206,6 +242,17 @@ const sellInvoiceSlice = createSlice({
         state.loading = false;
       })
       .addCase(cancelInvoice.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(createDebitNote.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createDebitNote.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(createDebitNote.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })

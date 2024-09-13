@@ -1,43 +1,16 @@
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
-import { FaSortDown, FaTrash } from "react-icons/fa6";
-import {
-  Command,
-  CommandEmpty,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "cmdk";
+import { FaTrash } from "react-icons/fa6";
 import { Select } from "antd";
-import { fetchProductData } from "@/features/salesmodule/createSalesOrderSlice";
-import { AppDispatch, RootState } from "@/store";
-import { transformCurrencyData, transformOptionData } from "@/helper/transform";
+import { transformCurrencyData } from "@/helper/transform";
 import CurrencyRateDialog from "@/components/ui/CurrencyRateDialog";
-import {
-  DeletePayload,
-  deleteProduct,
-} from "@/features/salesmodule/SalesSlice";
-import { useParams } from "react-router-dom";
 import { CommonModal } from "@/config/agGrid/registerModule/CommonModal";
 
 const DebitTextInputCellRenderer = (props: any) => {
-  const dispatch = useDispatch<AppDispatch>();
-  const params = useParams();
-  const [open, setOpen] = useState(false);
   const [openCurrencyDialog, setOpenCurrencyDialog] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
-  const { value, colDef, data, api, column, currency, setRowData } = props;
-  const { componentDetails } = useSelector(
-    (state: RootState) => state.createSalesOrder
-  );
+  const { value, colDef, data, api, column, setRowData,currency } = props;
 
   const handleDeleteRow = (rowIndex: number) => {
     setSelectedRowIndex(rowIndex);
@@ -52,15 +25,6 @@ const DebitTextInputCellRenderer = (props: any) => {
       api.applyTransaction({
         remove: [api.getDisplayedRowAtIndex(selectedRowIndex).data],
       });
-
-      const payload: DeletePayload = {
-        item: data?.material?.text,
-        so_id: (params.id as string).replace(/_/g, "/"),
-        updaterow: data?.updateid,
-      };
-      if (window.location.pathname.includes("update")) {
-        dispatch(deleteProduct(payload));
-      }
     }
     setShowConfirmDialog(false);
   };
@@ -112,6 +76,7 @@ const DebitTextInputCellRenderer = (props: any) => {
   const submitCurrencyRate = (field: string, value: any) => {
     data[field] = value?.rate;
   };
+
   const renderContent = () => {
     switch (colDef.field) {
       case "delete":
@@ -138,26 +103,38 @@ const DebitTextInputCellRenderer = (props: any) => {
             />
           </div>
         );
+        case "material":
+          case "gstType":
+          return (
+            <Input
+            readOnly
+            value={value?.text}
+            type="text"
+            placeholder={colDef.headerName}
+            className="w-[100%] text-slate-600 border-none shadow-none mt-[2px]"
+          />
+          );
         case "rate":
           return (
             <>
-              <Input
-                onChange={handleInputChange}
-                value={value}
-                type="text"
-                placeholder={colDef.headerName}
-                className="w-[100%]  text-slate-600  border-slate-400 shadow-none mt-[2px]"
-              />
+             <Input
+            name={colDef.field}
+            onChange={handleInputChange}
+            value={value}
+            type="number"
+            placeholder={colDef.headerName}
+            className="w-[100%] text-slate-600 border-slate-400 shadow-none mt-[2px]"
+          />
               <Select
-                className="w-1/3"
-                labelInValue
-                filterOption={false}
-                placeholder="Currency"
-                defaultValue={{ value: "364907247", label: "₹" }}
-                options={transformCurrencyData(currency || [])}
-                onChange={(e) => handleCurrencyChange(e.value)}
-                // value={value}
-              />
+              className="w-1/3"
+              labelInValue
+              filterOption={false}
+              placeholder="Currency"
+              defaultValue={{ value: "364907247", label: "₹" }}
+              options={transformCurrencyData(currency || [])}
+              onChange={(e) => handleCurrencyChange(e.value)}
+              // value={value}
+            />
               <CurrencyRateDialog
                 open={openCurrencyDialog}
                 onClose={() => setOpenCurrencyDialog(false)}
@@ -190,9 +167,7 @@ const DebitTextInputCellRenderer = (props: any) => {
       case "igst":
       case "type":
       case "gstRate":
-      case "gstType":
       case "dueDate":
-      case "material":
         return (
           <Input
             readOnly

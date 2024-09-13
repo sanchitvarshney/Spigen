@@ -267,7 +267,9 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
               suppressCellFocus={true}
             />
           </div>
+          
         </div>
+        
       </SheetContent>
       <SheetFooter></SheetFooter>
     </Sheet>

@@ -106,7 +106,7 @@ const ActionMenu: React.FC<any> = ({ row }) => {
         form={form}
         module="Invoice"
       />
-      <DebitNote visible={viewDebitNote} onClose={() => setViewDebitNote(false)} sellRequestDetails={dataNotes||[]} />
+      <DebitNote visible={viewDebitNote} onClose={() => setViewDebitNote(false)} sellRequestDetails={dataNotes||[]} row = {{req_id:row.so_ship_invoice_id}}/>
     </>
   );
 };
