@@ -32,6 +32,7 @@ import BlockedPageRenderPage from "./pages/BlockedPageRenderPage";
 import MasterCustomerPage from "./pages/masterModule/MasterCustomerPage";
 import NotPermissionPage from "./pages/NotPermissionPage";
 import CreateSalesOrderPage from "./pages/salesModule/CreateSalesOrderPage";
+import CreateEwayBill from "@/config/agGrid/invoiceModule/CreateEwayBill";
 // Define the authenticated routes
 const router = createBrowserRouter([
   {
@@ -136,6 +137,16 @@ const router = createBrowserRouter([
       </Protected>
     ),
     path: "/sales/order/update/:id",
+  },
+  {
+    element: (
+      <Protected authentication>
+        <MainLayout>
+           <CreateEwayBill/>
+        </MainLayout>
+      </Protected>
+    ),
+    path: "/salesOrder/e-way/:id",
   },
   
   {

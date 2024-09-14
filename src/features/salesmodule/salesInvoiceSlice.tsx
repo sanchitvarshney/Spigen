@@ -26,6 +26,7 @@ interface SellShipmentState {
   data: SellInvoiceData[];
   challanDetails: [];
   dataNotes:[];
+  ewayBillData:[];
   loading: boolean;
   error: string | null;
 }
@@ -34,6 +35,7 @@ const initialState: SellShipmentState = {
   data: [],
   challanDetails: [],
   dataNotes: [],
+  ewayBillData: [],
   loading: false,
   error: null,
 };
@@ -197,6 +199,31 @@ export const fetchDataNotes = createAsyncThunk(
   }
 );
 
+export const fetchDataForEwayBill = createAsyncThunk(
+  "so_challan_shipment/fetchDataForEwayBill",
+  async ({ shipment_id }: { shipment_id: string }, { rejectWithValue }) => {
+    try {
+      const response = await spigenAxios.post<any>(
+        "/so_challan_shipment/fetchDataForEwayBill",
+        { shipment_id: shipment_id }
+      );
+
+      if (!response.data) {
+        throw new Error("No data received");
+      }
+      // Return the entire response as expected by the fulfilled case
+      console.log(response?.data);
+      return response?.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        // Handle error using rejectWithValue
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("An unknown error occurred");
+    }
+  }
+);
+
 const sellInvoiceSlice = createSlice({
   name: "sellInvoice",
   initialState,
@@ -275,6 +302,18 @@ const sellInvoiceSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchDataNotes.rejected, (state, action) => {
+        state.error = action.error?.message || null;
+        state.loading = false;
+      })
+      .addCase(fetchDataForEwayBill.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchDataForEwayBill.fulfilled, (state, action) => {
+        console.log(action.payload.header)
+        state.ewayBillData = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(fetchDataForEwayBill.rejected, (state, action) => {
         state.error = action.error?.message || null;
         state.loading = false;
       });

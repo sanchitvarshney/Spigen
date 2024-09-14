@@ -394,6 +394,7 @@ const DebitNote: React.FC<DebitNoteProps> = ({
             Submit
           </Button>
         </div>
+        
       </SheetContent>
       <SheetFooter></SheetFooter>
     </Sheet>

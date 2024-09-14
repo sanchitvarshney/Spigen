@@ -466,6 +466,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                                 }
                                 value={data.client ? transformCustomerData([data.client]).find(option => option.value === field.value) : null} 
                                 />
+                                
                             </FormControl>
                             <FormMessage />
                           </FormItem>

@@ -9,6 +9,15 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu"; // Adjust path as needed
+import { Button } from "@/components/ui/button"; // Adjust path as needed
+import { useParams } from "react-router-dom";
 
 interface ViewInvoiceModalProps {
   visible: boolean;
@@ -29,6 +38,8 @@ interface ViewInvoiceModalProps {
       ship_pin?: string;
       ship_gstin?: string;
       ship_pan?: string;
+      isEwayBill?: string;
+      isEInvoice?: string;
     };
     items: {
       item_value: number;
@@ -60,12 +71,17 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
       headerName: "Component",
       field: "item_name",
       width: 500,
-      cellStyle : { 'text-overflow':'ellipsis','white-space':'nowrap', 'overflow': 'hidden', 'padding': 0 }
+      cellStyle: {
+        "text-overflow": "ellipsis",
+        "white-space": "nowrap",
+        overflow: "hidden",
+        padding: 0,
+      },
     },
     { headerName: "Qty", field: "item_qty" },
     { headerName: "Rate", field: "item_rate" },
   ];
-  
+
   const data = sellRequestDetails?.header;
 
   const itemCGSTs = sellRequestDetails?.items?.map(
@@ -86,15 +102,28 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
   const totalSGST = itemSGSTs?.reduce((acc, value) => acc + value, 0);
   const totalIGST = itemIGSTs?.reduce((acc, value) => acc + value, 0);
 
+  const handleEwayClick = () => {
+    const shipmentId = sellRequestDetails?.items[0]?.shipment_id || "";
+    const sanitizedShipmentId = shipmentId.replace(/\//g, "_"); 
+    
+    window.open(
+      `/salesOrder/e-way/${sanitizedShipmentId}`,
+      "_blank"
+    );
+  };
+  
+
   return (
     <Sheet open={visible} onOpenChange={onClose}>
       <SheetHeader></SheetHeader>
       <SheetContent side={"bottom"}>
         <SheetTitle>
-        Invoice Details : {sellRequestDetails?.header?.invoiceNo}
+          Invoice Details : {sellRequestDetails?.header?.invoiceNo}
         </SheetTitle>
+
         <div className="ag-theme-quartz h-[calc(100vh-140px)] grid grid-cols-4 gap-4">
           <div className="col-span-1 max-h-[calc(100vh-150px)] overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-800 scrollbar-track-gray-300 bg-white border-r flex flex-col gap-4 p-4">
+            {/* Cards Section */}
             <Card className="rounded-sm shadow-sm shadow-slate-500">
               <CardHeader className="flex flex-row items-center justify-between p-4 bg-[#e0f2f1]">
                 <CardTitle className="font-[550] text-slate-600">
@@ -259,17 +288,37 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
               </CardContent>
             </Card>
           </div>
-          <div className="col-span-3">
-            <AgGridReact
-              rowData={sellRequestDetails?.items}
-              columnDefs={columnDefs}
-              pagination={true}
-              suppressCellFocus={true}
-            />
+
+          <div className="col-span-3 flex flex-col h-full">
+            <div className="flex justify-end mb-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline">Generate</Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    disabled={data?.isEwayBill === "Y"}
+                    onClick={handleEwayClick}
+                  >
+                    E-Way Bill
+                  </DropdownMenuItem>
+                  <DropdownMenuItem disabled={data?.isEInvoice === "Y"}>
+                    E-Invoice
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            <div className="ag-theme-quartz flex-1">
+              <AgGridReact
+                rowData={sellRequestDetails?.items}
+                columnDefs={columnDefs}
+                pagination={true}
+                suppressCellFocus={true}
+              />
+            </div>
           </div>
-          
         </div>
-        
       </SheetContent>
       <SheetFooter></SheetFooter>
     </Sheet>
@@ -277,4 +326,3 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
 };
 
 export default ViewInvoiceModal;
-
