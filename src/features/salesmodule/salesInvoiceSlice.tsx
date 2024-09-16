@@ -144,6 +144,37 @@ export const cancelInvoice = createAsyncThunk(
   }
 );
 
+export const createEwayBill = createAsyncThunk(
+  "client/createEwayBill",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = (await spigenAxios.post<any>(
+        "/so_challan_shipment/createEwayBill",
+        payload
+      )) as any;
+
+      if (response?.data?.success) {
+        toast({
+          title: response?.data?.message,
+          className: "bg-green-600 text-white items-center",
+        });
+      } else {
+        toast({
+          title: response.data.message,
+          className: "bg-red-600 text-white items-center",
+        });
+      }
+
+      return response.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("An unknown error occurred");
+    }
+  }
+);
+
 export const createDebitNote = createAsyncThunk(
   "client/createDebitNote",
   async (payload: DebitNote, { rejectWithValue }) => {
@@ -269,6 +300,17 @@ const sellInvoiceSlice = createSlice({
         state.loading = false;
       })
       .addCase(cancelInvoice.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(createEwayBill.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createEwayBill.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(createEwayBill.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })

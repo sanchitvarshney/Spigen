@@ -17,7 +17,6 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"; // Adjust path as needed
 import { Button } from "@/components/ui/button"; // Adjust path as needed
-import { useParams } from "react-router-dom";
 
 interface ViewInvoiceModalProps {
   visible: boolean;

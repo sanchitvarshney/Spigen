@@ -33,6 +33,8 @@ import {
 } from "@/constants/EwayBillConstants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import FullPageLoading from "@/components/shared/FullPageLoading";
+import { Button } from "@/components/ui/button";
 
 export default function CreateEwayBill() {
   const dispatch = useDispatch<AppDispatch>();
@@ -41,19 +43,52 @@ export default function CreateEwayBill() {
     resolver: zodResolver(ewayBillSchema),
     mode: "onBlur",
   });
-  const { ewayBillData } = useSelector((state: RootState) => state.sellInvoice);
+  const { ewayBillData, loading } = useSelector(
+    (state: RootState) => state.sellInvoice
+  );
 
   useEffect(() => {
     const shipId = (params?.id as string).replace(/_/g, "/");
     dispatch(fetchDataForEwayBill({ shipment_id: shipId })).then((res) => {
-      console.log(res);
+      console.log(res?.payload?.header);
+      var data = res.payload?.header;
+      //   form.setValue("supply_type", data?.supplyType);
+      //   form.setValue("sub_supply_type", data?.subSupplyType);
+      form.setValue("invoice_id", data?.invoice_no);
+      form.setValue("document_type", data?.docType);
+      form.setValue("transactionType", data?.transactionType);
+      form.setValue("dispatch_name", data?.bill_from_name);
+      form.setValue("dispatchfrom_gstin", data?.bill_from_gst);
+      form.setValue("dispatchfrom_state", data?.billing_state_name);
+      form.setValue("dispatchfrom_pan", data?.billing_pan);
+      form.setValue("dispatchfrom_place", data?.billing_lable);
+      form.setValue("dispatchfrom_pincode", data?.billing_pin);
+      form.setValue("dispatchfrom_address1", data?.billingaddress1);
+      form.setValue("dispatchfrom_address2", data?.billingaddress2);
+      form.setValue("dispatchTo.label", data?.client);
+      form.setValue("dispatchTo.state_code", data?.ship_state_name);
+      form.setValue("dispatchTo.pincode", data?.ship_pin);
+      form.setValue("dispatchTo.gstin", data?.client_gstno);
+      form.setValue("dispatchTo.address1", data?.clientaddress1);
+      form.setValue("dispatchTo.address2", data?.clientaddress2);
+      form.setValue("shipto_name", data?.shipToName);
+      form.setValue("shipTo_state_code", data?.ship_state_name);
+      form.setValue("shipto_pincode", data?.ship_pin);
+      form.setValue("shipToAddress1", data?.clientaddress1);
+      form.setValue("shipToAddress2", data?.clientaddress2);
+      form.setValue("fromPincode", data?.billing_pin);
+      form.setValue("toPincode", data?.bill_to_pin);
+      form.setValue("shipto_gstin", data?.client_gstno);
+    //   form.setValue("vehicleType", data?.vehicleType);
+    //   form.setValue("vehicleType", data?.vehicleType);
+    //   form.setValue("vehicleType", data?.vehicleType);
     });
   }, [params]);
 
-  console.log(form.getValues());
+  console.log(form.getValues(),form.formState.errors);
   return (
     <div className="h-[calc(100vh-150px)] flex flex-col">
-      {/* {data.loading && <FullPageLoading />} */}
+      {loading && <FullPageLoading />}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(() => {})}>
           <div className="rounded p-[30px] shadow bg-[#fff] overflow-y-auto mb-10">
@@ -73,7 +108,7 @@ export default function CreateEwayBill() {
                     <FormField
                       control={form.control}
                       name="supply_type"
-                      render={(field) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel className={LableStyle}>
                             Supply Type
@@ -83,19 +118,25 @@ export default function CreateEwayBill() {
                           </FormLabel>
                           <FormControl>
                             <Select
+                              {...field}
                               styles={customStyles}
                               placeholder="Supply Type"
                               className="border-0 basic-single"
                               classNamePrefix="select border-0"
                               components={{ DropdownIndicator }}
-                              //   onChange={(selectedOption) => {
-                              //     field.onChange(selectedOption); // Update form value
-                              //   }}
                               isDisabled={false}
                               isClearable={true}
                               isSearchable={true}
                               options={supplyTypeOptions}
-                              //   value={field.value}
+                              onChange={(selectedOption) => {
+                                console.log(selectedOption?.value);
+                                field.onChange(
+                                  selectedOption ? selectedOption?.value : ""
+                                );
+                              }}
+                              value={supplyTypeOptions.find(
+                                (option) => option.value === field.value
+                              )}
                             />
                           </FormControl>
                           <FormMessage />
@@ -117,17 +158,24 @@ export default function CreateEwayBill() {
                           </FormLabel>
                           <FormControl>
                             <Select
+                              {...field}
                               styles={customStyles}
                               placeholder="Sub Type"
                               className="border-0 basic-single"
                               classNamePrefix="select border-0"
                               components={{ DropdownIndicator }}
-                              // onChange={handleClientSelected}
                               isDisabled={false}
                               isClearable={true}
                               isSearchable={true}
                               options={subOptions}
-                              //   value={field.value}
+                              onChange={(selectedOption) => {
+                                field.onChange(
+                                  selectedOption ? selectedOption?.value : ""
+                                );
+                              }}
+                              value={subOptions.find(
+                                (option) => option.value === field.value
+                              )}
                             />
                           </FormControl>
                           <FormMessage />
@@ -173,13 +221,13 @@ export default function CreateEwayBill() {
                           </FormLabel>
                           <FormControl>
                             <Select
+                              {...field}
                               styles={customStyles}
                               placeholder="Document Type"
                               className="border-0 basic-single"
                               classNamePrefix="select border-0"
                               components={{ DropdownIndicator }}
                               onChange={(selectedOption) => {
-                                // Set the selected option or null
                                 field.onChange(
                                   selectedOption ? selectedOption.value : null
                                 );
@@ -188,7 +236,9 @@ export default function CreateEwayBill() {
                               isClearable={true}
                               isSearchable={true}
                               options={docType}
-                              //   value={field.value}
+                              value={docType.find(
+                                (option) => option.value === field.value
+                              )}
                             />
                           </FormControl>
                           <FormMessage />
@@ -200,7 +250,7 @@ export default function CreateEwayBill() {
                     <FormField
                       control={form.control}
                       name="transactionType"
-                      render={() => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel className={LableStyle}>
                             Transaction Type
@@ -210,17 +260,24 @@ export default function CreateEwayBill() {
                           </FormLabel>
                           <FormControl>
                             <Select
+                              {...field}
                               styles={customStyles}
                               placeholder="Transaction Type"
                               className="border-0 basic-single"
                               classNamePrefix="select border-0"
                               components={{ DropdownIndicator }}
-                              onChange={() => {}}
                               isDisabled={false}
                               isClearable={true}
                               isSearchable={true}
                               options={transactionTypeOptions}
-                              // value={data.client ? transformCustomerData([data.client]).find(option => option.value === field.value) : null}
+                              onChange={(selectedOption) => {
+                                field.onChange(
+                                  selectedOption ? selectedOption.value : null
+                                );
+                              }}
+                              value={transactionTypeOptions.find(
+                                (option) => option.value === field.value
+                              )}
                             />
                           </FormControl>
                           <FormMessage />
@@ -288,7 +345,7 @@ export default function CreateEwayBill() {
                         )}
                       />
                     </div>
-                    <div>
+                    <div className="">
                       <FormField
                         control={form.control}
                         name="dispatchfrom_state"
@@ -301,19 +358,10 @@ export default function CreateEwayBill() {
                               </span>
                             </FormLabel>
                             <FormControl>
-                              <Select
-                                styles={customStyles}
+                              <Input
+                                className={InputStyle}
                                 placeholder="State"
-                                className="border-0 basic-single"
-                                classNamePrefix="select border-0"
-                                components={{ DropdownIndicator }}
-                                // onChange={handleClientChange}
-                                isDisabled={false}
-                                isClearable={true}
-                                isSearchable={true}
-                                options={[]}
-                                // value={data.clientDetails ? transformClientData(data.clientDetails).find(option => option.value === field.value) : null}
-                                // value={field.value}
+                                {...field}
                               />
                             </FormControl>
                             <FormMessage />
@@ -924,18 +972,24 @@ export default function CreateEwayBill() {
                             </FormLabel>
                             <FormControl>
                               <Select
+                                {...field}
                                 styles={customStyles}
                                 placeholder="Transporter Mode"
                                 className="border-0 basic-single"
                                 classNamePrefix="select border-0"
                                 components={{ DropdownIndicator }}
-                                // onChange={handleClientChange}
                                 isDisabled={false}
                                 isClearable={true}
                                 isSearchable={true}
                                 options={transportationMode}
-                                // value={data.clientDetails ? transformClientData(data.clientDetails).find(option => option.value === field.value) : null}
-                                // value={field.value}
+                                onChange={(selectedOption) => {
+                                  field.onChange(
+                                    selectedOption ? selectedOption.value : null
+                                  );
+                                }}
+                                value={transportationMode.find(
+                                  (option) => option.value === field.value
+                                )}
                               />
                             </FormControl>
                             <FormMessage />
@@ -957,18 +1011,24 @@ export default function CreateEwayBill() {
                             </FormLabel>
                             <FormControl>
                               <Select
+                                {...field}
                                 styles={customStyles}
                                 placeholder="Vehicle Type"
                                 className="border-0 basic-single"
                                 classNamePrefix="select border-0"
                                 components={{ DropdownIndicator }}
-                                // onChange={handleClientChange}
                                 isDisabled={false}
                                 isClearable={true}
                                 isSearchable={true}
                                 options={vehicleTypeOptions}
-                                // value={data.clientDetails ? transformClientData(data.clientDetails).find(option => option.value === field.value) : null}
-                                // value={field.value}
+                                onChange={(selectedOption) => {
+                                  field.onChange(
+                                    selectedOption ? selectedOption.value : null
+                                  );
+                                }}
+                                value={vehicleTypeOptions.find(
+                                  (option) => option.value === field.value
+                                )}
                               />
                             </FormControl>
                             <FormMessage />
@@ -1046,6 +1106,19 @@ export default function CreateEwayBill() {
                 </div>
               </CardContent>
             </Card>
+            <div className="bg-white border-t shadow border-slate-300 h-[50px] flex items-center justify-end gap-[20px] px-[20px]">
+              <Button
+                className="rounded-md shadow bg-green-700 hover:bg-green-600 shadow-slate-500 max-w-max px-[30px]"
+                onClick={form.handleSubmit((data) => {
+                    console.log('Form data:', data);
+                    // dispatch(createEwayBill(data));
+                    // Handle form submission here
+                  })}
+                disabled={Object.keys(form.formState.errors).length > 0}
+              >
+                Submit
+              </Button>
+            </div>
           </div>
 
           {/* <div className="h-[50px] w-full flex justify-end items-center px-[20px] bg-white shadow-md border-t border-slate-300">
