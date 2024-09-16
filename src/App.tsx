@@ -148,6 +148,16 @@ const router = createBrowserRouter([
     ),
     path: "/salesOrder/e-way/:id",
   },
+  {
+    element: (
+      <Protected authentication>
+        <MainLayout>
+           <CreateEwayBill/>
+        </MainLayout>
+      </Protected>
+    ),
+    path: "/salesOrder/e-inv/:id",
+  },
   
   {
     element: (

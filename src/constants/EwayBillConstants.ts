@@ -94,6 +94,7 @@ const supplyTypeOptions = [
     sub_supply_type:z.string({ required_error: "Please Select Sub Supply Type" }),
     invoice_id:z.string({ required_error: "Please enter Invoice Id" }),
     document_type:z.string({ required_error: "Please select Document Type" }),
+    documnet_date:z.string({ required_error: "Please enter Document Date" }),
     dispatch_name:z.string({ required_error: "Please enter Dispatch Name" }),
     dispatchfrom_pan:z.string({ required_error: "Please enter PAN Number" }),
     dispatchfrom_address1 :z.string({ required_error: "Please enter Address and Address must be between 3 and 100 characters" }),
@@ -113,9 +114,9 @@ const supplyTypeOptions = [
     shipto_pincode: z.string({ required_error: "Please enter Pincode" }),
     // transporter_id: z.string({ required_error: "Please select Billing Address" }),
     // transporter_name: z.string({ required_error: "" }),
-    // billToaddress1: z.string({ required_error: "Please select Shipping Address" }),
-    // billToaddress2: z.string({ required_error: "Please add your Shipping Address Description must be between 10 and 100 characters" }),
-    // bill_to_pincode: z.string({ required_error: "Please add your Shipping Address Description must be between 10 and 100 characters" }),
+    billToaddress1: z.string({ required_error: "Please add your Address. Description must be between 3 and 100 characters" }),
+    billToaddress2: z.string({ required_error: "Please add your Address Description must be between 10 and 100 characters" }),
+    bill_to_pincode: z.string({ required_error: "Please add your Shipping Address Description must be between 10 and 100 characters" }),
     transactionType: z.string({ required_error: "Please select Transaction Type" }),
     transporterDocNo: z.string({ required_error: "Please enter Transporter Doc No" }),
     fromPincode: z.string({ required_error: "Please enter Pincode" }),
@@ -123,6 +124,7 @@ const supplyTypeOptions = [
     transDistance: z.string({required_error: "Please enter Trans Distance" }),
     transMode: z.string({required_error: "Please enter Trans Mode" }),
     transporterId: z.string({ required_error: "Please enter Transporter Id" }),
+    trans_doc_date: z.string({ required_error: "Please enter Trans Doc Date" }),
     vehicleNo: z.string({ required_error: "Plase enter vehicle No" }),
     transporterName: z.string({ required_error: "Please enter Transporter Name" }),
     // transporterDate: z.string({ required_error: "Plenter Shipping GSTIN Number" }),
@@ -139,5 +141,50 @@ const supplyTypeOptions = [
 
 });
 
+const eInvoiceSchema = z.object({
+  supply_type: z.string({ required_error: "Please Select Supply Type" }),
+  sub_supply_type:z.string({ required_error: "Please Select Sub Supply Type" }),
+  invoice_id:z.string({ required_error: "Please enter Invoice Id" }),
+  document_type:z.string({ required_error: "Please select Document Type" }),
+  documnet_date:z.string({ required_error: "Please enter Document Date" }),
+  dispatch_name:z.string({ required_error: "Please enter Dispatch Name" }),
+  dispatchfrom_pan:z.string({ required_error: "Please enter PAN Number" }),
+  dispatchfrom_address1 :z.string({ required_error: "Please enter Address and Address must be between 3 and 100 characters" }),
+  dispatchfrom_address2:z.string({ required_error: "Please enter Address and Address must be between 3 and 100 characters" }),
+  dispatchfrom_gstin:z.string({ required_error: "Please enter GST" }),
+  dispatchfrom_place:z.string({ required_error: "Please enter place" }),
+  dispatchfrom_state:z.string({ required_error: "Please enter State" }),
+  dispatchfrom_pincode:z.string({ required_error: "Please enter Pincode" }),
+  shipto_name: z.string({ required_error: "Please select Name" }),
+  billToaddress1: z.string({ required_error: "Please add your Address. Description must be between 3 and 100 characters" }),
+  billToaddress2: z.string({ required_error: "Please add your Shipping Address Description must be between 10 and 100 characters" }),
+  bill_to_pincode: z.string({ required_error: "Please enter your Pincode" }),
+  shipto_gstin: z.string({ required_error: "Please enter GST" }),
+  shipToAddress2:z.string({ required_error: "Please add your Address. Description must be between 3 and 100 characters" }),
+  shipToAddress1:z.string({ required_error: "Please add your Address. Description must be between 3 and 100 characters" }),
+  shipTo_state_code:z.string({ required_error: "Please enter State" }),
+  shipto_pincode: z.string({ required_error: "Please enter Pincode" }),
+  transactionType: z.string({ required_error: "Please select Transaction Type" }),
+  transporterDocNo: z.string().optional(),
+  fromPincode: z.string().optional(),
+  toPincode: z.string().optional(),
+  transDistance: z.string({required_error: "Please enter Trans Distance" }),
+  transMode: z.string().optional(),
+  transporterId: z.string().optional(),
+  trans_doc_date: z.string().optional(),
+  vehicleNo: z.string().optional(),
+  transporterName: z.string().optional(),
+  vehicleType: z.string().optional(),
+  dispatchTo:z.object({
+  address1:z.string({ required_error: "Please enter Address Description must be between 3 and 100 characters" }),
+  address2:z.string({ required_error: "Please enter Address Description must be between 3 and 100 characters" }),
+  gstin:  z.string({ required_error: "Please enter GST" }),
+  label:z.string({ required_error: "Please enter Name" }),
+  pincode:    z.string({ required_error: "Please enter Pincode" }),
+  state_code:z.string({ required_error: "Please enter state" }),
+  })
 
-  export { supplyTypeOptions, subOptions , docType, transportationMode, vehicleTypeOptions, transactionTypeOptions ,columnDefs,ewayBillSchema };
+});
+
+
+  export { supplyTypeOptions, subOptions , docType, transportationMode, vehicleTypeOptions, transactionTypeOptions ,columnDefs,ewayBillSchema ,eInvoiceSchema};

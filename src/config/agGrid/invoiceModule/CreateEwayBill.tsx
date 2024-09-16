@@ -15,15 +15,22 @@ import Select from "react-select";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
-import { fetchDataForEwayBill } from "@/features/salesmodule/salesInvoiceSlice";
+import {
+  createEwayBill,
+  fetchDataForEwayBill,
+  fetchDataForInvoice,
+  generateEInvoice,
+} from "@/features/salesmodule/salesInvoiceSlice";
 import { useParams } from "react-router-dom";
+import { Dayjs } from "dayjs";
 import { AgGridReact } from "ag-grid-react";
 import {
   columnDefs,
   docType,
+  eInvoiceSchema,
   ewayBillSchema,
   subOptions,
   supplyTypeOptions,
@@ -35,12 +42,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import FullPageLoading from "@/components/shared/FullPageLoading";
 import { Button } from "@/components/ui/button";
+import { DatePicker, Space } from "antd";
+import { toast } from "@/components/ui/use-toast";
 
 export default function CreateEwayBill() {
   const dispatch = useDispatch<AppDispatch>();
   const params = useParams();
-  const form = useForm<z.infer<typeof ewayBillSchema>>({
-    resolver: zodResolver(ewayBillSchema),
+  const [totalSum, setTotalSum] = useState(0);
+  const isEwayBill = window.location.href?.includes("e-way");
+
+  const form = useForm<any>({
+    resolver: zodResolver(isEwayBill ? ewayBillSchema : eInvoiceSchema),
     mode: "onBlur",
   });
   const { ewayBillData, loading } = useSelector(
@@ -49,51 +61,99 @@ export default function CreateEwayBill() {
 
   useEffect(() => {
     const shipId = (params?.id as string).replace(/_/g, "/");
-    dispatch(fetchDataForEwayBill({ shipment_id: shipId })).then((res) => {
+    const action = isEwayBill ? fetchDataForEwayBill : fetchDataForInvoice;
+    dispatch(action({ shipment_id: shipId })).then((res) => {
       console.log(res?.payload?.header);
       var data = res.payload?.header;
-      //   form.setValue("supply_type", data?.supplyType);
-      //   form.setValue("sub_supply_type", data?.subSupplyType);
       form.setValue("invoice_id", data?.invoice_no);
       form.setValue("document_type", data?.docType);
       form.setValue("transactionType", data?.transactionType);
       form.setValue("dispatch_name", data?.bill_from_name);
       form.setValue("dispatchfrom_gstin", data?.bill_from_gst);
       form.setValue("dispatchfrom_state", data?.billing_state_name);
+      form.setValue("documnet_date", data?.delivery_challan_dt);
       form.setValue("dispatchfrom_pan", data?.billing_pan);
       form.setValue("dispatchfrom_place", data?.billing_lable);
       form.setValue("dispatchfrom_pincode", data?.billing_pin);
       form.setValue("dispatchfrom_address1", data?.billingaddress1);
       form.setValue("dispatchfrom_address2", data?.billingaddress2);
-      form.setValue("dispatchTo.label", data?.client);
+      form.setValue("dispatchTo.name", data?.shipToName);
       form.setValue("dispatchTo.state_code", data?.ship_state_name);
+      form.setValue("dispatchTo.gstin", data?.ship_gstin);
+      form.setValue("dispatchTo.address1", data?.shippingaddress1);
+      form.setValue("dispatchTo.address2", data?.shippingaddress2);
+      form.setValue("dispatchTo.company", data?.shipToName);
+      form.setValue("bill_to_pincode", data?.bill_to_pin);
       form.setValue("dispatchTo.pincode", data?.ship_pin);
-      form.setValue("dispatchTo.gstin", data?.client_gstno);
-      form.setValue("dispatchTo.address1", data?.clientaddress1);
-      form.setValue("dispatchTo.address2", data?.clientaddress2);
-      form.setValue("shipto_name", data?.shipToName);
+      form.setValue("billToaddress1", data?.clientaddress1);
+      form.setValue("billToaddress2", data?.clientaddress2);
+      form.setValue("dispatchTo.label", data?.shipToName);
       form.setValue("shipTo_state_code", data?.ship_state_name);
       form.setValue("shipto_pincode", data?.ship_pin);
+      form.setValue("shipto_name", data?.shipToName);
       form.setValue("shipToAddress1", data?.clientaddress1);
       form.setValue("shipToAddress2", data?.clientaddress2);
       form.setValue("fromPincode", data?.billing_pin);
       form.setValue("toPincode", data?.bill_to_pin);
       form.setValue("shipto_gstin", data?.client_gstno);
-    //   form.setValue("vehicleType", data?.vehicleType);
-    //   form.setValue("vehicleType", data?.vehicleType);
-    //   form.setValue("vehicleType", data?.vehicleType);
     });
   }, [params]);
+  console.log(form.formState.errors);
+  const onSubmit = (payload: any) => {
+    console.log("Form data:", payload);
+    if (isEwayBill) {
+      dispatch(createEwayBill(payload)).then((response) => {
+        console.log(response);
+        if (response.meta.requestStatus === "fulfilled") {
+          toast({
+            title: "Data Fetched Successfully",
+            className: "bg-green-600 text-white items-center",
+          });
+        } else {
+          toast({
+            title: "Failed to Fetch Data",
+            className: "bg-red-600 text-white items-center",
+          });
+        }
+      });
+    } else {
+      dispatch(generateEInvoice(payload)).then((response) => {
+        console.log(response);
+        if (response.meta.requestStatus === "fulfilled") {
+          toast({
+            title: "Data Fetched Successfully",
+            className: "bg-green-600 text-white items-center",
+          });
+        } else {
+          toast({
+            title: "Failed to Fetch Data",
+            className: "bg-red-600 text-white items-center",
+          });
+        }
+      });
+    }
+  };
 
-  console.log(form.getValues(),form.formState.errors);
+  useEffect(() => {
+    let sum = 0;
+    ewayBillData.forEach((item: any) => {
+      const itemValue = parseFloat(item.item_value) || 0;
+      const itemSGST = parseFloat(item.item_sgst) || 0;
+      const itemGSTRate = parseFloat(item.item_igst) || 0;
+      const itemCGST = parseFloat(item.item_cgst) || 0;
+      sum += itemValue + itemSGST + itemGSTRate + itemCGST;
+    });
+    setTotalSum(sum);
+  }, [ewayBillData]);
+
   return (
     <div className="h-[calc(100vh-150px)] flex flex-col">
       {loading && <FullPageLoading />}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(() => {})}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="rounded p-[30px] shadow bg-[#fff] overflow-y-auto mb-10">
             <div className="text-slate-600 font-[600] text-[20px] flex justify-center">
-              Create E Way Bill
+              {isEwayBill ? "Create E-Way Bill" : "Create E-Invoice"}
             </div>
 
             <Card className="rounded shadow bg-[#fff] mb-8">
@@ -246,6 +306,38 @@ export default function CreateEwayBill() {
                       )}
                     />
                   </div>
+                  <div>
+                    <FormField
+                      control={form.control}
+                      name="documnet_date"
+                      render={() => (
+                        <FormItem className="pl-[10px] w-full flex flex-col">
+                          <FormLabel className={LableStyle}>
+                            Document Date
+                            <span className="pl-1 text-red-500 font-bold">
+                              *
+                            </span>
+                          </FormLabel>
+                          <FormControl>
+                            <Space direction="vertical" size={12}>
+                              <DatePicker
+                                className="border-0 border-b-2 border-black py-[13px] w-[620px] "
+                                format="DD-MM-YYYY"
+                                onChange={(value: Dayjs | null) => {
+                                  const formattedDate = value
+                                    ? value.format("DD-MM-YYYY")
+                                    : "";
+                                  form.setValue("documnet_date", formattedDate);
+                                }}
+                              />
+                            </Space>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
                   <div>
                     <FormField
                       control={form.control}
@@ -517,7 +609,7 @@ export default function CreateEwayBill() {
                     <div className="">
                       <FormField
                         control={form.control}
-                        name="dispatchTo.label"
+                        name="dispatch_name"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
@@ -530,6 +622,163 @@ export default function CreateEwayBill() {
                               <Input
                                 className={InputStyle}
                                 placeholder="Name"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="">
+                      <FormField
+                        control={form.control}
+                        name="dispatchTo.state_code"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={LableStyle}>
+                              State
+                              <span className="pl-1 text-red-500 font-bold">
+                                *
+                              </span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                className={InputStyle}
+                                placeholder="State"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="">
+                      <FormField
+                        control={form.control}
+                        name="bill_to_pincode"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={LableStyle}>
+                              Pincode
+                              <span className="pl-1 text-red-500 font-bold">
+                                *
+                              </span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                className={InputStyle}
+                                placeholder="Pincode"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="">
+                      <FormField
+                        control={form.control}
+                        name="dispatchTo.gstin"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={LableStyle}>
+                              GSTIN
+                              <span className="pl-1 text-red-500 font-bold">
+                                *
+                              </span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                className={InputStyle}
+                                placeholder="GSTIN"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-[40px]">
+                    <FormField
+                      control={form.control}
+                      name="billToaddress1"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className={LableStyle}>
+                            Address Line 1
+                            <span className="pl-1 text-red-500 font-bold">
+                              *
+                            </span>
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea
+                              className={InputStyle}
+                              placeholder="Address line 1"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="mt-[40px]">
+                    <FormField
+                      control={form.control}
+                      name="billToaddress2"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className={LableStyle}>
+                            Address Line 2
+                            <span className="pl-1 text-red-500 font-bold">
+                              *
+                            </span>
+                          </FormLabel>
+                          <FormControl>
+                            <Textarea
+                              className={InputStyle}
+                              placeholder="Address line 2"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="rounded shadow bg-[#fff]">
+                <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
+                  <h3 className="text-[17px] font-[600] text-slate-600">
+                    Ship To
+                  </h3>
+                </CardHeader>
+
+                <CardContent className="mt-[10px]">
+                  <div className="mt-[30px] grid grid-cols-2 gap-[40px]">
+                    <div className="">
+                      <FormField
+                        control={form.control}
+                        name="dispatchTo.label"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={LableStyle}>
+                              Place
+                              <span className="pl-1 text-red-500 font-bold">
+                                *
+                              </span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                className={InputStyle}
+                                placeholder="Place"
                                 {...field}
                               />
                             </FormControl>
@@ -665,163 +914,6 @@ export default function CreateEwayBill() {
               <Card className="rounded shadow bg-[#fff]">
                 <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
                   <h3 className="text-[17px] font-[600] text-slate-600">
-                    Ship To
-                  </h3>
-                </CardHeader>
-
-                <CardContent className="mt-[10px]">
-                  <div className="mt-[30px] grid grid-cols-2 gap-[40px]">
-                    <div className="">
-                      <FormField
-                        control={form.control}
-                        name="shipto_name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className={LableStyle}>
-                              Place
-                              <span className="pl-1 text-red-500 font-bold">
-                                *
-                              </span>
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                className={InputStyle}
-                                placeholder="Place"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="">
-                      <FormField
-                        control={form.control}
-                        name="shipTo_state_code"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className={LableStyle}>
-                              State
-                              <span className="pl-1 text-red-500 font-bold">
-                                *
-                              </span>
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                className={InputStyle}
-                                placeholder="State"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="">
-                      <FormField
-                        control={form.control}
-                        name="shipto_pincode"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className={LableStyle}>
-                              Pincode
-                              <span className="pl-1 text-red-500 font-bold">
-                                *
-                              </span>
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                className={InputStyle}
-                                placeholder="Pincode"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div className="">
-                      <FormField
-                        control={form.control}
-                        name="shipto_gstin"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className={LableStyle}>
-                              GSTIN
-                              <span className="pl-1 text-red-500 font-bold">
-                                *
-                              </span>
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                className={InputStyle}
-                                placeholder="GSTIN"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-                  <div className="mt-[40px]">
-                    <FormField
-                      control={form.control}
-                      name="shipToAddress1"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className={LableStyle}>
-                            Address Line 1
-                            <span className="pl-1 text-red-500 font-bold">
-                              *
-                            </span>
-                          </FormLabel>
-                          <FormControl>
-                            <Textarea
-                              className={InputStyle}
-                              placeholder="Address line 1"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="mt-[40px]">
-                    <FormField
-                      control={form.control}
-                      name="shipToAddress2"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className={LableStyle}>
-                            Address Line 2
-                            <span className="pl-1 text-red-500 font-bold">
-                              *
-                            </span>
-                          </FormLabel>
-                          <FormControl>
-                            <Textarea
-                              className={InputStyle}
-                              placeholder="Address line 2"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="rounded shadow bg-[#fff]">
-                <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
-                  <h3 className="text-[17px] font-[600] text-slate-600">
                     Transportation Details
                   </h3>
                 </CardHeader>
@@ -835,9 +927,11 @@ export default function CreateEwayBill() {
                           <FormItem>
                             <FormLabel className={LableStyle}>
                               Transporter Id
-                              <span className="pl-1 text-red-500 font-bold">
-                                *
-                              </span>
+                              {isEwayBill && (
+                                <span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>
+                              )}
                             </FormLabel>
                             <FormControl>
                               <Input
@@ -859,9 +953,11 @@ export default function CreateEwayBill() {
                           <FormItem>
                             <FormLabel className={LableStyle}>
                               Transporter Name
-                              <span className="pl-1 text-red-500 font-bold">
-                                *
-                              </span>
+                              {isEwayBill && (
+                                <span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>
+                              )}
                             </FormLabel>
                             <FormControl>
                               <Input
@@ -883,9 +979,11 @@ export default function CreateEwayBill() {
                           <FormItem>
                             <FormLabel className={LableStyle}>
                               From Pincode
-                              <span className="pl-1 text-red-500 font-bold">
-                                *
-                              </span>
+                              {isEwayBill && (
+                                <span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>
+                              )}
                             </FormLabel>
                             <FormControl>
                               <Input
@@ -907,9 +1005,11 @@ export default function CreateEwayBill() {
                           <FormItem>
                             <FormLabel className={LableStyle}>
                               To Pincode
-                              <span className="pl-1 text-red-500 font-bold">
-                                *
-                              </span>
+                              {isEwayBill && (
+                                <span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>
+                              )}
                             </FormLabel>
                             <FormControl>
                               <Input
@@ -966,9 +1066,11 @@ export default function CreateEwayBill() {
                           <FormItem>
                             <FormLabel className={LableStyle}>
                               Transporter Mode
-                              <span className="pl-1 text-red-500 font-bold">
-                                *
-                              </span>
+                              {isEwayBill && (
+                                <span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>
+                              )}
                             </FormLabel>
                             <FormControl>
                               <Select
@@ -1005,9 +1107,11 @@ export default function CreateEwayBill() {
                           <FormItem>
                             <FormLabel className={LableStyle}>
                               Vehicle Type
-                              <span className="pl-1 text-red-500 font-bold">
-                                *
-                              </span>
+                              {isEwayBill && (
+                                <span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>
+                              )}
                             </FormLabel>
                             <FormControl>
                               <Select
@@ -1044,9 +1148,11 @@ export default function CreateEwayBill() {
                           <FormItem>
                             <FormLabel className={LableStyle}>
                               Vehicle No.
-                              <span className="pl-1 text-red-500 font-bold">
-                                *
-                              </span>
+                              {isEwayBill && (
+                                <span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>
+                              )}
                             </FormLabel>
                             <FormControl>
                               <Input
@@ -1068,9 +1174,11 @@ export default function CreateEwayBill() {
                           <FormItem>
                             <FormLabel className={LableStyle}>
                               Transport Doc
-                              <span className="pl-1 text-red-500 font-bold">
-                                *
-                              </span>
+                              {isEwayBill && (
+                                <span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>
+                              )}
                             </FormLabel>
                             <FormControl>
                               <Input
@@ -1084,16 +1192,54 @@ export default function CreateEwayBill() {
                         )}
                       />
                     </div>
+                    <div>
+                      <FormField
+                        control={form.control}
+                        name="trans_doc_date"
+                        render={() => (
+                          <FormItem className="pl-[10px] w-full flex flex-col">
+                            <FormLabel className={LableStyle}>
+                              Document Date
+                              <span className="pl-1 text-red-500 font-bold">
+                                *
+                              </span>
+                            </FormLabel>
+                            <FormControl>
+                              <Space direction="vertical" size={12}>
+                                <DatePicker
+                                  className="border-0 border-b-2 border-black py-[10px] w-[450px] "
+                                  format="DD-MM-YYYY"
+                                  onChange={(value: Dayjs | null) => {
+                                    const formattedDate = value
+                                      ? value.format("DD-MM-YYYY")
+                                      : "";
+                                    form.setValue(
+                                      "trans_doc_date",
+                                      formattedDate
+                                    );
+                                  }}
+                                />
+                              </Space>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
                 </CardContent>
               </Card>
             </div>
             <Card className="rounded shadow bg-[#fff] mt-8">
-              <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
+              <CardHeader className="bg-[#e0f2f1] p-0 flex justify-between items-center px-[10px] py-[5px] w-full flex-row">
                 <h3 className="text-[17px] font-[600] text-slate-600">
-                  Items Details : {ewayBillData?.length} Items
+                  Items Details: {ewayBillData?.length} Items
+                </h3>
+                <h3 className="text-[17px] font-[600] text-slate-600">
+                  Total Amount: {totalSum.toFixed(2)}
                 </h3>
               </CardHeader>
+
               <CardContent className="mt-[30px]">
                 <div className="ag-theme-quartz h-[calc(100vh-140px)]">
                   <AgGridReact
@@ -1109,32 +1255,17 @@ export default function CreateEwayBill() {
             <div className="bg-white border-t shadow border-slate-300 h-[50px] flex items-center justify-end gap-[20px] px-[20px]">
               <Button
                 className="rounded-md shadow bg-green-700 hover:bg-green-600 shadow-slate-500 max-w-max px-[30px]"
-                onClick={form.handleSubmit((data) => {
-                    console.log('Form data:', data);
-                    // dispatch(createEwayBill(data));
-                    // Handle form submission here
-                  })}
+                // onClick={form.handleSubmit((data) => {
+                //   console.log("Form data:", data);
+                //   dispatch(createEwayBill(data));
+                //   // Handle form submission here
+                // })}
                 disabled={Object.keys(form.formState.errors).length > 0}
               >
                 Submit
               </Button>
             </div>
           </div>
-
-          {/* <div className="h-[50px] w-full flex justify-end items-center px-[20px] bg-white shadow-md border-t border-slate-300">
-          <Button
-            onClick={() => {
-              //   setTab("add");
-              dispatch(updateFormData(form.control._formValues));
-            }}
-            className={`${primartButtonStyle} flex gap-[10px]`}
-            type="submit"
-            disabled={form.errors}
-          >
-            Next
-            <FaArrowRightLong className="" />
-          </Button>
-        </div> */}
         </form>
       </Form>
     </div>

@@ -34,8 +34,9 @@ const ActionMenu: React.FC<any> = ({ row }) => {
     setViewDebitNote(true);
   };
 
-  const handlePrintInvoice = async (orderId: string) => {
-    dispatch(printSellInvoice({ so_invoice: orderId })).then((response: any) => {
+  const handlePrintInvoice = async (orderId: string,printInvType:string) => {
+    console.log(orderId,printInvType)
+    dispatch(printSellInvoice({ so_invoice: orderId , printInvType:printInvType})).then((response: any) => {
       if (response?.payload?.success) {
         printFunction(response?.payload?.data.buffer.data);
       }
@@ -74,9 +75,6 @@ const ActionMenu: React.FC<any> = ({ row }) => {
       >
         View
       </Menu.Item>
-      <Menu.Item key="cancel" onClick={()=>handlePrintInvoice(row?.so_ship_invoice_id)}>
-        Download
-      </Menu.Item>
       <Menu.Item key="materialList" onClick={()=> setCancelModalVisible(true)} disabled={row?.isEwayBill == "Y" || row?.isEInvoice == "Y"}>
         Cancel
       </Menu.Item>
@@ -97,7 +95,7 @@ const ActionMenu: React.FC<any> = ({ row }) => {
       <Dropdown overlay={menu} trigger={["click"]}>
         <Button icon={<MoreOutlined />} />
       </Dropdown>
-      <ViewInvoiceModal visible={viewInvoice} onClose={() => setViewInvoice(false)} sellRequestDetails={challanDetails} />
+      <ViewInvoiceModal visible={viewInvoice} onClose={() => setViewInvoice(false)} sellRequestDetails={challanDetails} handlePrintInvoice={handlePrintInvoice}/>
       <ConfirmCancellationDialog
         isDialogVisible={cancelModalVisible}
         handleOk={handleOk}

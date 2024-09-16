@@ -91,11 +91,11 @@ export const getchallanDetails = createAsyncThunk(
 
 export const printSellInvoice = createAsyncThunk(
   "client/printSellInvoice",
-  async ({ so_invoice }: { so_invoice: string }, { rejectWithValue }) => {
+  async ({ so_invoice,printInvType }: { so_invoice: string,printInvType:string }, { rejectWithValue }) => {
     try {
       const response = await spigenAxios.post<any>(
         "/so_challan_shipment/printSellInvoice",
-        { so_invoice: so_invoice }
+        { so_invoice: so_invoice,printInvType:printInvType }
       );
 
       if (!response.data) {
@@ -145,26 +145,25 @@ export const cancelInvoice = createAsyncThunk(
 );
 
 export const createEwayBill = createAsyncThunk(
-  "client/createEwayBill",
-  async (payload, { rejectWithValue }) => {
+  'client/createEwayBill',
+  async (payload:any, { rejectWithValue }) => {
     try {
-      const response = (await spigenAxios.post<any>(
-        "/so_challan_shipment/createEwayBill",
-        payload
-      )) as any;
-
-      if (response?.data?.success) {
-        toast({
-          title: response?.data?.message,
-          className: "bg-green-600 text-white items-center",
-        });
-      } else {
-        toast({
-          title: response.data.message,
-          className: "bg-red-600 text-white items-center",
-        });
+      const response = await spigenAxios.post('/so_challan_shipment/createEwayBill', payload);
+      return response.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
       }
+      return rejectWithValue("An unknown error occurred");
+    }
+  }
+);
 
+export const generateEInvoice = createAsyncThunk(
+  'client/generateEInvoice',
+  async (payload:any, { rejectWithValue }) => {
+    try {
+      const response = await spigenAxios.post('so_challan_shipment/generateEinvoice', payload);
       return response.data;
     } catch (error) {
       if (error instanceof Error) {
@@ -255,6 +254,31 @@ export const fetchDataForEwayBill = createAsyncThunk(
   }
 );
 
+export const fetchDataForInvoice = createAsyncThunk(
+  "so_challan_shipment/fetchDataForInvoice",
+  async ({ shipment_id }: { shipment_id: string }, { rejectWithValue }) => {
+    try {
+      const response = await spigenAxios.post<any>(
+        "/so_challan_shipment/fetchDataForinvoice",
+        { shipment_id: shipment_id }
+      );
+
+      if (!response.data) {
+        throw new Error("No data received");
+      }
+      // Return the entire response as expected by the fulfilled case
+      console.log(response?.data);
+      return response?.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        // Handle error using rejectWithValue
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("An unknown error occurred");
+    }
+  }
+);
+
 const sellInvoiceSlice = createSlice({
   name: "sellInvoice",
   initialState,
@@ -314,6 +338,17 @@ const sellInvoiceSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
+      .addCase(generateEInvoice.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(generateEInvoice.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(generateEInvoice.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
       .addCase(createDebitNote.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -356,6 +391,18 @@ const sellInvoiceSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchDataForEwayBill.rejected, (state, action) => {
+        state.error = action.error?.message || null;
+        state.loading = false;
+      })
+      .addCase(fetchDataForInvoice.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchDataForInvoice.fulfilled, (state, action) => {
+        console.log(action.payload.header)
+        state.ewayBillData = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(fetchDataForInvoice.rejected, (state, action) => {
         state.error = action.error?.message || null;
         state.loading = false;
       });

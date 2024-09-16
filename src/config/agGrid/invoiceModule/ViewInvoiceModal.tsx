@@ -54,12 +54,14 @@ interface ViewInvoiceModalProps {
       shipment_id?: string;
     }[];
   };
+  handlePrintInvoice: any;
 }
 
 const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
   visible,
   onClose,
   sellRequestDetails,
+  handlePrintInvoice,
 }) => {
   const columnDefs: ColDef[] = [
     { headerName: "#", valueGetter: "node.rowIndex + 1", maxWidth: 50 },
@@ -80,7 +82,6 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
     { headerName: "Qty", field: "item_qty" },
     { headerName: "Rate", field: "item_rate" },
   ];
-
   const data = sellRequestDetails?.header;
 
   const itemCGSTs = sellRequestDetails?.items?.map(
@@ -101,16 +102,15 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
   const totalSGST = itemSGSTs?.reduce((acc, value) => acc + value, 0);
   const totalIGST = itemIGSTs?.reduce((acc, value) => acc + value, 0);
 
-  const handleEwayClick = () => {
+  const handleEwayClick = (module: string) => {
     const shipmentId = sellRequestDetails?.items[0]?.shipment_id || "";
-    const sanitizedShipmentId = shipmentId.replace(/\//g, "_"); 
-    
-    window.open(
-      `/salesOrder/e-way/${sanitizedShipmentId}`,
-      "_blank"
-    );
+    const sanitizedShipmentId = shipmentId.replace(/\//g, "_");
+    if (module === "Invoice") {
+      window.open(`/salesOrder/e-inv/${sanitizedShipmentId}`, "_blank");
+    } else {
+      window.open(`/salesOrder/e-way/${sanitizedShipmentId}`, "_blank");
+    }
   };
-  
 
   return (
     <Sheet open={visible} onOpenChange={onClose}>
@@ -265,7 +265,8 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
                         </p>
                       </div>
                     </li>
-                    <li className="grid grid-cols-[1fr_150px] mt-4">
+                    <li className="mt-2 border-t border-gray-300 p-2"></li>
+                    <li className="grid grid-cols-[1fr_150px]">
                       <div>
                         <h3 className="font-[600] text-cyan-600">
                           Sub-Total values after Taxes :
@@ -289,7 +290,45 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
           </div>
 
           <div className="col-span-3 flex flex-col h-full">
-            <div className="flex justify-end mb-4">
+            <div className="flex justify-end mb-4 gap-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline">Print</Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() =>
+                      handlePrintInvoice(
+                        sellRequestDetails?.header?.invoiceNo,
+                        "Original"
+                      )
+                    }
+                  >
+                    Original
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      handlePrintInvoice(
+                        sellRequestDetails?.header?.invoiceNo,
+                        "Duplicate"
+                      )
+                    }
+                  >
+                    Duplicate
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() =>
+                      handlePrintInvoice(
+                        sellRequestDetails?.header?.invoiceNo,
+                        "Transporter"
+                      )
+                    }
+                  >
+                    Transporter
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline">Generate</Button>
@@ -298,11 +337,14 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     disabled={data?.isEwayBill === "Y"}
-                    onClick={handleEwayClick}
+                    onClick={() => handleEwayClick("WayBill")}
                   >
                     E-Way Bill
                   </DropdownMenuItem>
-                  <DropdownMenuItem disabled={data?.isEInvoice === "Y"}>
+                  <DropdownMenuItem
+                    disabled={data?.isEInvoice === "Y"}
+                    onClick={() => handleEwayClick("Invoice")}
+                  >
                     E-Invoice
                   </DropdownMenuItem>
                 </DropdownMenuContent>
