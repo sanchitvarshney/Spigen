@@ -61,6 +61,14 @@ export const fetchEwayList = createAsyncThunk<
   return response.data;
 });
 
+export const cancelEInvoice = createAsyncThunk<
+ApiResponse<eInvoice[]>,
+FetchTransactionPayload
+>("so_challan_shipment/cancel_einvoice", async (payload) => {
+  const response = await spigenAxios.post("so_challan_shipment/cancel_einvoice", payload);
+  return response.data;
+});
+
 
 
 
