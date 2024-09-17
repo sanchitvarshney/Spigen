@@ -106,6 +106,7 @@ const ActionMenu: React.FC<any> = ({ row }) => {
       <NoteMaterialListModal
         visible={showMaterialList}
         onClose={() => setShowMaterialList(false)}
+        isGenerate={{status:row?.status}}
       />
     </>
   );

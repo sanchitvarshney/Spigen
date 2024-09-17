@@ -23,15 +23,15 @@ import { RootState } from "@/store";
 interface NoteMaterialListModalProps {
   visible: boolean;
   onClose: () => void;
-  //   materialData: string;
+  isGenerate: any;
 }
 
 const NoteMaterialListModal: React.FC<NoteMaterialListModalProps> = ({
   visible,
   onClose,
-  //   materialData,
+  isGenerate,
 }) => {
-  const { materialListData }: { materialListData: any } = useSelector(
+  const { materialListData,loading }: { materialListData: any, loading:boolean } = useSelector(
     (state: RootState) => state.creditDebitRegister
   );
 
@@ -66,7 +66,7 @@ const NoteMaterialListModal: React.FC<NoteMaterialListModalProps> = ({
   const data = materialListData?.header;
 
   const handleEwayClick = (module: string) => {
-    const shipmentId = materialListData?.materials[0]?.shipment_id || "";
+    const shipmentId = materialListData?.header?.note_id || "";
     const sanitizedShipmentId = shipmentId.replace(/\//g, "_");
     if (module === "Invoice") {
       window.open(`/salesOrder/e-inv/${sanitizedShipmentId}`, "_blank");
@@ -261,13 +261,7 @@ const NoteMaterialListModal: React.FC<NoteMaterialListModalProps> = ({
                 <DropdownMenuContent>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    disabled={data?.isEwayBill === "Y"}
-                    onClick={() => handleEwayClick("WayBill")}
-                  >
-                    E-Way Bill
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    disabled={data?.isEInvoice === "Y"}
+                    disabled={isGenerate === "Active"}
                     onClick={() => handleEwayClick("Invoice")}
                   >
                     E-Invoice
@@ -282,6 +276,7 @@ const NoteMaterialListModal: React.FC<NoteMaterialListModalProps> = ({
                 pagination={true}
                 suppressCellFocus={true}
                 components={{ truncateCellRenderer: TruncateCellRenderer }}
+                loading={loading}
               />
             </div>
           </div>
