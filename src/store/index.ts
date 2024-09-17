@@ -12,6 +12,7 @@ import SalesSlice from "@/features/salesmodule/SalesSlice";
 import salesTransactionSlice from "@/features/salesmodule/salesTransactionSlice";
 import salesShipmentSlice from "@/features/salesmodule/salesShipmentSlice";
 import salesInvoiceSlice from "@/features/salesmodule/salesInvoiceSlice";
+import creditDebitRegisterSlice from "@/features/salesmodule/creditDebitRegister";
 
 
 export const store = configureStore({
@@ -29,6 +30,7 @@ export const store = configureStore({
     sellShipment:salesShipmentSlice,
     sellInvoice:salesInvoiceSlice,
     invoice:salesTransactionSlice,
+    creditDebitRegister:creditDebitRegisterSlice,
     
     
     
