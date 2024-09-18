@@ -110,7 +110,7 @@ const supplyTypeOptions = [
     shipToAddress1:z.string({ required_error: "Please add your Address. Description must be between 3 and 100 characters" }),
     shipto_place:z.string(),
     shipTo_state_code:z.string({ required_error: "Please enter State" }),
-    // bill_to_state: z.string().optional(),
+    bill_to_state: z.string().optional(),
     shipto_pincode: z.string({ required_error: "Please enter Pincode" }),
     // transporter_id: z.string({ required_error: "Please select Billing Address" }),
     // transporter_name: z.string({ required_error: "" }),
@@ -155,10 +155,11 @@ const eInvoiceSchema = z.object({
   dispatchfrom_place:z.string({ required_error: "Please enter place" }),
   dispatchfrom_state:z.string({ required_error: "Please enter State" }),
   dispatchfrom_pincode:z.string({ required_error: "Please enter Pincode" }),
-  // shipto_name: z.string({ required_error: "Please select Name" }),
-  // billToaddress1: z.string({ required_error: "Please add your Address. Description must be between 3 and 100 characters" }),
-  // billToaddress2: z.string({ required_error: "Please add your Shipping Address Description must be between 10 and 100 characters" }),
-  // bill_to_pincode: z.string({ required_error: "Please enter your Pincode" }),
+  shipto_name: z.string({ required_error: "Please select Name" }),
+  billToaddress1: z.string({ required_error: "Please add your Address. Description must be between 3 and 100 characters" }),
+  billToaddress2: z.string({ required_error: "Please add your Shipping Address Description must be between 10 and 100 characters" }),
+  bill_to_pincode: z.string({ required_error: "Please enter your Pincode" }),
+  bill_to_state: z.string().optional(),
   shipto_gstin: z.string({ required_error: "Please enter GST" }),
   shipToAddress2:z.string({ required_error: "Please add your Address. Description must be between 3 and 100 characters" }),
   shipToAddress1:z.string({ required_error: "Please add your Address. Description must be between 3 and 100 characters" }),
@@ -186,5 +187,19 @@ const eInvoiceSchema = z.object({
 
 });
 
+const debitNoteSchema = eInvoiceSchema.extend({
+  debit_no: z.string({ required_error: "Please select Note Id" }),
+  other_ref: z.string({ required_error: "Please enter Other Reference" }),
+  document_date: z.string({ required_error: "Please select Document Date" }),
+  documnet_date:z.string().optional(),
+})
 
-  export { supplyTypeOptions, subOptions , docType, transportationMode, vehicleTypeOptions, transactionTypeOptions ,columnDefs,ewayBillSchema ,eInvoiceSchema};
+const creditNoteSchema = eInvoiceSchema.extend({
+  credit_no: z.string({ required_error: "Please select Note Id" }),
+  other_ref: z.string({ required_error: "Please enter Other Reference" }),
+  document_date: z.string({ required_error: "Please select Document Date" }),
+  documnet_date:z.string().optional(),
+})
+
+
+  export { supplyTypeOptions, subOptions , docType, transportationMode, vehicleTypeOptions, transactionTypeOptions ,columnDefs,ewayBillSchema ,eInvoiceSchema,debitNoteSchema,creditNoteSchema};

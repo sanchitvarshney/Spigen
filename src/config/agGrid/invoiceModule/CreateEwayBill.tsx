@@ -19,6 +19,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
 import {
+  createCreditEinvoice,
   createDebitEinvoice,
   createEwayBill,
   fetchDataForEwayBill,
@@ -31,6 +32,8 @@ import { Dayjs } from "dayjs";
 import { AgGridReact } from "ag-grid-react";
 import {
   columnDefs,
+  creditNoteSchema,
+  debitNoteSchema,
   docType,
   eInvoiceSchema,
   ewayBillSchema,
@@ -51,9 +54,20 @@ export default function CreateEwayBill() {
   const params = useParams();
   const [totalSum, setTotalSum] = useState(0);
   const isEwayBill = window.location.href?.includes("e-way");
-
+  const isCrNote = window.location.href?.includes("CRN");
+  const isCnDn =
+    window.location.href?.includes("DBN") ||
+    window.location.href?.includes("CRN");
   const form = useForm<any>({
-    resolver: zodResolver(isEwayBill ? ewayBillSchema : eInvoiceSchema),
+    resolver: zodResolver(
+      isCnDn
+        ? isCrNote
+          ? creditNoteSchema
+          : debitNoteSchema
+        : isEwayBill
+        ? ewayBillSchema
+        : eInvoiceSchema
+    ),
     mode: "onBlur",
   });
   const { ewayBillData, loading } = useSelector(
@@ -61,11 +75,6 @@ export default function CreateEwayBill() {
   );
   const [rowData, setRowData] = useState(ewayBillData || []);
 
-  const isDbNote = window.location.href?.includes("DBN");
-  const isCrNote = window.location.href?.includes("CRN");
-  const isCnDn =
-    window.location.href?.includes("DBN") ||
-    window.location.href?.includes("CRN");
   console.log(rowData, "rowData", ewayBillData);
   useEffect(() => {
     if (!isCnDn) {
@@ -121,10 +130,12 @@ export default function CreateEwayBill() {
           const data = res.payload?.data?.header;
           form.setValue("invoice_id", data?.invoice_no);
           form.setValue("other_ref", data?.other_ref);
-          form.setValue("note_id", data?.note_id);
+          !isCrNote
+            ? form.setValue("debit_no", data?.note_id)
+            : form.setValue("credit_no", data?.note_id);
           form.setValue("dispatch_name", data?.billfrom?.name);
           form.setValue("dispatchfrom_gstin", data?.billfrom?.gst);
-          form.setValue("dispatchfrom_state", data?.billfrom?.state?.label);
+          form.setValue("dispatchfrom_state", data?.billfrom?.state?.value);
           form.setValue("dispatchfrom_pan", data?.billfrom?.pan);
           form.setValue("dispatchfrom_place", data?.billfrom?.place);
           form.setValue("dispatchfrom_pincode", data?.billfrom?.pin);
@@ -137,14 +148,19 @@ export default function CreateEwayBill() {
             data?.billfrom?.billFromaddress2
           );
           form.setValue("dispatchTo.name", data?.billTo?.name);
-          form.setValue("dispatchTo.state_code", data?.billTo?.state?.label);
+          form.setValue("dispatchTo.state_code", data?.billTo?.state?.value);
+          form.setValue("bill_to_state", data?.billTo?.state?.value);
           form.setValue("dispatchTo.label", data?.billTo?.name);
           form.setValue("dispatchTo.pincode", data?.billTo?.pin);
+          form.setValue("bill_to_pincode", data?.billTo?.pin);
           form.setValue("dispatchTo.gstin", data?.billTo?.gst);
           form.setValue("dispatchTo.address1", data?.billTo?.billToaddress1);
+          form.setValue("billToaddress1", data?.billTo?.billToaddress1);
+          form.setValue("billToaddress2", data?.billTo?.billToaddress2);
           form.setValue("dispatchTo.address2", data?.billTo?.billToaddress2);
           form.setValue("dispatchTo.company", data?.shipToName);
           form.setValue("shipto_place", data?.shipto?.place);
+          form.setValue("shipto_name", data?.shipto?.place);
           form.setValue("shipto_pincode", data?.shipto?.pin);
           form.setValue("shipto_gstin", data?.shipto?.gst);
           form.setValue("shipToAddress1", data?.shipto?.shipToAddress1);
@@ -160,19 +176,39 @@ export default function CreateEwayBill() {
   const onSubmit = (payload: any) => {
     console.log("Form data:", payload, isCnDn);
     if (isCnDn) {
-      dispatch(createDebitEinvoice(payload)).then((response) => {
-        if (response.meta.requestStatus === "fulfilled") {
-          toast({
-            title: "Data Fetched Successfully",
-            className: "bg-green-600 text-white items-center",
-          });
-        } else {
-          toast({
-            title: "Failed to Fetch Data",
-            className: "bg-red-600 text-white items-center",
-          });
-        }
-      });
+      if (isCrNote) {
+        dispatch(createCreditEinvoice(payload)).then((response) => {
+          console.log(response, "33");
+          if (response.payload.success) {
+            toast({
+              title:
+                response?.payload?.message || "Data Submitted Successfully",
+              className: "bg-green-600 text-white items-center",
+            });
+          } else {
+            toast({
+              title: response?.payload?.message || "Failed to Submit Data",
+              className: "bg-red-600 text-white items-center",
+            });
+          }
+        });
+      } else {
+        dispatch(createDebitEinvoice(payload)).then((response) => {
+          console.log(response, "33");
+          if (response.payload.success) {
+            toast({
+              title:
+                response?.payload?.message || "Data Submitted Successfully",
+              className: "bg-green-600 text-white items-center",
+            });
+          } else {
+            toast({
+              title: response?.payload?.message || "Failed to Submit Data",
+              className: "bg-red-600 text-white items-center",
+            });
+          }
+        });
+      }
     } else {
       if (isEwayBill) {
         dispatch(createEwayBill(payload)).then((response) => {
@@ -386,11 +422,11 @@ export default function CreateEwayBill() {
                       )}
                     />
                   </div>
-                  {isCnDn && (
+                  {isCrNote && (
                     <div className="">
                       <FormField
                         control={form.control}
-                        name="note_id"
+                        name="credit_no"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
@@ -412,10 +448,37 @@ export default function CreateEwayBill() {
                       />
                     </div>
                   )}
+                  {isCnDn && !isCrNote && (
+                    <div className="">
+                      <FormField
+                        control={form.control}
+                        name="debit_no"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className={LableStyle}>
+                              Note Id
+                              <span className="pl-1 text-red-500 font-bold">
+                                *
+                              </span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                className={InputStyle}
+                                placeholder="Document No"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  )}
+
                   <div>
                     <FormField
                       control={form.control}
-                      name="documnet_date"
+                      name={isCnDn ? "document_date" : "documnet_date"}
                       render={() => (
                         <FormItem className="pl-[10px] w-full flex flex-col">
                           <FormLabel className={LableStyle}>
@@ -433,7 +496,15 @@ export default function CreateEwayBill() {
                                   const formattedDate = value
                                     ? value.format("DD-MM-YYYY")
                                     : "";
-                                  form.setValue("documnet_date", formattedDate);
+                                  isCnDn
+                                    ? form.setValue(
+                                        "document_date",
+                                        formattedDate
+                                      )
+                                    : form.setValue(
+                                        "documnet_date",
+                                        formattedDate
+                                      );
                                 }}
                               />
                             </Space>
