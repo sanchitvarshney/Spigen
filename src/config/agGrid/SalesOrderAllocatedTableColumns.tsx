@@ -11,7 +11,7 @@ import {
   cancelNotes,
   getNoteMaterialList,
   soNotePrint,
-} from "@/features/salesmodule/creditDebitRegister";
+} from "@/features/salesmodule/creditDebitRegisterSlice";
 import { printFunction } from "@/General";
 import NoteMaterialListModal from "@/pages/salesModule/NoteMaterialListModal";
 
@@ -106,7 +106,7 @@ const ActionMenu: React.FC<any> = ({ row }) => {
       <NoteMaterialListModal
         visible={showMaterialList}
         onClose={() => setShowMaterialList(false)}
-        isGenerate={{status:row?.status}}
+        isGenerate={{ status: row?.status }}
       />
     </>
   );

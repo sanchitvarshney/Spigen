@@ -21,6 +21,7 @@ import CustomLoadingCellRenderer from "@/config/agGrid/CustomLoadingCellRenderer
 import { RootState } from "@/store";
 import { fetchSalesOrderShipmentList } from "@/features/salesmodule/SalesSlice";
 import { useDispatch, useSelector } from "react-redux";
+import moment from "moment";
 
 const { RangePicker } = DatePicker;
 const dateFormat = "YYYY/MM/DD";
@@ -56,8 +57,8 @@ const SalesShipmentPage: React.FC = () => {
   
     let dataString = "";
     if (wise === "datewise" && dateRange) {
-      const startDate = dateRange[0].toLocaleDateString("en-GB").split("/").reverse().join("-");
-      const endDate = dateRange[1].toLocaleDateString("en-GB").split("/").reverse().join("-");
+      const startDate = moment(dateRange[0]).format('DD-MM-YYYY');
+      const endDate = moment(dateRange[1]).format('DD-MM-YYYY');
       dataString = `${startDate}-${endDate}`;
     } else if (wise === "clientwise" && wise !== undefined) {
       dataString = wise;

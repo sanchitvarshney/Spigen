@@ -25,8 +25,8 @@ interface SellInvoiceData {
 interface SellShipmentState {
   data: SellInvoiceData[];
   challanDetails: [];
-  dataNotes:[];
-  ewayBillData:[];
+  dataNotes: [];
+  ewayBillData: [];
   loading: boolean;
   error: string | null;
 }
@@ -49,10 +49,10 @@ interface CancelPayload {
   invoice_no: string;
 }
 
-interface DebitNote{
+interface DebitNote {
   invoice_id: string;
   other_ref: string;
-  material:{}
+  material: {};
 }
 export const fetchSalesOrderInvoiceList = createAsyncThunk<
   ApiResponse<any>,
@@ -91,11 +91,14 @@ export const getchallanDetails = createAsyncThunk(
 
 export const printSellInvoice = createAsyncThunk(
   "client/printSellInvoice",
-  async ({ so_invoice,printInvType }: { so_invoice: string,printInvType:string }, { rejectWithValue }) => {
+  async (
+    { so_invoice, printInvType }: { so_invoice: string; printInvType: string },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await spigenAxios.post<any>(
         "/so_challan_shipment/printSellInvoice",
-        { so_invoice: so_invoice,printInvType:printInvType }
+        { so_invoice: so_invoice, printInvType: printInvType }
       );
 
       if (!response.data) {
@@ -145,10 +148,13 @@ export const cancelInvoice = createAsyncThunk(
 );
 
 export const createEwayBill = createAsyncThunk(
-  'client/createEwayBill',
-  async (payload:any, { rejectWithValue }) => {
+  "client/createEwayBill",
+  async (payload: any, { rejectWithValue }) => {
     try {
-      const response = await spigenAxios.post('/so_challan_shipment/createEwayBill', payload);
+      const response = await spigenAxios.post(
+        "/so_challan_shipment/createEwayBill",
+        payload
+      );
       return response.data;
     } catch (error) {
       if (error instanceof Error) {
@@ -160,10 +166,13 @@ export const createEwayBill = createAsyncThunk(
 );
 
 export const generateEInvoice = createAsyncThunk(
-  'client/generateEInvoice',
-  async (payload:any, { rejectWithValue }) => {
+  "client/generateEInvoice",
+  async (payload: any, { rejectWithValue }) => {
     try {
-      const response = await spigenAxios.post('so_challan_shipment/generateEinvoice', payload);
+      const response = await spigenAxios.post(
+        "so_challan_shipment/generateEinvoice",
+        payload
+      );
       return response.data;
     } catch (error) {
       if (error instanceof Error) {
@@ -237,6 +246,30 @@ export const fetchDataForEwayBill = createAsyncThunk(
         "/so_challan_shipment/fetchDataForEwayBill",
         { shipment_id: shipment_id }
       );
+
+      if (!response.data) {
+        throw new Error("No data received");
+      }
+      // Return the entire response as expected by the fulfilled case
+      console.log(response?.data);
+      return response?.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        // Handle error using rejectWithValue
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("An unknown error occurred");
+    }
+  }
+);
+
+export const fetchNoteData = createAsyncThunk(
+  "so_challan_shipment/fetchNoteData",
+  async ({ note_no }: { note_no: string }, { rejectWithValue }) => {
+    try {
+      const response = await spigenAxios.post<any>("soEnotes/fetchNotedata", {
+        note_no: note_no,
+      });
 
       if (!response.data) {
         throw new Error("No data received");
@@ -386,7 +419,7 @@ const sellInvoiceSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchDataForEwayBill.fulfilled, (state, action) => {
-        console.log(action.payload.header)
+        console.log(action.payload.header);
         state.ewayBillData = action.payload.data;
         state.loading = false;
       })
@@ -394,11 +427,23 @@ const sellInvoiceSlice = createSlice({
         state.error = action.error?.message || null;
         state.loading = false;
       })
+      .addCase(fetchNoteData.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchNoteData.fulfilled, (state, action) => {
+        console.log(action.payload.header);
+        state.ewayBillData = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(fetchNoteData.rejected, (state, action) => {
+        state.error = action.error?.message || null;
+        state.loading = false;
+      })
       .addCase(fetchDataForInvoice.pending, (state) => {
         state.loading = true;
       })
       .addCase(fetchDataForInvoice.fulfilled, (state, action) => {
-        console.log(action.payload.header)
+        console.log(action.payload.header);
         state.ewayBillData = action.payload.data;
         state.loading = false;
       })

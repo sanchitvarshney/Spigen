@@ -61,6 +61,7 @@
     "fullcalendar": "^6.1.14",
     "lodash": "^4.17.21",
     "lucide-react": "^0.395.0",
+    "moment": "^2.30.1",
     "next-themes": "^0.3.0",
     "print-js": "^1.6.0",
     "react": "^18.2.0",
@@ -89,6 +90,7 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.17.6",
+    "@types/moment": "^2.11.29",
     "@types/node": "^20.14.2",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",

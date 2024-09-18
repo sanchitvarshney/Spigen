@@ -22,7 +22,7 @@ import { DatePicker, Space } from "antd";
 import { gridOptions } from "@/config/agGrid/ModuleRegistry";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
-import { fetchCreditDebitRegisterList } from "@/features/salesmodule/creditDebitRegister";
+import { fetchCreditDebitRegisterList } from "@/features/salesmodule/creditDebitRegisterSlice";
 import FullPageLoading from "@/components/shared/FullPageLoading";
 import {
   Select,
@@ -32,6 +32,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import moment from "moment";
+
 
 const { RangePicker } = DatePicker;
 const dateFormat = "YYYY/MM/DD";
@@ -82,16 +84,8 @@ const AllocatedInvoicesPage: React.FC = () => {
     let dataString = "";
 
     if (wiseType === "date" && dateRange?.length === 2) {
-      const startDate = dateRange[0]
-        .toLocaleDateString("en-GB")
-        .split("/")
-        .reverse()
-        .join("-");
-      const endDate = dateRange[1]
-        .toLocaleDateString("en-GB")
-        .split("/")
-        .reverse()
-        .join("-");
+      const startDate = moment(dateRange[0]).format('DD-MM-YYYY');
+      const endDate = moment(dateRange[1]).format('DD-MM-YYYY');
       dataString = `${startDate}-${endDate}`;
     } else {
       dataString = number || "";
@@ -133,6 +127,11 @@ const AllocatedInvoicesPage: React.FC = () => {
           <Filter className="h-[20px] w-[20px]" />
           Filter
         </div>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6 overflow-hidden p-[10px]"
+          >
         <div className="p-[10px]">
           <Select
             value={noteType}
@@ -167,11 +166,7 @@ const AllocatedInvoicesPage: React.FC = () => {
             </SelectContent>
           </Select>
         </div>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-6 overflow-hidden p-[10px]"
-          >
+       
             {wiseType === "date" ? (
               <FormField
                 control={form.control}

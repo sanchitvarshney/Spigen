@@ -39,7 +39,6 @@ import {
   vehicleTypeOptions,
 } from "@/constants/EwayBillConstants";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import FullPageLoading from "@/components/shared/FullPageLoading";
 import { Button } from "@/components/ui/button";
 import { DatePicker, Space } from "antd";
@@ -58,7 +57,12 @@ export default function CreateEwayBill() {
   const { ewayBillData, loading } = useSelector(
     (state: RootState) => state.sellInvoice
   );
-
+  const isDbNote = window.location.href?.includes("DBN");
+  const isCrNote = window.location.href?.includes("CRN");
+  const isCnDn =
+    window.location.href?.includes("DBN") ||
+    window.location.href?.includes("CRN");
+  console.log((params?.id as string).replace(/_/g, "/"));
   useEffect(() => {
     const shipId = (params?.id as string).replace(/_/g, "/");
     const action = isEwayBill ? fetchDataForEwayBill : fetchDataForInvoice;
@@ -98,6 +102,7 @@ export default function CreateEwayBill() {
       form.setValue("shipto_gstin", data?.client_gstno);
     });
   }, [params]);
+
   console.log(form.formState.errors);
   const onSubmit = (payload: any) => {
     console.log("Form data:", payload);
@@ -153,7 +158,13 @@ export default function CreateEwayBill() {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="rounded p-[30px] shadow bg-[#fff] overflow-y-auto mb-10">
             <div className="text-slate-600 font-[600] text-[20px] flex justify-center">
-              {isEwayBill ? "Create E-Way Bill" : "Create E-Invoice"}
+              {isCnDn
+                ? isCrNote
+                  ? "Create CN"
+                  : "Create DN"
+                : isEwayBill
+                ? "Create E-Way Bill"
+                : "Create E-Invoice"}
             </div>
 
             <Card className="rounded shadow bg-[#fff] mb-8">

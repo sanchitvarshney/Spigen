@@ -17,6 +17,7 @@ import CustomLoadingCellRenderer from "@/config/agGrid/CustomLoadingCellRenderer
 import { columnDefs } from "@/config/agGrid/SalesOrderRegisterTableColumns";
 import { useToast } from "@/components/ui/use-toast";
 import FullPageLoading from "@/components/shared/FullPageLoading";
+import moment from "moment";
 
 const { RangePicker } = DatePicker;
 const dateFormat = "YYYY/MM/DD";
@@ -51,8 +52,8 @@ const RegisterSalesOrderPage: React.FC = () => {
   
     let dataString = "";
     if (wise === "DATE" && dateRange) {
-      const startDate = dateRange[0].toLocaleDateString("en-GB").split("/").reverse().join("-");
-      const endDate = dateRange[1].toLocaleDateString("en-GB").split("/").reverse().join("-");
+      const startDate = moment(dateRange[0]).format('DD-MM-YYYY');
+      const endDate = moment(dateRange[1]).format('DD-MM-YYYY');
       dataString = `${startDate}-${endDate}`;
       dispatch(setDateRange(dataString as any));
     } else if (wise === "SONO" && soWise) {

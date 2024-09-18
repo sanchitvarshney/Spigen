@@ -43,6 +43,7 @@ import { RootState } from "@/store";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchInvoiceList } from "@/features/salesmodule/salesTransactionSlice";
 import FullPageLoading from "@/components/shared/FullPageLoading";
+import moment from "moment";
 const { RangePicker } = DatePicker;
 const dateFormat = "DD-MM-YYYY";
 const wises = [
@@ -79,14 +80,8 @@ const SalesETransactionRegisterPage: React.FC = () => {
 
     let dataString = "";
     if (wise === "date" && dateRange) {
-      const startDate = dateRange[0]
-        .toLocaleDateString("en-GB")
-        .split("/")
-        .join("-");
-      const endDate = dateRange[1]
-        .toLocaleDateString("en-GB")
-        .split("/")
-        .join("-");
+      const startDate = moment(dateRange[0]).format('DD-MM-YYYY');
+      const endDate = moment(dateRange[1]).format('DD-MM-YYYY');
       dataString = `${startDate}-${endDate}`;
     } else if (wise === "client" && wise !== undefined) {
       dataString = wise;
