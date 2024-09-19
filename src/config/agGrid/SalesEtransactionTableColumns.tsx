@@ -4,7 +4,12 @@ import { MoreOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Form, Menu } from "antd";
 import { useState } from "react";
 import { ConfirmCancellationDialog } from "@/config/agGrid/registerModule/ConfirmCancellationDialog";
-import { cancelEInvoice } from "@/features/salesmodule/salesTransactionSlice";
+import {
+  cancelCrDbEInvoice,
+  cancelEInvoice,
+  cancelEwayBill,
+  printEwayBill,
+} from "@/features/salesmodule/salesTransactionSlice";
 import { AppDispatch } from "@/store";
 import { useDispatch } from "react-redux";
 import { toast } from "@/components/ui/use-toast";
@@ -14,36 +19,47 @@ import { printSellInvoice } from "@/features/salesmodule/salesInvoiceSlice";
 const ActionMenu: React.FC<any> = ({ row }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
+  const [module, setModule] = useState("");
   const [form] = Form.useForm();
 
-  const handlePrintInvoice = async (orderId: string) => {
+  const handlePrintInvoice = async (orderId: string, section: string) => {
     console.log(orderId);
-    dispatch(
-      printSellInvoice({ so_invoice: orderId, printInvType: "Original" })
-    ).then((response: any) => {
-      if (response?.payload?.success) {
-        printFunction(response?.payload?.data.buffer.data);
-      } else {
-        toast({
-          title: response?.payload || "Print failed",
-          className: "bg-red-600 text-white items-center",
-        });
-      }
-    });
+    if (section === "e-waybill") {
+      dispatch(printEwayBill({ ewayBillNo: orderId })).then((response: any) => {
+        if (response?.payload?.success) {
+          printFunction(response?.payload?.data.buffer.data);
+        } else {
+          toast({
+            title: response?.payload || "Print failed",
+            className: "bg-red-600 text-white items-center",
+          });
+        }
+      });
+    } else {
+      dispatch(
+        printSellInvoice({ so_invoice: orderId, printInvType: "Original" })
+      ).then((response: any) => {
+        if (response?.payload?.success) {
+          printFunction(response?.payload?.data.buffer.data);
+        } else {
+          toast({
+            title: response?.payload || "Print failed",
+            className: "bg-red-600 text-white items-center",
+          });
+        }
+      });
+    }
   };
 
   const handleOk = () => {
     form
       .validateFields()
       .then((values) => {
-        const payload: any = {
-          invoice_no: row?.invoiceNo,
-          irn: row?.irnno,
-          cancellReason: values.reason,
-          remark: values.remark,
-        };
+        const payload = createPayload(values);
         console.log(payload);
-        dispatch(cancelEInvoice(payload)).then((response: any) => {
+
+        const action = getCancelAction(payload);
+        dispatch(action).then((response: any) => {
           if (response?.payload?.success) {
             toast({
               title: response?.message || "Cancelled successfully",
@@ -51,11 +67,12 @@ const ActionMenu: React.FC<any> = ({ row }) => {
             });
           } else {
             toast({
-              title: response?.message || "Cancelled failed",
+              title: response?.error?.message || "Cancelled failed",
               className: "bg-red-600 text-white items-center",
             });
           }
         });
+
         setCancelModalVisible(false);
         form.resetFields();
       })
@@ -64,16 +81,76 @@ const ActionMenu: React.FC<any> = ({ row }) => {
       });
   };
 
+  const createPayload = (values: any) => {
+    if (module === "e-invoice") {
+      return {
+        invoice_no: row?.invoiceNo,
+        irn: row?.irnno,
+        cancellReason: values.reason,
+        remark: values.remark,
+      };
+    } else if (module === "e-waybill") {
+      return {
+        ewayBillNo: row?.eway_bill_no,
+        cancellReason: values.reason,
+        comment: values.remark,
+      };
+    } else {
+      return {
+        noteNo: row?.note_no,
+        irn: row?.irnNo,
+        cancellReason: values.reason,
+        remark: values.remark,
+      };
+    }
+  };
+
+  const getCancelAction = (payload: any) => {
+    if (module === "e-invoice") {
+      return cancelEInvoice(payload);
+    } else if (module === "e-waybill") {
+      return cancelEwayBill(payload);
+    } else {
+      return cancelCrDbEInvoice(payload); // Assuming this is default action for others
+    }
+  };
+  console.log(module);
   const menu = (
     <Menu>
       <Menu.Item
         key="cancel"
-        onClick={() => setCancelModalVisible(true)}
-        disabled={row.eInvoice_status == "CANCELLED"}
+        onClick={() => {
+          if (row?.eInvoiceNo) {
+            setModule("e-invoice");
+          } else if (row?.eway_bill_no) {
+            setModule("e-waybill");
+          } else {
+            setModule("note");
+          }
+          setCancelModalVisible(true);
+        }}
+        disabled={
+          row.eInvoice_status == "CANCELLED" ||
+          row.ewaybill_status == "CANCELLED"
+        }
       >
         Cancel
       </Menu.Item>
-      <Menu.Item key="print" onClick={() => handlePrintInvoice(row?.invoiceNo)}>
+      <Menu.Item
+        key="print"
+        onClick={() => {
+          if (row?.eInvoiceNo) {
+            handlePrintInvoice(row?.invoiceNo, "e-invoice");
+          } else if (row?.eway_bill_no) {
+            handlePrintInvoice(row?.eway_bill_no, "e-waybill");
+          } else {
+            toast({
+              title: "In Development , We will Update Soon!",
+              className: "bg-blue-600 text-white items-center",
+            });
+          }
+        }}
+      >
         Print
       </Menu.Item>
     </Menu>
@@ -129,7 +206,7 @@ export const columnDefs: ColDef<RowData>[] = [
     field: "so_no",
     filter: "agDateColumnFilter",
     cellRenderer: "truncateCellRenderer",
-    maxWidth: 100,
+    maxWidth: 150,
   },
   {
     headerName: "Invoice Date",
@@ -184,6 +261,230 @@ export const columnDefs: ColDef<RowData>[] = [
   {
     headerName: "Shipping Address",
     field: "shippingaddress2",
+    width: 400,
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+];
+
+export const EwayBillColumnDefs: ColDef<any>[] = [
+  {
+    headerName: "Actions",
+    maxWidth: 100,
+    cellRenderer: (params: any) => <ActionMenu row={params.data} />,
+  },
+  { headerName: "#", valueGetter: "node.rowIndex + 1", maxWidth: 50 },
+  {
+    headerName: "Status",
+    field: "ewaybill_status",
+    filter: "agDateColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+    maxWidth: 100,
+  },
+  {
+    headerName: "SO Id",
+    field: "so_id",
+    filter: "agDateColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+    maxWidth: 150,
+  },
+  {
+    headerName: "Invoice Date",
+    field: "invoice_date",
+    filter: "agDateColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Invoice Number",
+    field: "challanId",
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Supply Type",
+    field: "supply_type",
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Supply Type",
+    field: "supply_type",
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Sub Supply Type",
+    field: "sub_supply_type",
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Doc Type",
+    field: "document_type",
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Trans Type",
+    field: "transaction_type",
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Dispatch Name",
+    field: "dispatchfrom_name",
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Dispatch Address",
+    field: "dispatchfrom_address",
+    filter: "agTextColumnFilter",
+    width: 400,
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Dispatch GST",
+    field: "dispatchfrom_gstin",
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Dispatch From",
+    field: "dispatchfrom_place",
+    filter: "agDateColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Dispatch State",
+    field: "dispatchfrom_state",
+    filter: "agDateColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Dispatch Pincode",
+    field: "dispatchfrom_pincode",
+    filter: "agDateColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Shipping GST",
+    field: "shipto_gstin",
+    filter: "agDateColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Shipping Place",
+    field: "shipto_place",
+    filter: "agDateColumnFilter",
+    width: 400,
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Shipping State",
+    field: "shipto_state",
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Shipping Pincode",
+    field: "shipto_pincode",
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Transport Id",
+    field: "transporter_id",
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Trans Doc Date",
+    field: "trans_doc_no",
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Vehicle",
+    field: "vehicle_no",
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Trans Mode",
+    field: "trans_mode",
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "E-way Bill Number",
+    field: "eway_bill_no",
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Generated Date",
+    field: "generated_dt",
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+];
+
+export const CrDbColumnDefs: ColDef<any>[] = [
+  {
+    headerName: "Actions",
+    maxWidth: 100,
+    cellRenderer: (params: any) => <ActionMenu row={params.data} />,
+  },
+  { headerName: "#", valueGetter: "node.rowIndex + 1", maxWidth: 50 },
+  {
+    headerName: "Status",
+    field: "status",
+    filter: "agDateColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+    maxWidth: 100,
+  },
+  {
+    headerName: "SO Id",
+    field: "so_id",
+    filter: "agDateColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+    maxWidth: 150,
+  },
+  {
+    headerName: "Invoice Date",
+    field: "eInvoiceDate",
+    filter: "agDateColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Invoice Number",
+    field: "einvoice_no",
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Bill To",
+    field: "billTo",
+    filter: "agTextColumnFilter",
+    width: 400,
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "CN/DN Id",
+    field: "note_no",
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "IRN Number",
+    field: "irnNo",
+    filter: "agTextColumnFilter",
+    cellRenderer: "truncateCellRenderer",
+  },
+  {
+    headerName: "Shipping Address",
+    field: "shipTo",
     width: 400,
     filter: "agTextColumnFilter",
     cellRenderer: "truncateCellRenderer",

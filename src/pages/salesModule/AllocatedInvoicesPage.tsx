@@ -172,7 +172,7 @@ const AllocatedInvoicesPage: React.FC = () => {
                 control={form.control}
                 name="dateRange"
                 render={({ field }) => (
-                  <FormItem className="w-full">
+                  <FormItem className="w-full p-[12px]">
                     <FormControl>
                       <Space direction="vertical" size={12} className="w-full">
                         <RangePicker
@@ -197,7 +197,7 @@ const AllocatedInvoicesPage: React.FC = () => {
                 control={form.control}
                 name="number"
                 render={({ field }) => (
-                  <FormItem className="w-full">
+                  <FormItem className="w-full p-[12px]">
                     <FormControl>
                       <Input {...field} placeholder="Invoice number" />
                     </FormControl>

@@ -30,26 +30,37 @@ import { toast } from "@/components/ui/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Filter } from "lucide-react";
 import styled from "styled-components";
-import { DatePicker, Space } from "antd";
-import { RowData } from "@/types/SalesEtransactionTypes";
+import { DatePicker, Input, Space } from "antd";
 
 import { gridOptions } from "@/config/agGrid/ModuleRegistry";
 import {
   columnDefs,
+  CrDbColumnDefs,
+  EwayBillColumnDefs,
   TruncateCellRenderer,
 } from "@/config/agGrid/SalesEtransactionTableColumns";
 
 import { RootState } from "@/store";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchInvoiceList } from "@/features/salesmodule/salesTransactionSlice";
+import {
+  fetchEInvoiceData,
+  fetchEwayList,
+  fetchInvoiceList,
+} from "@/features/salesmodule/salesTransactionSlice";
 import FullPageLoading from "@/components/shared/FullPageLoading";
 import moment from "moment";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 const { RangePicker } = DatePicker;
 const dateFormat = "DD-MM-YYYY";
 const wises = [
   { label: "Date Wise", value: "date" },
-  { label: "client", value: "client" },
-  { label: "invoice", value: "invoice" },
+  { label: "Invoice Number", value: "invoice" },
 ] as const;
 
 const FormSchema = z.object({
@@ -61,11 +72,13 @@ const FormSchema = z.object({
       message: "Please select a valid date range.",
     }),
   wise: z.string(),
+  invoice: z.string().optional(),
 });
 const SalesETransactionRegisterPage: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const [wise] = useState<any>("datewise");
+  const [wise, setWise] = useState<any>("date");
+  const [type, setType] = useState<any>("e-invoice");
   const { data: rowData, loading } = useSelector(
     (state: RootState) => state.invoice
   );
@@ -75,42 +88,77 @@ const SalesETransactionRegisterPage: React.FC = () => {
       wise: "date",
     },
   });
+
+  const types = [
+    { label: "E-Invoice", value: "e-invoice" },
+    { label: "E-way Bill", value: "e-waybill" },
+    { label: "Debit Note", value: "debit" },
+    { label: "Credit Note", value: "credit" },
+  ] as const;
+
+  const getColumnDefs = (type: string) => {
+    if (type === "e-waybill") {
+      return EwayBillColumnDefs;
+    } else if (type === "debit" || type === "credit") {
+      return CrDbColumnDefs;
+    } else {
+      return columnDefs;
+    }
+  };
+
   const onSubmit = async (formData: z.infer<typeof FormSchema>) => {
-    const { dateRange, wise } = formData;
+    const { dateRange, wise, invoice } = formData;
 
     let dataString = "";
     if (wise === "date" && dateRange) {
-      const startDate = moment(dateRange[0]).format('DD-MM-YYYY');
-      const endDate = moment(dateRange[1]).format('DD-MM-YYYY');
+      const startDate = moment(dateRange[0]).format("DD-MM-YYYY");
+      const endDate = moment(dateRange[1]).format("DD-MM-YYYY");
       dataString = `${startDate}-${endDate}`;
-    } else if (wise === "client" && wise !== undefined) {
-      dataString = wise;
+    } else if (wise === "invoice") {
+      dataString = invoice || "";
     }
 
     try {
-      console.log("Dispatching fetchSellRequestList with:", {
-        wise,
-        data: dataString,
-      });
-      const resultAction = await dispatch(
-        fetchInvoiceList({ wise, data: dataString }) as any
-      ).unwrap();
+      console.log("Dispatching fetch with:", { wise, data: dataString });
+
+      let resultAction;
+      switch (type) {
+        case "e-invoice":
+          resultAction = await dispatch(
+            fetchInvoiceList({ wise, data: dataString }) as any
+          ).unwrap();
+          break;
+        case "e-waybill":
+          resultAction = await dispatch(
+            fetchEwayList({ wise, data: dataString }) as any
+          ).unwrap();
+          break;
+        case "debit":
+        case "credit":
+          resultAction = await dispatch(
+            fetchEInvoiceData({ wise, data: dataString, type }) as any
+          ).unwrap();
+          break;
+        default:
+          throw new Error("Invalid type selected");
+      }
+
       console.log("Result Action:", resultAction);
       if (resultAction.success) {
         toast({
-          title: "Shipment fetched successfully",
+          title: "Data fetched successfully",
           className: "bg-green-600 text-white items-center",
         });
       } else {
         toast({
-          title: resultAction.message || "Failed to Create Product",
+          title: resultAction.message || "Failed to fetch data",
           className: "bg-red-600 text-white items-center",
         });
       }
     } catch (error: any) {
-      console.error("Failed to fetch sell requests:", error);
+      console.error("Failed to fetch data:", error);
       toast({
-        title: error.message || "Failed to fetch Product",
+        title: error.message || "Failed to fetch data",
         className: "bg-red-600 text-white items-center",
       });
     }
@@ -134,6 +182,20 @@ const SalesETransactionRegisterPage: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="mt-[20px] p-0">
+            <div className="p-[18px]">
+              <Select value={type} onValueChange={(value) => setType(value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a filter type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {types.map((item) => (
+                    <SelectItem key={item.value} value={item.value}>
+                      {item.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
@@ -184,6 +246,7 @@ const SalesETransactionRegisterPage: React.FC = () => {
                                     className="data-[disabled]:opacity-100 aria-selected:bg-cyan-600 aria-selected:text-white data-[disabled]:pointer-events-auto flex items-center gap-[10px]"
                                     onSelect={() => {
                                       form.setValue("wise", wise.value);
+                                      setWise(wise.value);
                                       setOpen(false);
                                     }}
                                   >
@@ -199,29 +262,46 @@ const SalesETransactionRegisterPage: React.FC = () => {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="dateRange"
-                  render={() => (
-                    <FormItem className="pl-[10px] w-fulls">
-                      <FormControl>
-                        <Space direction="vertical" size={12}>
-                          <RangePicker
-                            className=" border shadow-sm border-slate-400 py-[7px] hover:border-slate-300 w-[310px]"
-                            onChange={(value) =>
-                              form.setValue(
-                                "dateRange",
-                                value ? value.map((date) => date!.toDate()) : []
-                              )
-                            }
-                            format={dateFormat}
-                          />
-                        </Space>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {wise === "date" ? (
+                  <FormField
+                    control={form.control}
+                    name="dateRange"
+                    render={() => (
+                      <FormItem className="pl-[10px] w-fulls">
+                        <FormControl>
+                          <Space direction="vertical" size={12}>
+                            <RangePicker
+                              className=" border shadow-sm border-slate-400 py-[7px] hover:border-slate-300 w-[310px]"
+                              onChange={(value) =>
+                                form.setValue(
+                                  "dateRange",
+                                  value
+                                    ? value.map((date) => date!.toDate())
+                                    : []
+                                )
+                              }
+                              format={dateFormat}
+                            />
+                          </Space>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ) : (
+                  <FormField
+                    control={form.control}
+                    name="invoice"
+                    render={({ field }) => (
+                      <FormItem className="w-full p-[12px]">
+                        <FormControl>
+                          <Input {...field} placeholder="Invoice number" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 <Button
                   type="submit"
@@ -236,8 +316,8 @@ const SalesETransactionRegisterPage: React.FC = () => {
       </div>
       <div className="ag-theme-quartz h-[calc(100vh-100px)]">
         <AgGridReact
-          rowData={rowData as RowData[]}
-          columnDefs={columnDefs}
+          rowData={rowData as any[]}
+          columnDefs={getColumnDefs(type)}
           pagination={true}
           paginationPageSize={10}
           paginationAutoPageSize={true}

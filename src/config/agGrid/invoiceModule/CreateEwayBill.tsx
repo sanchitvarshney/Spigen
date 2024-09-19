@@ -126,7 +126,8 @@ export default function CreateEwayBill() {
     if (isCnDn) {
       dispatch(fetchNoteData({ note_no: shipmentId })).then((res) => {
         if (res.payload.success) {
-          setRowData(res.payload?.data?.materials);
+          const materials = res.payload.data.materials || []; // Ensure it's an array
+          setRowData(materials);
           const data = res.payload?.data?.header;
           form.setValue("invoice_id", data?.invoice_no);
           form.setValue("other_ref", data?.other_ref);

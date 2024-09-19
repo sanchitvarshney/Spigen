@@ -57,7 +57,7 @@ export function CreateInvoiceDialog({
             <Input />
           </Form.Item>
           <Form.Item name="remark" label="Remark">
-            <Input.TextArea rows={4} />
+            <Input.TextArea rows={4} style={{ height: 120, resize: 'none' }}/>
           </Form.Item>
         </Form>
         <DialogFooter>
