@@ -173,7 +173,6 @@ export const createDebitEinvoice = createAsyncThunk(
         "soEnotes/createDebitEinvoice",
         payload
       );
-      console.log(response, response?.data);
       return response.data;
     } catch (error) {
       if (error instanceof Error) {
@@ -192,7 +191,6 @@ export const createCreditEinvoice = createAsyncThunk(
         "soEnotes/createCretditEinvoice",
         payload
       );
-      console.log(response, response?.data);
       return response.data;
     } catch (error) {
       if (error instanceof Error) {
@@ -289,7 +287,6 @@ export const fetchDataForEwayBill = createAsyncThunk(
         throw new Error("No data received");
       }
       // Return the entire response as expected by the fulfilled case
-      console.log(response?.data);
       return response?.data;
     } catch (error) {
       if (error instanceof Error) {
@@ -312,7 +309,6 @@ export const fetchNoteData = createAsyncThunk(
       if (!response.data) {
         throw new Error("No data received");
       }
-      console.log(response?.data);
       return response?.data;
     } catch (error) {
       if (error instanceof Error) {
@@ -337,7 +333,6 @@ export const fetchDataForInvoice = createAsyncThunk(
         throw new Error("No data received");
       }
       // Return the entire response as expected by the fulfilled case
-      console.log(response?.data);
       return response?.data;
     } catch (error) {
       if (error instanceof Error) {
@@ -412,8 +407,7 @@ const sellInvoiceSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(createDebitEinvoice.fulfilled, (state, action) => {
-        console.log(action.payload.header, action.payload, action, "22");
+      .addCase(createDebitEinvoice.fulfilled, (state) => {
         state.loading = false;
       })
       .addCase(createDebitEinvoice.rejected, (state, action) => {
@@ -424,8 +418,7 @@ const sellInvoiceSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(createCreditEinvoice.fulfilled, (state, action) => {
-        console.log(action.payload.header, action.payload, action, "22");
+      .addCase(createCreditEinvoice.fulfilled, (state) => {
         state.loading = false;
       })
       .addCase(createCreditEinvoice.rejected, (state, action) => {
@@ -480,7 +473,6 @@ const sellInvoiceSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchDataForEwayBill.fulfilled, (state, action) => {
-        console.log(action.payload.header);
         state.ewayBillData = action.payload.data;
         state.loading = false;
       })
@@ -503,7 +495,6 @@ const sellInvoiceSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchDataForInvoice.fulfilled, (state, action) => {
-        console.log(action.payload.header);
         state.ewayBillData = action.payload.data;
         state.loading = false;
       })

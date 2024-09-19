@@ -10,6 +10,7 @@ import ViewInvoiceModal from "@/config/agGrid/invoiceModule/ViewInvoiceModal";
 import { printFunction } from "@/General";
 import { ConfirmCancellationDialog } from "@/config/agGrid/registerModule/ConfirmCancellationDialog";
 import DebitNote from "@/config/agGrid/invoiceModule/DebitNote";
+import CopyCellRenderer from "@/components/shared/CopyCellRenderer";
 
 const ActionMenu: React.FC<any> = ({ row }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -35,7 +36,6 @@ const ActionMenu: React.FC<any> = ({ row }) => {
   };
 
   const handlePrintInvoice = async (orderId: string,printInvType:string) => {
-    console.log(orderId,printInvType)
     dispatch(printSellInvoice({ so_invoice: orderId , printInvType:printInvType})).then((response: any) => {
       if (response?.payload?.success) {
         printFunction(response?.payload?.data.buffer.data);
@@ -84,7 +84,7 @@ const ActionMenu: React.FC<any> = ({ row }) => {
       >
         Debit Note
       </Menu.Item>
-      <Menu.Item key="print" onClick={() => console.log(row?.req_id)}>
+      <Menu.Item key="print"  onClick={() => handleViewDebitNote(row)}>
         Credit Note
       </Menu.Item>
     </Menu>
@@ -119,7 +119,7 @@ export const columnDefs: ColDef<RowData>[] = [
   },
 
   { headerName: "S.No.", valueGetter: "node.rowIndex + 1", maxWidth: 50 },
-  { headerName: "SO ID", field: "so_id", filter: "agNumberColumnFilter" },
+  { headerName: "SO ID", field: "so_id", filter: "agNumberColumnFilter" ,cellRenderer: CopyCellRenderer},
   {
     headerName: "Date",
     field: "delivery_challan_dt",
@@ -130,11 +130,13 @@ export const columnDefs: ColDef<RowData>[] = [
     headerName: "Invoice Number",
     field: "so_ship_invoice_id",
     filter: "agTextColumnFilter",
+    cellRenderer: CopyCellRenderer
   },
   {
     headerName: "Bill To Code",
     field: "client_code",
     filter: "agTextColumnFilter",
+    cellRenderer: CopyCellRenderer
   },
   {
     headerName: "Bill To",

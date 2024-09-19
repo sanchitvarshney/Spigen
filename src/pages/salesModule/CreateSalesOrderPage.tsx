@@ -74,7 +74,6 @@ const CreateSalesOrderPage = () => {
         ship,
         materials
       }:any = updateData;
-      console.log(channel,"channel",client,"client",bill,"bill",ship,"ship",materials)
       // Set channel value
       setChannel({
         label: channel?.channel || "",
@@ -96,7 +95,6 @@ const CreateSalesOrderPage = () => {
         form.setValue("customer", clientData.clientcode  , { shouldValidate: true, shouldDirty: true });
         dispatch(fetchClientDetails(clientData?.clientcode?.value))
         // .then((response: any) => {
-        //   console.log(response.meta.requestStatus==="fulfilled")
         //   if (response.meta.requestStatus!=="fulfilled") {
             form.setValue("customer_branch", clientData.clientbranch?.value  , { shouldValidate: true, shouldDirty: true });
         //   }
@@ -168,11 +166,7 @@ useEffect(() => {
   useEffect(() => {
     channel?.value && form.setValue("channel", channel?.value as ChannelType, { shouldValidate: true, shouldDirty: true });
     if (channel?.value) {
-      dispatch(fetchClient({ clientCode: channel.value })).then(
-        (response: any) => {
-          console.log("Fetch Client Response:", response);
-        }
-      );
+      dispatch(fetchClient({ clientCode: channel.value }))
     }
   }, [channel]);
 

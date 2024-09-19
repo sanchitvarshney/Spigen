@@ -56,6 +56,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import CopyCellRenderer from "@/components/shared/CopyCellRenderer";
 const { RangePicker } = DatePicker;
 const dateFormat = "DD-MM-YYYY";
 const wises = [
@@ -119,7 +120,6 @@ const SalesETransactionRegisterPage: React.FC = () => {
     }
 
     try {
-      console.log("Dispatching fetch with:", { wise, data: dataString });
 
       let resultAction;
       switch (type) {
@@ -143,7 +143,6 @@ const SalesETransactionRegisterPage: React.FC = () => {
           throw new Error("Invalid type selected");
       }
 
-      console.log("Result Action:", resultAction);
       if (resultAction.success) {
         toast({
           title: "Data fetched successfully",
@@ -323,7 +322,10 @@ const SalesETransactionRegisterPage: React.FC = () => {
           paginationAutoPageSize={true}
           gridOptions={gridOptions}
           suppressCellFocus={true}
-          components={{ truncateCellRenderer: TruncateCellRenderer }}
+          components={{
+            truncateCellRenderer: TruncateCellRenderer,
+            copyCellRenderer: CopyCellRenderer,
+          }}
         />
       </div>
     </Wrapper>

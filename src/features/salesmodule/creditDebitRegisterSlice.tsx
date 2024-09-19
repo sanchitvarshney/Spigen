@@ -128,7 +128,6 @@ export const getNoteMaterialList = createAsyncThunk<
     }
 
     // Return the entire response as expected by the fulfilled case
-    console.log(response?.data);
     return response.data;
   } catch (error) {
     if (error instanceof Error) {
@@ -183,7 +182,6 @@ const creditDebitRegister = createSlice({
         state.error = null;
       })
       .addCase(getNoteMaterialList.fulfilled, (state, action) => {
-        console.log(action.payload.data);
         state.loading = false;
         state.materialListData = action.payload.data;
       })

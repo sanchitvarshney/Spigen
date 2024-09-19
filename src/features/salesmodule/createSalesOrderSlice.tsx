@@ -53,7 +53,6 @@ export const fetchClientDetails = createAsyncThunk<Client[], string>(
         throw new Error("Failed to fetch client details");
       }
       // Assuming there is only one client in the data array
-      console.log(response.data.data);
       return response.data.data;
     } catch (error) {
       if (error instanceof Error) {

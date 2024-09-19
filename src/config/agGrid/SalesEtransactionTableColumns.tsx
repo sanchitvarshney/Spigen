@@ -15,6 +15,7 @@ import { useDispatch } from "react-redux";
 import { toast } from "@/components/ui/use-toast";
 import { printFunction } from "@/General";
 import { printSellInvoice } from "@/features/salesmodule/salesInvoiceSlice";
+import CopyCellRenderer from "@/components/shared/CopyCellRenderer";
 
 const ActionMenu: React.FC<any> = ({ row }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -23,7 +24,6 @@ const ActionMenu: React.FC<any> = ({ row }) => {
   const [form] = Form.useForm();
 
   const handlePrintInvoice = async (orderId: string, section: string) => {
-    console.log(orderId);
     if (section === "e-waybill") {
       dispatch(printEwayBill({ ewayBillNo: orderId })).then((response: any) => {
         if (response?.payload?.success) {
@@ -56,7 +56,6 @@ const ActionMenu: React.FC<any> = ({ row }) => {
       .validateFields()
       .then((values) => {
         const payload = createPayload(values);
-        console.log(payload);
 
         const action = getCancelAction(payload);
         dispatch(action).then((response: any) => {
@@ -114,7 +113,6 @@ const ActionMenu: React.FC<any> = ({ row }) => {
       return cancelCrDbEInvoice(payload); // Assuming this is default action for others
     }
   };
-  console.log(module);
   const menu = (
     <Menu>
       <Menu.Item
@@ -205,8 +203,8 @@ export const columnDefs: ColDef<RowData>[] = [
     headerName: "SO Id",
     field: "so_no",
     filter: "agDateColumnFilter",
-    cellRenderer: "truncateCellRenderer",
     maxWidth: 150,
+    cellRenderer: CopyCellRenderer,
   },
   {
     headerName: "Invoice Date",
@@ -218,7 +216,7 @@ export const columnDefs: ColDef<RowData>[] = [
     headerName: "Invoice Number",
     field: "invoiceNo",
     filter: "agTextColumnFilter",
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
   },
   {
     headerName: "Bill To Name",
@@ -231,13 +229,13 @@ export const columnDefs: ColDef<RowData>[] = [
     field: "billTo",
     filter: "agTextColumnFilter",
     width: 400,
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
   },
   {
     headerName: "Ack No",
     field: "eInvoiceNo",
     filter: "agTextColumnFilter",
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
   },
   {
     headerName: "Ack Date",
@@ -249,21 +247,21 @@ export const columnDefs: ColDef<RowData>[] = [
     headerName: "IRN Number",
     field: "irnno",
     filter: "agTextColumnFilter",
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
   },
   {
     headerName: "Bill From Address",
     field: "billFromAddress",
     width: 400,
     filter: "agTextColumnFilter",
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
   },
   {
     headerName: "Shipping Address",
     field: "shippingaddress2",
     width: 400,
     filter: "agTextColumnFilter",
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
   },
 ];
 
@@ -285,7 +283,7 @@ export const EwayBillColumnDefs: ColDef<any>[] = [
     headerName: "SO Id",
     field: "so_id",
     filter: "agDateColumnFilter",
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
     maxWidth: 150,
   },
   {
@@ -298,7 +296,7 @@ export const EwayBillColumnDefs: ColDef<any>[] = [
     headerName: "Invoice Number",
     field: "challanId",
     filter: "agTextColumnFilter",
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
   },
   {
     headerName: "Supply Type",
@@ -341,7 +339,7 @@ export const EwayBillColumnDefs: ColDef<any>[] = [
     field: "dispatchfrom_address",
     filter: "agTextColumnFilter",
     width: 400,
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
   },
   {
     headerName: "Dispatch GST",
@@ -368,6 +366,12 @@ export const EwayBillColumnDefs: ColDef<any>[] = [
     cellRenderer: "truncateCellRenderer",
   },
   {
+    headerName: "Shipping Name",
+    field: "shipto_name",
+    filter: "agDateColumnFilter",
+    cellRenderer: CopyCellRenderer,
+  },
+  {
     headerName: "Shipping GST",
     field: "shipto_gstin",
     filter: "agDateColumnFilter",
@@ -378,7 +382,7 @@ export const EwayBillColumnDefs: ColDef<any>[] = [
     field: "shipto_place",
     filter: "agDateColumnFilter",
     width: 400,
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
   },
   {
     headerName: "Shipping State",
@@ -448,45 +452,52 @@ export const CrDbColumnDefs: ColDef<any>[] = [
     headerName: "SO Id",
     field: "so_id",
     filter: "agDateColumnFilter",
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
     maxWidth: 150,
   },
   {
-    headerName: "Invoice Date",
+    headerName: "E-Invoice Date",
     field: "eInvoiceDate",
     filter: "agDateColumnFilter",
     cellRenderer: "truncateCellRenderer",
   },
   {
-    headerName: "Invoice Number",
+    headerName: "E-Invoice Number",
     field: "einvoice_no",
     filter: "agTextColumnFilter",
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
+  },
+  {
+    headerName: "Invoice Number",
+    field: "invoice_no",
+    filter: "agTextColumnFilter",
+    cellRenderer: CopyCellRenderer,
   },
   {
     headerName: "Bill To",
     field: "billTo",
     filter: "agTextColumnFilter",
     width: 400,
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
   },
   {
-    headerName: "CN/DN Id",
+    headerName: "CN/DN Id1",
     field: "note_no",
     filter: "agTextColumnFilter",
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
+    // cellRenderer: ({ row }) => <ToolTipEllipses text={row.note_no} copy={true} />,
   },
   {
     headerName: "IRN Number",
     field: "irnNo",
     filter: "agTextColumnFilter",
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
   },
   {
     headerName: "Shipping Address",
     field: "shipTo",
     width: 400,
     filter: "agTextColumnFilter",
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
   },
 ];

@@ -65,9 +65,7 @@ const SalesShipmentPage: React.FC = () => {
     }
   
     try {
-      console.log("Dispatching fetchSellRequestList with:", { wise, data: dataString });
       const resultAction = await dispatch(fetchSalesOrderShipmentList({ wise, data: dataString }) as any).unwrap();
-      console.log("Result Action:", resultAction);
       if (resultAction.success) {
         toast({
           title: "Shipment fetched successfully",
@@ -95,10 +93,6 @@ const SalesShipmentPage: React.FC = () => {
       dispatch(fetchSalesOrderShipmentList({ wise, data: "" }) as any);
     }
   }, [wise, dispatch]);
-
-  useEffect(() => {
-    console.log("Row Data:", rowData);
-  }, [rowData]);
 
   const components = useMemo(()=>({
     shipmentsActionRenderer:ShipMentsActionCellRender

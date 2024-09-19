@@ -14,6 +14,7 @@ import {
 } from "@/features/salesmodule/creditDebitRegisterSlice";
 import { printFunction } from "@/General";
 import NoteMaterialListModal from "@/pages/salesModule/NoteMaterialListModal";
+import CopyCellRenderer from "@/components/shared/CopyCellRenderer";
 
 const ActionMenu: React.FC<any> = ({ row }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -22,7 +23,6 @@ const ActionMenu: React.FC<any> = ({ row }) => {
   const [form] = Form.useForm();
 
   const handlePrintInvoice = async (orderId: string) => {
-    console.log(orderId);
     dispatch(soNotePrint({ note_no: orderId })).then((response: any) => {
       if (response?.payload?.success) {
         printFunction(response?.payload?.data.buffer.data);
@@ -145,14 +145,14 @@ export const columnDefs: ColDef<RowData>[] = [
     headerName: "Invoice No",
     field: "invoice_no",
     filter: "agTextColumnFilter",
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
     maxWidth: 250,
   },
   {
     headerName: "CN/DN Id",
     field: "note_id",
     filter: "agTextColumnFilter",
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
   },
   {
     headerName: "Other Ref",
@@ -172,41 +172,41 @@ export const columnDefs: ColDef<RowData>[] = [
     field: "billToaddress1",
     filter: "agTextColumnFilter",
     width: 400,
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
   },
   {
     headerName: "Bill To Address Line 2",
     field: "billToaddress2",
     filter: "agTextColumnFilter",
     width: 400,
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
   },
   {
     headerName: "Bill From Address Line 1",
     field: "billFromaddress1",
     filter: "agTextColumnFilter",
     width: 400,
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
   },
   {
     headerName: "Bill From Address Line 2",
     field: "billFromaddress2",
     filter: "agTextColumnFilter",
     width: 400,
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
   },
   {
     headerName: "Ship To Address Line 1",
     field: "shipToAddress1",
     filter: "agTextColumnFilter",
     width: 400,
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
   },
   {
     headerName: "Ship To Address Line 2",
     field: "shipToAddress2",
     filter: "agTextColumnFilter",
     width: 400,
-    cellRenderer: "truncateCellRenderer",
+    cellRenderer: CopyCellRenderer,
   },
 ];

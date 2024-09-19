@@ -18,6 +18,7 @@ import { columnDefs } from "@/config/agGrid/SalesOrderRegisterTableColumns";
 import { useToast } from "@/components/ui/use-toast";
 import FullPageLoading from "@/components/shared/FullPageLoading";
 import moment from "moment";
+import CopyCellRenderer from "@/components/shared/CopyCellRenderer";
 
 const { RangePicker } = DatePicker;
 const dateFormat = "YYYY/MM/DD";
@@ -62,9 +63,7 @@ const RegisterSalesOrderPage: React.FC = () => {
     }
   
     try {
-      console.log("Dispatching fetchSellRequestList with:", { wise, data: dataString });
       const resultAction = await dispatch(fetchSellRequestList({ wise, data: dataString }) as any).unwrap();
-      console.log("Result Action:", resultAction);
       if (resultAction.success) {
         toast({
           title: "Register fetched successfully",
@@ -87,7 +86,6 @@ const RegisterSalesOrderPage: React.FC = () => {
   
   // useEffect(() => {
   //   if (wise === "DATE") {
-  //     console.log("Dispatching fetchSellRequestList");
   //     dispatch(fetchSellRequestList({ wise, data: "" }) as any);
   //   }
   // }, [wise]);
@@ -128,7 +126,10 @@ const RegisterSalesOrderPage: React.FC = () => {
         </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 overflow-hidden p-[10px]">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-6 overflow-hidden p-[10px]"
+          >
             {wise === "DATE" ? (
               <FormField
                 control={form.control}
@@ -139,7 +140,11 @@ const RegisterSalesOrderPage: React.FC = () => {
                       <Space direction="vertical" size={12} className="w-full">
                         <RangePicker
                           className="border shadow-sm border-slate-400 py-[7px] hover:border-slate-300 w-full"
-                          onChange={(value) => field.onChange(value ? value.map((date) => date!.toDate()) : [])}
+                          onChange={(value) =>
+                            field.onChange(
+                              value ? value.map((date) => date!.toDate()) : []
+                            )
+                          }
                           format={dateFormat}
                         />
                       </Space>
@@ -162,7 +167,10 @@ const RegisterSalesOrderPage: React.FC = () => {
                 )}
               />
             )}
-            <Button type="submit" className="shadow bg-cyan-700 hover:bg-cyan-600 shadow-slate-500">
+            <Button
+              type="submit"
+              className="shadow bg-cyan-700 hover:bg-cyan-600 shadow-slate-500"
+            >
               Submit
             </Button>
           </form>
@@ -178,6 +186,7 @@ const RegisterSalesOrderPage: React.FC = () => {
           paginationPageSize={10}
           paginationAutoPageSize={true}
           suppressCellFocus={true}
+          components={{ copyCellRenderer: CopyCellRenderer }}
         />
       </div>
     </Wrapper>

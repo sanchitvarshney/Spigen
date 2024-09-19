@@ -75,13 +75,11 @@ export default function CreateEwayBill() {
   );
   const [rowData, setRowData] = useState(ewayBillData || []);
 
-  console.log(rowData, "rowData", ewayBillData);
   useEffect(() => {
     if (!isCnDn) {
       const shipId = (params?.id as string).replace(/_/g, "/");
       const action = isEwayBill ? fetchDataForEwayBill : fetchDataForInvoice;
       dispatch(action({ shipment_id: shipId })).then((res) => {
-        console.log(res?.payload?.header);
         var data = res.payload?.header;
         form.setValue("invoice_id", data?.invoice_no);
         form.setValue("document_type", data?.docType);
@@ -122,7 +120,6 @@ export default function CreateEwayBill() {
 
   useEffect(() => {
     const shipmentId = (params?.id as string).replace(/_/g, "/");
-    console.log(shipmentId, "idd");
     if (isCnDn) {
       dispatch(fetchNoteData({ note_no: shipmentId })).then((res) => {
         if (res.payload.success) {
@@ -172,14 +169,12 @@ export default function CreateEwayBill() {
       });
     }
   }, [params]);
-  console.log(rowData);
-  console.log(form.formState.errors);
+
   const onSubmit = (payload: any) => {
-    console.log("Form data:", payload, isCnDn);
+    console.log("Form data:", payload);
     if (isCnDn) {
       if (isCrNote) {
         dispatch(createCreditEinvoice(payload)).then((response) => {
-          console.log(response, "33");
           if (response.payload.success) {
             toast({
               title:
@@ -195,7 +190,6 @@ export default function CreateEwayBill() {
         });
       } else {
         dispatch(createDebitEinvoice(payload)).then((response) => {
-          console.log(response, "33");
           if (response.payload.success) {
             toast({
               title:
@@ -213,7 +207,6 @@ export default function CreateEwayBill() {
     } else {
       if (isEwayBill) {
         dispatch(createEwayBill(payload)).then((response) => {
-          console.log(response);
           if (response.meta.requestStatus === "fulfilled") {
             toast({
               title: "Data Fetched Successfully",
@@ -228,7 +221,6 @@ export default function CreateEwayBill() {
         });
       } else {
         dispatch(generateEInvoice(payload)).then((response) => {
-          console.log(response);
           if (response.meta.requestStatus === "fulfilled") {
             toast({
               title: "Data Fetched Successfully",
@@ -306,7 +298,6 @@ export default function CreateEwayBill() {
                               isSearchable={true}
                               options={supplyTypeOptions}
                               onChange={(selectedOption) => {
-                                console.log(selectedOption?.value);
                                 field.onChange(
                                   selectedOption ? selectedOption?.value : ""
                                 );
@@ -1460,7 +1451,6 @@ export default function CreateEwayBill() {
               <Button
                 className="rounded-md shadow bg-green-700 hover:bg-green-600 shadow-slate-500 max-w-max px-[30px]"
                 // onClick={form.handleSubmit((data) => {
-                //   console.log("Form data:", data);
                 //   dispatch(createEwayBill(data));
                 //   // Handle form submission here
                 // })}

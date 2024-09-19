@@ -17,6 +17,7 @@ import MaterialListModal from "@/config/agGrid/registerModule/MaterialListModal"
 import { printFunction } from "@/General";
 import { ConfirmCancellationDialog } from "@/config/agGrid/registerModule/ConfirmCancellationDialog";
 import { CreateInvoiceDialog } from "@/config/agGrid/registerModule/CreateInvoiceDialog";
+import CopyCellRenderer from "@/components/shared/CopyCellRenderer";
 
 interface ActionMenuProps {
   row: RowData; // Use the RowData type here
@@ -158,11 +159,10 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
         isDialogVisible={isModalVisible}
         handleOk={handleOk}
         handleCancel={handleCancel}
-        row={{req_id:row.req_id}}
+        row={{ req_id: row.req_id }}
         form={form}
-
       />
-       <CreateInvoiceDialog
+      <CreateInvoiceDialog
         isDialogVisible={isInvoiceModalVisible}
         handleOk={handleInvoiceModalOk}
         handleCancel={handleInvoiceModalCancel}
@@ -187,7 +187,13 @@ export const columnDefs: ColDef<RowData>[] = [
     cellRenderer: (params: any) => <ActionMenu row={params.data} />,
   },
   { headerName: "#", valueGetter: "node.rowIndex + 1", maxWidth: 50 },
-  { headerName: "SO ID", field: "req_id", filter: "agTextColumnFilter" },
+
+  {
+    headerName: "SO ID",
+    field: "req_id",
+    filter: "agTextColumnFilter",
+    cellRenderer: CopyCellRenderer,
+  },
   { headerName: "Status", field: "status", filter: "agTextColumnFilter" },
   {
     headerName: "Customer Code",
@@ -199,6 +205,7 @@ export const columnDefs: ColDef<RowData>[] = [
     headerName: "Customer Name",
     field: "channel",
     filter: "agTextColumnFilter",
+    cellRenderer: CopyCellRenderer,
   },
   {
     headerName: "Created By",

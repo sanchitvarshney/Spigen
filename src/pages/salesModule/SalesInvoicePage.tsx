@@ -6,9 +6,26 @@ import { z } from "zod";
 import { AgGridReact } from "ag-grid-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { toast } from "@/components/ui/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Filter } from "lucide-react";
@@ -23,6 +40,7 @@ import CustomLoadingCellRenderer from "@/config/agGrid/CustomLoadingCellRenderer
 import FullPageLoading from "@/components/shared/FullPageLoading";
 import { setDateRange } from "@/features/salesmodule/SalesSlice";
 import moment from "moment";
+import CopyCellRenderer from "@/components/shared/CopyCellRenderer";
 
 const { RangePicker } = DatePicker;
 const dateFormat = "YYYY/MM/DD";
@@ -30,7 +48,6 @@ const wises = [
   { label: "Date Wise", value: "datewise" },
   { label: "client", value: "clientwise" },
   { label: "so id", value: "so_id_wise" },
-
 ] as const;
 
 const FormSchema = z.object({
@@ -38,41 +55,44 @@ const FormSchema = z.object({
     .array(z.date())
     .length(2)
     .optional()
-    .refine(data => data === undefined || data.length === 2, {
+    .refine((data) => data === undefined || data.length === 2, {
       message: "Please select a valid date range.",
     }),
-    wise: z.string().optional(),
+  wise: z.string().optional(),
 });
 const SalesInvoicePage: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const dispatch = useDispatch();
   const [wise] = useState<any>("datwwise");
-  const { data: rowData,loading } = useSelector((state: RootState) => state.sellInvoice);
+  const { data: rowData, loading } = useSelector(
+    (state: RootState) => state.sellInvoice
+  );
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      wise: "datewise" // Set default value for 'wise'
-    }
+      wise: "datewise", // Set default value for 'wise'
+    },
   });
 
   const onSubmit = async (formData: z.infer<typeof FormSchema>) => {
     const { dateRange, wise } = formData;
-  
+
     let dataString = "";
     if (wise === "datewise" && dateRange) {
-      const startDate = moment(dateRange[0]).format('DD-MM-YYYY');
-      const endDate = moment(dateRange[1]).format('DD-MM-YYYY');
+      const startDate = moment(dateRange[0]).format("DD-MM-YYYY");
+      const endDate = moment(dateRange[1]).format("DD-MM-YYYY");
       dataString = `${startDate}-${endDate}`;
       dispatch(setDateRange(dataString as any));
     } else if (wise === "clientwise" && wise !== undefined) {
       dataString = wise;
       dispatch(setDateRange(dataString as any));
     }
-  
+
     try {
-      console.log("Dispatching fetchSellRequestList with:", { wise, data: dataString });
-      const resultAction = await dispatch(fetchSalesOrderInvoiceList({ wise, data: dataString }) as any).unwrap();
-      console.log("Result Action:", resultAction);
+
+      const resultAction = await dispatch(
+        fetchSalesOrderInvoiceList({ wise, data: dataString }) as any
+      ).unwrap();
       if (resultAction.success) {
         toast({
           title: "Invoice fetched successfully",
@@ -93,7 +113,6 @@ const SalesInvoicePage: React.FC = () => {
     }
   };
 
-  
   const loadingCellRenderer = useCallback(CustomLoadingCellRenderer, []);
 
   useEffect(() => {
@@ -102,7 +121,6 @@ const SalesInvoicePage: React.FC = () => {
     }
   }, [wise, dispatch]);
 
-  
   return (
     <Wrapper className="h-[calc(100vh-100px)] grid grid-cols-[350px_1fr] ">
       {loading && <FullPageLoading />}
@@ -116,7 +134,10 @@ const SalesInvoicePage: React.FC = () => {
           </CardHeader>
           <CardContent className="mt-[20px] p-0">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 overflow-hidden p-[10px]">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6 overflow-hidden p-[10px]"
+              >
                 <FormField
                   control={form.control}
                   name="wise"
@@ -125,15 +146,33 @@ const SalesInvoicePage: React.FC = () => {
                       <Popover open={open} onOpenChange={setOpen}>
                         <PopoverTrigger asChild onClick={() => setOpen(true)}>
                           <FormControl>
-                            <Button variant="outline" role="combobox" className={`${cn(" justify-between", !field.value && "text-muted-foreground")} text-slate-600 border-slate-400 ${field.value?"text-slate-600":"text-neutral-400 font-[350]"}`}>
-                              {field.value ? wises.find((wise) => wise.value === field.value)?.label : "Select option "}
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className={`${cn(
+                                " justify-between",
+                                !field.value && "text-muted-foreground"
+                              )} text-slate-600 border-slate-400 ${
+                                field.value
+                                  ? "text-slate-600"
+                                  : "text-neutral-400 font-[350]"
+                              }`}
+                            >
+                              {field.value
+                                ? wises.find(
+                                    (wise) => wise.value === field.value
+                                  )?.label
+                                : "Select option "}
                               <CaretSortIcon className="w-4 h-4 ml-2 opacity-50 shrink-0" />
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
                         <PopoverContent className="p-0 ">
                           <Command>
-                            <CommandInput placeholder="Search framework..." className="h-9" />
+                            <CommandInput
+                              placeholder="Search framework..."
+                              className="h-9"
+                            />
                             <CommandList className="max-h-[400px]">
                               <CommandEmpty>No framework found.</CommandEmpty>
                               <CommandGroup>
@@ -161,15 +200,19 @@ const SalesInvoicePage: React.FC = () => {
                 />
                 <FormField
                   control={form.control}
-                  
                   name="dateRange"
                   render={() => (
                     <FormItem className="pl-[10px] w-fulls">
                       <FormControl>
                         <Space direction="vertical" size={12}>
                           <RangePicker
-                          className=" border shadow-sm border-slate-400 py-[7px] hover:border-slate-300 w-[310px]"
-                            onChange={(value) => form.setValue("dateRange", value ? value.map((date) => date!.toDate()) : [])}
+                            className=" border shadow-sm border-slate-400 py-[7px] hover:border-slate-300 w-[310px]"
+                            onChange={(value) =>
+                              form.setValue(
+                                "dateRange",
+                                value ? value.map((date) => date!.toDate()) : []
+                              )
+                            }
                             format={dateFormat}
                           />
                         </Space>
@@ -179,7 +222,10 @@ const SalesInvoicePage: React.FC = () => {
                   )}
                 />
 
-                <Button type="submit" className="shadow bg-cyan-700 hover:bg-cyan-600 shadow-slate-500 ml-[10px]">
+                <Button
+                  type="submit"
+                  className="shadow bg-cyan-700 hover:bg-cyan-600 shadow-slate-500 ml-[10px]"
+                >
                   Submit
                 </Button>
               </form>
@@ -188,8 +234,6 @@ const SalesInvoicePage: React.FC = () => {
         </Card>
       </div>
       <div className="ag-theme-quartz h-[calc(100vh-100px)]">
-
-        
         <AgGridReact
           loadingCellRenderer={loadingCellRenderer}
           rowData={rowData as any}
@@ -199,7 +243,10 @@ const SalesInvoicePage: React.FC = () => {
           paginationPageSize={10}
           paginationAutoPageSize={true}
           suppressCellFocus={true}
-          gridOptions={gridOptions}          
+          gridOptions={gridOptions}
+          components={{
+            copyCellRenderer: CopyCellRenderer,
+          }}
         />
       </div>
     </Wrapper>
