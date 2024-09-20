@@ -39,7 +39,7 @@ const ClientActionCellRender: React.FC = (params: any) => {
           <DropdownMenuLabel>Action</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem className="hover:bg-cyan-600 hover:text-white" onClick={() => setClientEdit(true)}>
-            Edit Client
+            Edit Bill To Details
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setClientBranch(true)}>Add Branch</DropdownMenuItem>
           <DropdownMenuItem onClick={() => setEditView(true)}>Edit / View Branch Details</DropdownMenuItem>

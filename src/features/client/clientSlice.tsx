@@ -2,7 +2,9 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { spigenAxios } from "@/axiosIntercepter";
 
 interface ClientPayload {
+  client_channel: string;
   clientName: string;
+  phone: string;
   panNo: string;
   mobileNo: string;
   email: string;
@@ -27,6 +29,7 @@ export interface ApiResponse<T> {
   success: boolean;
   data: T;
   message?: string | null;
+  status?: string | null;
 }
 
 export const fetchClient = createAsyncThunk<
@@ -54,14 +57,23 @@ export const updateClient = createAsyncThunk<
   return response.data;
 });
 
+export const fetchchannelList = createAsyncThunk<
+  ApiResponse<any>
+>("/products", async () => {
+  const response = await spigenAxios.get("channel/getChannel");
+  return response.data;
+});
+
 interface ClientState {
   data: any[];
+  channelList: any[];
   loading: boolean;
   error: string | null;
 }
 
 const initialState: ClientState = {
   data: [],
+  channelList: [],
   loading: false,
   error: null,
 };
@@ -81,6 +93,18 @@ const clientSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchClient.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to fetch clients";
+      })
+      .addCase(fetchchannelList.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchchannelList.fulfilled, (state, action) => {
+        state.channelList = action.payload.data; 
+        state.loading = false;
+      })
+      .addCase(fetchchannelList.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Failed to fetch clients";
       })

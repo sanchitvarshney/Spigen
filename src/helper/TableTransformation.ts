@@ -64,11 +64,11 @@ export const transformSalesOrderRegisterData = (data: any[]) => {
 
  
 export const transformCustomerTableData = (data:any[])=>{
-
   return data.map((item)=>({
     clientID:item.code,
     name:item.name,
     email:item.email,
+    channel:item.channelName,
     mobile:item.mobile,
     pan:item.panNo,
     status:item.status

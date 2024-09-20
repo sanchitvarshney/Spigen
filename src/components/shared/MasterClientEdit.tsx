@@ -29,6 +29,14 @@ import styled from "styled-components";
 import { useToast } from "@/components/ui/use-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchClient, updateClient } from "@/features/client/clientSlice";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RootState } from "@/store";
 const MasterClientEdit: React.FC<Props> = ({
   uiState,
 }: {
@@ -42,6 +50,7 @@ const MasterClientEdit: React.FC<Props> = ({
     (state: any) =>
       state.client.data.find((client: any) => client?.code === clientId) || {}
   );
+  const { channelList } = useSelector((state: RootState) => state.client);
 
   const form = useForm<z.infer<typeof clientEditFormSchema>>({
     resolver: zodResolver(clientEditFormSchema),
@@ -50,7 +59,6 @@ const MasterClientEdit: React.FC<Props> = ({
     },
   });
 
-
   useEffect(() => {
     if (clientEdit && clientId) {
       dispatch(fetchClient({ code: clientId }) as any);
@@ -58,20 +66,21 @@ const MasterClientEdit: React.FC<Props> = ({
   }, [clientEdit, clientId, dispatch]);
 
   useEffect(() => {
-    if (clientData) {
+    if (clientData && clientData.code === clientId) {
       form.reset({
+        client_channel: clientData.client_channel,
         clientName: clientData.name,
         email: clientData.email,
         panNo: clientData.panNo,
         mobileNo: clientData.mobile,
         salePerson: clientData.salesPerson,
         website: clientData.website,
-        clientTDS: clientData.tds || [],
-        clientTCS: clientData.tcs || [],
+        clientTDS: clientData.tds?.[0] ,
+        clientTCS: clientData.tcs?.[0] ,
         active: clientData.status === "active",
       });
     }
-  }, [clientData, form]);
+  }, [clientData, clientId, form]);
 
   const onSubmit = (value: any) => {
     const payload = {
@@ -80,7 +89,7 @@ const MasterClientEdit: React.FC<Props> = ({
       status: value.active ? "active" : "inactive",
     };
     dispatch(updateClient({ endpoint: `/client/update`, payload }) as any);
-    toast({
+     toast({
       title: "Client updated successfully",
       className: "bg-green-600 text-white items-center",
     });
@@ -92,7 +101,7 @@ const MasterClientEdit: React.FC<Props> = ({
     <Sheet open={clientEdit} onOpenChange={setClientEdit}>
       <SheetContent className="min-w-[50%]">
         <SheetHeader>
-          <SheetTitle>Edit Client Details</SheetTitle>
+          <SheetTitle>Update Bill To Details: {clientId}</SheetTitle>
           <div>
             <Form {...form}>
               <form
@@ -128,6 +137,43 @@ const MasterClientEdit: React.FC<Props> = ({
                       </FormItem>
                     )}
                   />
+                  <div className="grid grid-cols-1 gap-[10px]">
+                    <FormField
+                      control={form.control}
+                      name="client_channel"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-slate-600">
+                            Channel{" "}
+                            <span className="pl-1 text-red-500 font-bold">
+                              *
+                            </span>
+                          </FormLabel>
+                          <FormControl>
+                            <Select
+                              value={field.value}
+                              onValueChange={(value) =>
+                                form.setValue("client_channel", value)
+                              }
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a filter type" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {channelList.map((item) => (
+                                  <SelectItem key={item.code} value={item.code}>
+                                    {item.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
                   <FormField
                     control={form.control}
                     name="panNo"
@@ -148,7 +194,10 @@ const MasterClientEdit: React.FC<Props> = ({
                     name="mobileNo"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-slate-600">Mobile</FormLabel>
+                        <FormLabel className="text-slate-600">
+                          Mobile{" "}
+                          <span className="pl-1 text-red-500 font-bold">*</span>
+                        </FormLabel>
                         <FormControl>
                           <Input
                             type="number"

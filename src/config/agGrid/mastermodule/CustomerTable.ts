@@ -18,6 +18,13 @@ export const columnDefs: ColDef[] = [
     width: 150,
   },
   {
+    headerName: 'Channel',
+    field: 'channel',
+    sortable: true,
+    filter: true,
+    width: 150,
+  },
+  {
     headerName: 'Name',
     field: 'name',
     sortable: true,

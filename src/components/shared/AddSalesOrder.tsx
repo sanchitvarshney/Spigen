@@ -352,7 +352,7 @@ const AddSalesOrder = ({
           <div className="ag-theme-quartz h-[calc(100vh-210px)] w-full">
             <AgGridReact
               ref={gridRef}
-              rowData={rowData}
+              rowData={rowData||[]}
               columnDefs={columnDefs as (ColDef | ColGroupDef)[]}
               defaultColDef={defaultColDef}
               statusBar={statusBar}

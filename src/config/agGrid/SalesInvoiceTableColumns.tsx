@@ -1,6 +1,6 @@
 import { RowData } from "@/types/SalesInvoiceTypes";
 import { ColDef } from "ag-grid-community";
-import { Button, Dropdown, Form, Menu } from "antd";
+import { Button, Dropdown, Form } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { cancelInvoice, fetchDataNotes, fetchSalesOrderInvoiceList, getchallanDetails, printSellInvoice } from "@/features/salesmodule/salesInvoiceSlice";
@@ -66,50 +66,70 @@ const ActionMenu: React.FC<any> = ({ row }) => {
 
   const isDisabled = row.hasInvoice === true || row.status === "Cancelled";
 
-  const menu = (
-    <Menu>
-      <Menu.Item
-        key="update"
-        onClick={()=>handleViewInvoice(row)}
-        disabled={isDisabled}
-      >
-        View
-      </Menu.Item>
-      <Menu.Item key="materialList" onClick={()=> setCancelModalVisible(true)} disabled={row?.isEwayBill == "Y" || row?.isEInvoice == "Y"}>
-        Cancel
-      </Menu.Item>
-      <Menu.Item
-        key="createInvoice"
-        onClick={() => handleViewDebitNote(row)}
-      >
-        Debit Note
-      </Menu.Item>
-      <Menu.Item key="print"  onClick={() => handleViewDebitNote(row)}>
-        Credit Note
-      </Menu.Item>
-    </Menu>
-  );
+  const menuItems = [
+    {
+      key: "update",
+      label: (
+        <span onClick={() => handleViewInvoice(row)} style={{ color: isDisabled ? "gray" : "inherit" }}>
+          View
+        </span>
+      ),
+      disabled: isDisabled,
+    },
+    {
+      key: "materialList",
+      label: (
+        <span onClick={() => setCancelModalVisible(true)} style={{ color: (row?.isEwayBill === "Y" || row?.isEInvoice === "Y") ? "gray" : "inherit" }}>
+          Cancel
+        </span>
+      ),
+      disabled: row?.isEwayBill === "Y" || row?.isEInvoice === "Y",
+    },
+    {
+      key: "createInvoice",
+      label: (
+        <span onClick={() => handleViewDebitNote(row)}>Debit Note</span>
+      ),
+    },
+    {
+      key: "print",
+      label: (
+        <span onClick={() => handleViewDebitNote(row)}>Credit Note</span>
+      ),
+    },
+  ];
 
   return (
     <>
-      <Dropdown overlay={menu} trigger={["click"]}>
+      <Dropdown menu={{ items: menuItems }} trigger={["click"]}>
         <Button icon={<MoreOutlined />} />
       </Dropdown>
-      <ViewInvoiceModal visible={viewInvoice} onClose={() => setViewInvoice(false)} sellRequestDetails={challanDetails} handlePrintInvoice={handlePrintInvoice}/>
+      <ViewInvoiceModal 
+        visible={viewInvoice} 
+        onClose={() => setViewInvoice(false)} 
+        sellRequestDetails={challanDetails} 
+        handlePrintInvoice={handlePrintInvoice} 
+      />
       <ConfirmCancellationDialog
         isDialogVisible={cancelModalVisible}
         handleOk={handleOk}
         handleCancel={() => setCancelModalVisible(false)}
-        row={{req_id:row.so_ship_invoice_id}}
+        row={{ req_id: row.so_ship_invoice_id }}
         form={form}
         module="Invoice"
       />
-      <DebitNote visible={viewDebitNote} onClose={() => setViewDebitNote(false)} sellRequestDetails={dataNotes||[]} row = {{req_id:row.so_ship_invoice_id}}/>
+      <DebitNote 
+        visible={viewDebitNote} 
+        onClose={() => setViewDebitNote(false)} 
+        sellRequestDetails={dataNotes || []} 
+        row={{ req_id: row.so_ship_invoice_id }} 
+      />
     </>
   );
 };
 
 export default ActionMenu;
+
 
 export const columnDefs: ColDef<RowData>[] = [
   {
