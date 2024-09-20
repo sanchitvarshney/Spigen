@@ -20,11 +20,12 @@ const MasterEditViewBranch: React.FC<Props> = ({ uiState }) => {
     }),
     []
   );
+
   return (
     <Sheet open={editView} onOpenChange={setEditView}>
       <SheetContent className="min-w-[100%]">
         <SheetHeader>
-          <SheetTitle>All Branch: {}</SheetTitle>
+          <SheetTitle>All Branch: {params?.data?.clientID}</SheetTitle>
         </SheetHeader>
           <div className="mt-[15px]">
           <ReusableTable components={components} heigth="h-[calc(100vh-70px)]" endpoint={`client/branches?clientCode=${params?.data?.clientID}`} columns={editViewColdef} transform={transformEditViewTable} method="get" />

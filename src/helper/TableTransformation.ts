@@ -77,8 +77,9 @@ export const transformCustomerTableData = (data:any[])=>{
 
 export const transformEditViewTable = (data:any[])=>{
   return data.map((item)=>({
+    label:item.label,
     addressId:item.addressID,
-    city:item.city.name,
+    city:item.city,
     address:item.address,
     gst:item.gst,
     contact:item.phoneNo,

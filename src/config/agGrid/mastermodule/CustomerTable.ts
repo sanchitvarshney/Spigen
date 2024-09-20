@@ -64,6 +64,7 @@ export const columnDefs: ColDef[] = [
 
 export const editViewColdef: ColDef[] = [
   { headerName: 'Address ID', field: 'addressId' },
+  { headerName: 'Lable/Wharehouse/FC Code/DC', field: 'label' },
   { headerName: 'City', field: 'city' },
   { headerName: 'Address', field: 'address',autoHeight:true,minWidth:300 },
   { headerName: 'GST', field: 'gst' },

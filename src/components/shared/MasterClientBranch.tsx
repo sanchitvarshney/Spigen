@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -28,9 +28,10 @@ import { useToast } from "@/components/ui/use-toast";
 import { AppDispatch } from "@/store";
 import { createBranch } from "@/features/client/branchSlice";
 import { InputStyle, LableStyle } from "@/constants/themeContants";
+import { Switch } from "antd";
 
 const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
-  const { clientBranch, setClientBranch, params } = uiState;
+  const { clientBranch, setClientBranch, params, status, data } = uiState;
   const clientId = params?.data?.clientID;
 
   const { toast } = useToast();
@@ -49,9 +50,28 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
       useAsShipmentAddress: false,
     },
   });
-  console.log(params);
+
+  const copyAddressToShipment = () => {
+    const { addressLine1, addressLine2, state, country, pinCode, gst } =
+      form.getValues();
+
+    form.setValue("shipmentAddress.label", addressLine1);
+    form.setValue("shipmentAddress.country", country);
+    form.setValue("shipmentAddress.state", state);
+    form.setValue("shipmentAddress.pinCode", pinCode);
+    form.setValue("shipmentAddress.gst", gst);
+    form.setValue("shipmentAddress.addressLine1", addressLine1);
+    form.setValue("shipmentAddress.addressLine2", addressLine2);
+    form.setValue("useAsShipmentAddress", true);
+  };
+
+  useEffect(() => {
+    if (status && data) {
+      console.log(data);
+    }
+  }, [data]);
+
   const onSubmit = async (values: z.infer<typeof branchAddressSchema>) => {
-    console.log(values, "val");
     try {
       const resultAction = await dispatch(
         createBranch({
@@ -63,11 +83,12 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
         })
       ).unwrap();
 
-      if (resultAction.message) {
+      if (resultAction.code === 200) {
         toast({
-          title: "Branch created successfully",
+          title: resultAction.message || "Branch created successfully",
           className: "bg-green-600 text-white items-center",
         });
+        setClientBranch(false);
       } else {
         toast({
           title: resultAction.message || "Failed to Create Branch",
@@ -78,7 +99,7 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
       console.error("An error occurred:", error);
     }
   };
-  console.log(form.getValues());
+
   return (
     <Sheet open={clientBranch} onOpenChange={setClientBranch}>
       <SheetContent className="min-w-[90%]">
@@ -122,7 +143,10 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   name="country"
                   render={() => (
                     <FormItem>
-                      <FormLabel className={LableStyle}>Country</FormLabel>
+                      <FormLabel className={LableStyle}>
+                        Country{" "}
+                        <span className="pl-1 text-red-500 font-bold">*</span>
+                      </FormLabel>
                       <FormControl>
                         <ReusableAsyncSelect
                           placeholder="Country"
@@ -143,7 +167,10 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   name="state"
                   render={() => (
                     <FormItem>
-                      <FormLabel className={LableStyle}>State</FormLabel>
+                      <FormLabel className={LableStyle}>
+                        State{" "}
+                        <span className="pl-1 text-red-500 font-bold">*</span>
+                      </FormLabel>
                       <FormControl>
                         <ReusableAsyncSelect
                           placeholder="State"
@@ -162,7 +189,10 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   name="city"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={LableStyle}>City</FormLabel>
+                      <FormLabel className={LableStyle}>
+                        City{" "}
+                        <span className="pl-1 text-red-500 font-bold">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className={InputStyle}
@@ -179,7 +209,10 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   name="pinCode"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={LableStyle}>ZIP Code</FormLabel>
+                      <FormLabel className={LableStyle}>
+                        ZIP Code{" "}
+                        <span className="pl-1 text-red-500 font-bold">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className={InputStyle}
@@ -197,7 +230,10 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   name="phoneNo"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={LableStyle}>Phone Number</FormLabel>
+                      <FormLabel className={LableStyle}>
+                        Phone Number{" "}
+                        <span className="pl-1 text-red-500 font-bold">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className={InputStyle}
@@ -216,7 +252,10 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   name="gst"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={LableStyle}>GST Number</FormLabel>
+                      <FormLabel className={LableStyle}>
+                        GST Number{" "}
+                        <span className="pl-1 text-red-500 font-bold">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="GST Number"
@@ -236,7 +275,8 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className={LableStyle}>
-                        Address Line 1
+                        Address Line 1{" "}
+                        <span className="pl-1 text-red-500 font-bold">*</span>
                       </FormLabel>
                       <FormControl>
                         <Textarea
@@ -255,7 +295,8 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className={LableStyle}>
-                        Address Line 2
+                        Address Line 2{" "}
+                        <span className="pl-1 text-red-500 font-bold">*</span>
                       </FormLabel>
                       <FormControl>
                         <Textarea
@@ -275,6 +316,7 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   Map Ship Address
                 </h3>
                 <p className="text-[14px]">Same as Bill To</p>
+                <Switch onChange={copyAddressToShipment} />
               </div>
               <div className="grid grid-cols-4 gap-[20px]">
                 <FormField
@@ -322,7 +364,10 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   name="shipmentAddress.country"
                   render={() => (
                     <FormItem>
-                      <FormLabel className={LableStyle}>Country</FormLabel>
+                      <FormLabel className={LableStyle}>
+                        Country{" "}
+                        <span className="pl-1 text-red-500 font-bold">*</span>
+                      </FormLabel>
                       <FormControl>
                         <ReusableAsyncSelect
                           placeholder="Country"
@@ -343,7 +388,10 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   name="shipmentAddress.state"
                   render={() => (
                     <FormItem>
-                      <FormLabel className={LableStyle}>State</FormLabel>
+                      <FormLabel className={LableStyle}>
+                        State{" "}
+                        <span className="pl-1 text-red-500 font-bold">*</span>
+                      </FormLabel>
                       <FormControl>
                         <ReusableAsyncSelect
                           placeholder="State"
@@ -364,7 +412,10 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   name="shipmentAddress.pinCode"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={LableStyle}>ZIP Code</FormLabel>
+                      <FormLabel className={LableStyle}>
+                        ZIP Code{" "}
+                        <span className="pl-1 text-red-500 font-bold">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className={InputStyle}
@@ -382,7 +433,10 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   name="shipmentAddress.gst"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={LableStyle}>GST Number</FormLabel>
+                      <FormLabel className={LableStyle}>
+                        GST Number{" "}
+                        <span className="pl-1 text-red-500 font-bold">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="GST Number"
@@ -399,7 +453,10 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   name="shipmentAddress.pan"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={LableStyle}>PAN Number</FormLabel>
+                      <FormLabel className={LableStyle}>
+                        PAN Number{" "}
+                        <span className="pl-1 text-red-500 font-bold">*</span>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className={InputStyle}
@@ -419,7 +476,8 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className={LableStyle}>
-                        Address Line 1
+                        Address Line 1{" "}
+                        <span className="pl-1 text-red-500 font-bold">*</span>
                       </FormLabel>
                       <FormControl>
                         <Textarea
@@ -438,7 +496,8 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className={LableStyle}>
-                        Address Line 2
+                        Address Line 2{" "}
+                        <span className="pl-1 text-red-500 font-bold">*</span>
                       </FormLabel>
                       <FormControl>
                         <Textarea
@@ -455,7 +514,6 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
               <Button
                 type="submit"
                 className="bg-cyan-700 hover:bg-cyan-600 shadow-slate-500"
-                onClick={() => onSubmit(form.getValues())}
               >
                 Submit
               </Button>

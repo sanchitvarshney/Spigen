@@ -42,10 +42,8 @@ export const branchAddressSchema = z.object({
     state: z.string().min(1, "State is required"),
     pinCode: z.string().min(1, "Pin Code is required"),
     pan: z.string().min(1, "PAN Number is required"),
-    address: z.string().min(1, "Address is required"),
     addressLine1: z.string().min(1, "Address is required"),
     addressLine2: z.string().min(1, "Address is required"),
-    phoneNo: z.string().min(1, "Phone Number is required"),
     gst: z.string().min(1, "GST Number is required"),
   })
 });
