@@ -8,8 +8,6 @@ export interface MasterCustomer {
     setClientBranch:Dispatch<SetStateAction<boolean>>;
     editView:boolean;
     setEditView:Dispatch<SetStateAction<boolean>>;
-    status?:string
-    data?:any
   }
   export interface Props {
     uiState: MasterCustomer;

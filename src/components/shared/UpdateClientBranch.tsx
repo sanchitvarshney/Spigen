@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,7 +15,6 @@ import { Input } from "@/components/ui/input";
 import { branchAddressSchema } from "@/schema/masterModule/customerSchema";
 import ReusableAsyncSelect from "./ReusableAsyncSelect";
 import { transformPlaceData } from "@/helper/transform";
-import { Props } from "@/types/masterModule/masterCustomerTypes";
 import {
   Sheet,
   SheetContent,
@@ -29,11 +28,16 @@ import { AppDispatch } from "@/store";
 import { createBranch } from "@/features/client/branchSlice";
 import { InputStyle, LableStyle } from "@/constants/themeContants";
 import styled from "styled-components";
-
-const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
-  const { clientBranch, setClientBranch, params } = uiState;
+interface Props {
+  open: boolean;
+  onClose: (open: boolean) => void;
+  params: any;
+  data: any;
+}
+const MasterClientBranch: React.FC<Props> = (props: Props) => {
+  const { open, onClose, params, data } = props;
   const clientId = params?.data?.clientID;
-
+  console.log(data);
   const { toast } = useToast();
   const dispatch = useDispatch<AppDispatch>();
   const form = useForm<z.infer<typeof branchAddressSchema>>({
@@ -51,6 +55,44 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
     },
   });
 
+  useEffect(() => {
+    if (data) {
+      form.setValue("label", data?.label);
+      form.setValue("country", data?.country?.label);
+      form.setValue("state", data?.state?.label);
+      form.setValue("city", data?.city);
+      form.setValue("pinCode", data?.pinCode);
+      form.setValue("phoneNo", data?.phoneNo);
+      form.setValue("email", data?.email);
+      form.setValue("gst", data?.gst);
+      form.setValue("addressLine1", data?.addressLine1);
+      form.setValue("addressLine2", data?.addressLine2);
+      form.setValue("useAsShipmentAddress", data?.useAsShipmentAddress);
+      form.setValue("shipmentAddress.label", data?.shipmentAddress?.Label);
+      form.setValue("shipmentAddress.company", data?.shipmentAddress?.Company);
+      form.setValue(
+        "shipmentAddress.country",
+        data?.shipmentAddress?.Country?.label
+      );
+      form.setValue(
+        "shipmentAddress.state",
+        data?.shipmentAddress?.State?.label
+      );
+      form.setValue("shipmentAddress.pinCode", data?.shipmentAddress?.Pin);
+      form.setValue("shipmentAddress.pan", data?.shipmentAddress?.Pan);
+      form.setValue(
+        "shipmentAddress.addressLine1",
+        data?.shipmentAddress?.Address1
+      );
+      form.setValue(
+        "shipmentAddress.addressLine2",
+        data?.shipmentAddress?.Address2
+      );
+      form.setValue("shipmentAddress.gst", data?.shipmentAddress?.Gstin);
+      form.setValue("shipmentAddress.pinCode", data?.shipmentAddress?.pinCode);
+    }
+  }, [data]);
+
   const copyAddressToShipment = () => {
     const { addressLine1, addressLine2, state, country, pinCode, gst } =
       form.getValues();
@@ -65,6 +107,12 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
     // form.setValue("useAsShipmentAddress", true);
   };
 
+  useEffect(() => {
+    if (status && data) {
+      console.log(data);
+    }
+  }, [data]);
+  console.log(data, "+++", form.getValues());
   const onSubmit = async (values: z.infer<typeof branchAddressSchema>) => {
     try {
       const resultAction = await dispatch(
@@ -82,7 +130,7 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
           title: resultAction.message || "Branch created successfully",
           className: "bg-green-600 text-white items-center",
         });
-        setClientBranch(false);
+        onClose(false);
       } else {
         toast({
           title: resultAction.message || "Failed to Create Branch",
@@ -95,7 +143,7 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
   };
 
   return (
-    <Sheet open={clientBranch} onOpenChange={setClientBranch}>
+    <Sheet open={open} onOpenChange={onClose}>
       <SheetContent className="min-w-[60%]">
         <SheetHeader>
           <SheetTitle className="text-slate-600">
@@ -320,15 +368,19 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                             <input
                               type="checkbox"
                               checked={field.value}
-                              onChange={(e: any) =>
-                                {form.setValue("useAsShipmentAddress", e.target.checked)
-                                  copyAddressToShipment();
-                                }
-                              }
+                              onChange={(e: any) => {
+                                form.setValue(
+                                  "useAsShipmentAddress",
+                                  e.target.checked
+                                );
+                                copyAddressToShipment();
+                              }}
                             />
                             <span className="slider"></span>
                           </label>
-                          <p className="text-slate-600 text-[13px]">Same as Bill To</p>
+                          <p className="text-slate-600 text-[13px]">
+                            Same as Bill To
+                          </p>
                         </Switch>
                       </FormControl>
                       <FormMessage />
@@ -433,7 +485,7 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className={LableStyle}>
-                        ZIP Code{" "}
+                        ZIP Code
                         <span className="pl-1 text-red-500 font-bold">*</span>
                       </FormLabel>
                       <FormControl>
@@ -544,8 +596,6 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
     </Sheet>
   );
 };
-
-
 
 const Switch = styled.div`
   .switch {
