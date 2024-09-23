@@ -63,7 +63,7 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
       form.setValue("city", data?.city);
       form.setValue("pinCode", data?.pinCode);
       form.setValue("phoneNo", data?.phoneNo);
-      form.setValue("email", data?.email);
+    //   form.setValue("email", data?.email);
       form.setValue("gst", data?.gst);
       form.setValue("addressLine1", data?.addressLine1);
       form.setValue("addressLine2", data?.addressLine2);

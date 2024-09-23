@@ -24,7 +24,6 @@ const MasterEditViewBranch: React.FC<Props> = ({ uiState }) => {
     (state: RootState) => state.createSalesOrder
   );
   const [rowId, setRowId] = useState<any>();
-  const [data, setData] = useState<any>([]);
   const [clientBranch, setClientBranch] = useState<boolean>(false);
   const [clientData, setClientData] = useState<any>(null);
   const components = useMemo(
@@ -33,11 +32,7 @@ const MasterEditViewBranch: React.FC<Props> = ({ uiState }) => {
         useEffect(() => {
           if (params.data.clientID) {
             console.log("dispatch");
-            dispatch(fetchClientDetails(params.data.clientID) as any).then(
-              (res: any) => {
-                setData(res?.payload);
-              }
-            );
+            dispatch(fetchClientDetails(params.data.clientID) as any)
           }
         }, [params]);
         return (
@@ -55,6 +50,7 @@ const MasterEditViewBranch: React.FC<Props> = ({ uiState }) => {
     }),
     []
   );
+  
   useEffect(() => {
     if (clientDetails) {
       const foundClient = clientDetails.find(
