@@ -13,7 +13,7 @@ const ClientActionCellRender: React.FC = (params: any) => {
   
  
 
-  const clientId = params.data.clientID; 
+  const clientId = params?.data?.clientID; 
 
   const uiState: MasterCustomer = {
     clientEdit,

@@ -1,6 +1,5 @@
 import { ColDef } from "@ag-grid-community/core";
 
-
 export const columnDefs: ColDef[] = [
   {
     headerName: '#',
@@ -30,6 +29,7 @@ export const columnDefs: ColDef[] = [
     sortable: true,
     filter: true,
     width: 200,
+    cellRenderer:"truncateCellRenderer",
   },
   {
     headerName: 'Email',

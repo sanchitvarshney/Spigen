@@ -28,7 +28,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { AppDispatch } from "@/store";
 import { createBranch } from "@/features/client/branchSlice";
 import { InputStyle, LableStyle } from "@/constants/themeContants";
-import { Switch } from "antd";
+import styled from "styled-components";
 
 const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
   const { clientBranch, setClientBranch, params, status, data } = uiState;
@@ -62,7 +62,7 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
     form.setValue("shipmentAddress.gst", gst);
     form.setValue("shipmentAddress.addressLine1", addressLine1);
     form.setValue("shipmentAddress.addressLine2", addressLine2);
-    form.setValue("useAsShipmentAddress", true);
+    // form.setValue("useAsShipmentAddress", true);
   };
 
   useEffect(() => {
@@ -102,7 +102,7 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
 
   return (
     <Sheet open={clientBranch} onOpenChange={setClientBranch}>
-      <SheetContent className="min-w-[90%]">
+      <SheetContent className="min-w-[60%]">
         <SheetHeader>
           <SheetTitle className="text-slate-600">
             {params?.data?.name} ({clientId})
@@ -315,7 +315,33 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                 <h3 className="text-[17px] text-slate-600 font-[600]">
                   Map Ship Address
                 </h3>
-                <p className="text-[14px]">Same as Bill To</p>
+                <FormField
+                  control={form.control}
+                  name="useAsShipmentAddress"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Switch className="flex items-center gap-[10px]">
+                          <label className="switch">
+                            <input
+                              type="checkbox"
+                              checked={field.value}
+                              onChange={(e: any) =>
+                                {form.setValue("useAsShipmentAddress", e.target.checked)
+                                  copyAddressToShipment();
+                                }
+                              }
+                            />
+                            <span className="slider"></span>
+                          </label>
+                          <p className="text-slate-600 text-[13px]">Same as Bill To</p>
+                        </Switch>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <p className="text-[14px]"></p>
                 <Switch onChange={copyAddressToShipment} />
               </div>
               <div className="grid grid-cols-4 gap-[20px]">
@@ -524,5 +550,58 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
     </Sheet>
   );
 };
+
+
+
+const Switch = styled.div`
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 2.8em;
+    height: 18px;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 30px;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 15px;
+    width: 15px;
+    border-radius: 20px;
+    left: 2px;
+    bottom: 1.5px;
+    background-color: white;
+    transition: 0.4s;
+  }
+
+  input:checked + .slider {
+    background-color: #0891b2;
+  }
+
+  input:focus + .slider {
+    box-shadow: 0 0 1px #0891b2;
+  }
+
+  input:checked + .slider:before {
+    transform: translateX(1.7em);
+  }
+`;
 
 export default MasterClientBranch;

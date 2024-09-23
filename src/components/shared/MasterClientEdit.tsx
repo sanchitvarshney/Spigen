@@ -37,6 +37,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RootState } from "@/store";
+import { InputStyle, LableStyle } from "@/constants/themeContants";
 const MasterClientEdit: React.FC<Props> = ({
   uiState,
 }: {
@@ -75,8 +76,8 @@ const MasterClientEdit: React.FC<Props> = ({
         mobileNo: clientData.mobile,
         salePerson: clientData.salesPerson,
         website: clientData.website,
-        clientTDS: clientData.tds?.[0] ,
-        clientTCS: clientData.tcs?.[0] ,
+        clientTDS: clientData.tds?.[0],
+        clientTCS: clientData.tcs?.[0],
         active: clientData.status === "active",
       });
     }
@@ -89,7 +90,7 @@ const MasterClientEdit: React.FC<Props> = ({
       status: value.active ? "active" : "inactive",
     };
     dispatch(updateClient({ endpoint: `/client/update`, payload }) as any);
-     toast({
+    toast({
       title: "Client updated successfully",
       className: "bg-green-600 text-white items-center",
     });
@@ -114,11 +115,15 @@ const MasterClientEdit: React.FC<Props> = ({
                     name="clientName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-slate-600">
+                        <FormLabel className={LableStyle}>
                           Vendor Name
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="Vendor Name" {...field} />
+                          <Input
+                            placeholder="Vendor Name"
+                            {...field}
+                            className={InputStyle}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -129,9 +134,13 @@ const MasterClientEdit: React.FC<Props> = ({
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-slate-600">Email</FormLabel>
+                        <FormLabel className={LableStyle}>Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="Email" {...field} />
+                          <Input
+                            placeholder="Email"
+                            {...field}
+                            className={InputStyle}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -142,31 +151,36 @@ const MasterClientEdit: React.FC<Props> = ({
                       control={form.control}
                       name="client_channel"
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-slate-600">
+                        <FormItem className="border-b border-black">
+                          <FormLabel className={LableStyle}>
                             Channel{" "}
                             <span className="pl-1 text-red-500 font-bold">
                               *
                             </span>
                           </FormLabel>
                           <FormControl>
-                            <Select
-                              value={field.value}
-                              onValueChange={(value) =>
-                                form.setValue("client_channel", value)
-                              }
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select a filter type" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {channelList.map((item) => (
-                                  <SelectItem key={item.code} value={item.code}>
-                                    {item.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
+                            <div className="border-0 focus:outline-none focus:ring-0">
+                              <Select
+                                value={field.value}
+                                onValueChange={(value) =>
+                                  form.setValue("client_channel", value)
+                                }
+                              >
+                                <SelectTrigger className="border-0 focus:outline-none focus:ring-0">
+                                  <SelectValue placeholder="Select a filter type" />
+                                </SelectTrigger>
+                                <SelectContent className="border-0 focus:outline-none focus:ring-0">
+                                  {channelList.map((item) => (
+                                    <SelectItem
+                                      key={item.code}
+                                      value={item.code}
+                                    >
+                                      {item.name}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -179,11 +193,13 @@ const MasterClientEdit: React.FC<Props> = ({
                     name="panNo"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-slate-600">
-                          PAN Number
-                        </FormLabel>
+                        <FormLabel className={LableStyle}>PAN Number</FormLabel>
                         <FormControl>
-                          <Input placeholder="PAN Number" {...field} />
+                          <Input
+                            placeholder="PAN Number"
+                            {...field}
+                            className={InputStyle}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -194,7 +210,7 @@ const MasterClientEdit: React.FC<Props> = ({
                     name="mobileNo"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-slate-600">
+                        <FormLabel className={LableStyle}>
                           Mobile{" "}
                           <span className="pl-1 text-red-500 font-bold">*</span>
                         </FormLabel>
@@ -203,6 +219,7 @@ const MasterClientEdit: React.FC<Props> = ({
                             type="number"
                             placeholder="Mobile"
                             {...field}
+                            className={InputStyle}
                           />
                         </FormControl>
                         <FormMessage />
@@ -214,11 +231,15 @@ const MasterClientEdit: React.FC<Props> = ({
                     name="salePerson"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-slate-600">
+                        <FormLabel className={LableStyle}>
                           Sale Person
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="Sale Person" {...field} />
+                          <Input
+                            placeholder="Sale Person"
+                            {...field}
+                            className={InputStyle}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -229,11 +250,13 @@ const MasterClientEdit: React.FC<Props> = ({
                     name="website"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-slate-600">
-                          Website
-                        </FormLabel>
+                        <FormLabel className={LableStyle}>Website</FormLabel>
                         <FormControl>
-                          <Input placeholder="Website" {...field} />
+                          <Input
+                            placeholder="Website"
+                            {...field}
+                            className={InputStyle}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -245,9 +268,7 @@ const MasterClientEdit: React.FC<Props> = ({
                   name="clientTDS"
                   render={() => (
                     <FormItem>
-                      <FormLabel className="text-slate-600">
-                        Client TDS
-                      </FormLabel>
+                      <FormLabel className={LableStyle}>Client TDS</FormLabel>
                       <FormControl>
                         <ReusableAsyncSelect
                           placeholder="Client TDS"
@@ -268,9 +289,7 @@ const MasterClientEdit: React.FC<Props> = ({
                   name="clientTCS"
                   render={() => (
                     <FormItem>
-                      <FormLabel className="text-slate-600">
-                        Client TCS
-                      </FormLabel>
+                      <FormLabel className={LableStyle}>Client TCS</FormLabel>
                       <FormControl>
                         <ReusableAsyncSelect
                           placeholder="Client TCS"

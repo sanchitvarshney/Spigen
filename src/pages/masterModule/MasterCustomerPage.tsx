@@ -29,6 +29,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { InputStyle, LableStyle } from "@/constants/themeContants";
+import { Tooltip } from "antd";
 
 const MasterCustomerPage: React.FC = () => {
   const { toast } = useToast();
@@ -55,7 +57,7 @@ const MasterCustomerPage: React.FC = () => {
           payload: {
             client_channel: values.channel,
             clientName: values.clientName,
-            phone: values.phone||"",
+            phone: values.phone || "",
             panNo: values.panNo,
             mobileNo: values.mobileNo,
             email: values.email || "",
@@ -81,12 +83,28 @@ const MasterCustomerPage: React.FC = () => {
     }
   };
 
+  const TruncateCellRenderer = (props: any) => {
+    const style = {
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      width: "100%", // Ensure the width of the cell
+      display: "block", // Ensure that the content respects the overflow
+    };
+
+    return (
+      <Tooltip title={props.value} placement="top">
+        <div style={style}>{props.value}</div>
+      </Tooltip>
+    );
+  };
   const components = useMemo(
     () => ({
       actionsCellRenderer: ClientActionCellRender,
       statusCellRenderer: (params: any) => {
         return <Badge className="bg-green-600">{params.data.status}</Badge>;
       },
+      truncateCellRenderer: TruncateCellRenderer,
     }),
     []
   );
@@ -108,47 +126,52 @@ const MasterCustomerPage: React.FC = () => {
                 control={form.control}
                 name="channel"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-slate-600">
+                  <FormItem className="border-b border-black">
+                    <FormLabel className={LableStyle}>
                       Channel{" "}
                       <span className="pl-1 text-red-500 font-bold">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select
-                        value={field.value}
-                        onValueChange={(value) =>
-                          form.setValue("channel", value)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a filter type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {channelList.map((item) => (
-                            <SelectItem key={item.code} value={item.code}>
-                              {item.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="border-0 focus:outline-none focus:ring-0">
+                        <Select
+                          value={field.value}
+                          onValueChange={(value) =>
+                            form.setValue("channel", value)
+                          }
+                        >
+                          <SelectTrigger className="border-0 focus:outline-none focus:ring-0">
+                            <SelectValue placeholder="Select a filter type" />
+                          </SelectTrigger>
+                          <SelectContent className="border-0 focus:outline-none focus:ring-0">
+                            {channelList.map((item) => (
+                              <SelectItem key={item.code} value={item.code}>
+                                {item.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-
             <FormField
               control={form.control}
               name="clientName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-600">
+                  <FormLabel className={LableStyle}>
                     Client Name{" "}
                     <span className="pl-1 text-red-500 font-bold">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Client Name" {...field} />
+                    <Input
+                      placeholder="Enter Client Name"
+                      {...field}
+                      className={InputStyle}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -159,11 +182,15 @@ const MasterCustomerPage: React.FC = () => {
               name="salesPersonName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-600">
+                  <FormLabel className={LableStyle}>
                     Sales Person Name
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Sales Person Name" {...field} />
+                    <Input
+                      placeholder="Enter Sales Person Name"
+                      {...field}
+                      className={InputStyle}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -175,12 +202,16 @@ const MasterCustomerPage: React.FC = () => {
                 name="panNo"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-slate-600">
+                    <FormLabel className={LableStyle}>
                       PAN Number{" "}
                       <span className="pl-1 text-red-500 font-bold">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter PAN Number" {...field} />
+                      <Input
+                        placeholder="Enter PAN Number"
+                        {...field}
+                        className={InputStyle}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -192,9 +223,13 @@ const MasterCustomerPage: React.FC = () => {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-600">Email</FormLabel>
+                  <FormLabel className={LableStyle}>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Email" {...field} />
+                    <Input
+                      placeholder="Enter Email"
+                      {...field}
+                      className={InputStyle}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -206,15 +241,13 @@ const MasterCustomerPage: React.FC = () => {
                 name="phone"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-slate-600">
-                      Phone{" "}
-                      
-                    </FormLabel>
+                    <FormLabel className={LableStyle}>Phone </FormLabel>
                     <FormControl>
                       <Input
                         type="number"
                         placeholder="Enter Phone"
                         {...field}
+                        className={InputStyle}
                       />
                     </FormControl>
                     <FormMessage />
@@ -226,7 +259,7 @@ const MasterCustomerPage: React.FC = () => {
                 name="mobileNo"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-slate-600">
+                    <FormLabel className={LableStyle}>
                       Mobile Number{" "}
                       <span className="pl-1 text-red-500 font-bold">*</span>
                     </FormLabel>
@@ -235,6 +268,7 @@ const MasterCustomerPage: React.FC = () => {
                         type="number"
                         placeholder="Enter Mobile Number"
                         {...field}
+                        className={InputStyle}
                       />
                     </FormControl>
                     <FormMessage />
@@ -247,9 +281,13 @@ const MasterCustomerPage: React.FC = () => {
               name="website"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-600">Website URL</FormLabel>
+                  <FormLabel className={LableStyle}>Website URL</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter Website URL" {...field} />
+                    <Input
+                      placeholder="Enter Website URL"
+                      {...field}
+                      className={InputStyle}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
