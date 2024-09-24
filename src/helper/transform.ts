@@ -39,3 +39,10 @@ export const transformCurrencyData = (data: any[]) => {
     value: item?.currency_id,
   }));
 };
+
+export const transformUomData = (data: any[]) => {
+  return data?.map((item) => ({
+    label: item?.units_name,
+    value: item?.units_id,
+  }));
+};

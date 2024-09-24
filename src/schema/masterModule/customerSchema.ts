@@ -25,8 +25,8 @@ export const clientEditFormSchema = z.object({
 });
 
 export const branchAddressSchema = z.object({
-  label:z.string({ required_error: "Label is required" }),
-  country: z.string().min(1, "Country is required"),
+  label: z.string({ required_error: "Label is required" }),
+  country: z.string({ required_error: "Country is required" }),
   state: z.string().min(1, "State is required"),
   city: z.string().min(1, "City is required"),
   pinCode: z.string().min(1, "Pin Code is required"),
@@ -34,9 +34,10 @@ export const branchAddressSchema = z.object({
   addressLine2: z.string().min(1, "Address is required"),
   phoneNo: z.string().min(1, "Phone Number is required"),
   gst: z.string().min(1, "GST Number is required"),
-  useAsShipmentAddress:z.boolean(),
-  shipmentAddress:z.object({
-    label:z.string({ required_error: "Label is required" }),
+  useAsShipmentAddress: z.boolean(),
+  status: z.string().optional(),
+  shipmentAddress: z.object({
+    label: z.string({ required_error: "Label is required" }),
     country: z.string().min(1, "Country is required"),
     company: z.string().min(1, "Company is required"),
     state: z.string().min(1, "State is required"),
@@ -45,7 +46,33 @@ export const branchAddressSchema = z.object({
     addressLine1: z.string().min(1, "Address is required"),
     addressLine2: z.string().min(1, "Address is required"),
     gst: z.string().min(1, "GST Number is required"),
-  })
+  }),
+});
+
+export const updateBranchAddressSchema = z.object({
+  label: z.string({ required_error: "Label is required" }),
+  country: z.string().optional(),
+  state: z.string().optional(),
+  city: z.string().optional(),
+  pinCode: z.string().optional(),
+  addressLine1: z.string().optional(),
+  addressLine2: z.string().optional(),
+  phoneNo: z.string().optional(),
+  gst: z.string().optional(),
+  email: z.string().optional(),
+  status: z.boolean().optional(),
+  useAsShipmentAddress: z.boolean(),
+  shipmentAddress: z.object({
+    label: z.string({ required_error: "Label is required" }),
+    country: z.string().min(1, "Country is required"),
+    company: z.string().min(1, "Company is required"),
+    state: z.string().min(1, "State is required"),
+    pinCode: z.string().min(1, "Pin Code is required"),
+    pan: z.string().min(1, "PAN Number is required"),
+    addressLine1: z.string().min(1, "Address is required"),
+    addressLine2: z.string().min(1, "Address is required"),
+    gst: z.string().min(1, "GST Number is required"),
+  }),
 });
 
 export const updateBranchSchema = z.object({

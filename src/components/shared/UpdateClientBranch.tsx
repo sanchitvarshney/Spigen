@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { branchAddressSchema } from "@/schema/masterModule/customerSchema";
+import { updateBranchAddressSchema } from "@/schema/masterModule/customerSchema";
 import ReusableAsyncSelect from "./ReusableAsyncSelect";
 import { transformPlaceData } from "@/helper/transform";
 import {
@@ -21,13 +21,24 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "../ui/textarea";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useToast } from "@/components/ui/use-toast";
-import { AppDispatch } from "@/store";
-import { createBranch } from "@/features/client/branchSlice";
+import { AppDispatch, RootState } from "@/store";
+import { updateBranch } from "@/features/client/branchSlice";
 import { InputStyle, LableStyle } from "@/constants/themeContants";
 import styled from "styled-components";
+import {
+  fetchCountries,
+  fetchStates,
+} from "@/features/salesmodule/createSalesOrderSlice";
 interface Props {
   open: boolean;
   onClose: (open: boolean) => void;
@@ -35,13 +46,14 @@ interface Props {
   data: any;
 }
 const MasterClientBranch: React.FC<Props> = (props: Props) => {
-  const { open, onClose, params, data } = props;
-  const clientId = params?.data?.clientID;
-  console.log(data);
+  const { open, onClose, data } = props;
   const { toast } = useToast();
   const dispatch = useDispatch<AppDispatch>();
-  const form = useForm<z.infer<typeof branchAddressSchema>>({
-    resolver: zodResolver(branchAddressSchema),
+  const { countries, states } = useSelector(
+    (state: RootState) => state.createSalesOrder
+  );
+  const form = useForm<z.infer<typeof updateBranchAddressSchema>>({
+    resolver: zodResolver(updateBranchAddressSchema),
     defaultValues: {
       state: "",
       country: "",
@@ -58,12 +70,12 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
   useEffect(() => {
     if (data) {
       form.setValue("label", data?.label);
-      form.setValue("country", data?.country?.label);
-      form.setValue("state", data?.state?.label);
+      form.setValue("country", data?.country?.value);
+      form.setValue("state", data?.state?.value);
       form.setValue("city", data?.city);
       form.setValue("pinCode", data?.pinCode);
       form.setValue("phoneNo", data?.phoneNo);
-    //   form.setValue("email", data?.email);
+      form.setValue("email", data?.email);
       form.setValue("gst", data?.gst);
       form.setValue("addressLine1", data?.addressLine1);
       form.setValue("addressLine2", data?.addressLine2);
@@ -72,11 +84,11 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
       form.setValue("shipmentAddress.company", data?.shipmentAddress?.Company);
       form.setValue(
         "shipmentAddress.country",
-        data?.shipmentAddress?.Country?.label
+        data?.shipmentAddress?.Country?.value
       );
       form.setValue(
         "shipmentAddress.state",
-        data?.shipmentAddress?.State?.label
+        data?.shipmentAddress?.State?.value
       );
       form.setValue("shipmentAddress.pinCode", data?.shipmentAddress?.Pin);
       form.setValue("shipmentAddress.pan", data?.shipmentAddress?.Pan);
@@ -89,7 +101,6 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
         data?.shipmentAddress?.Address2
       );
       form.setValue("shipmentAddress.gst", data?.shipmentAddress?.Gstin);
-      form.setValue("shipmentAddress.pinCode", data?.shipmentAddress?.pinCode);
     }
   }, [data]);
 
@@ -97,46 +108,59 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
     const { addressLine1, addressLine2, state, country, pinCode, gst } =
       form.getValues();
 
-    form.setValue("shipmentAddress.label", addressLine1);
-    form.setValue("shipmentAddress.country", country);
-    form.setValue("shipmentAddress.state", state);
-    form.setValue("shipmentAddress.pinCode", pinCode);
-    form.setValue("shipmentAddress.gst", gst);
-    form.setValue("shipmentAddress.addressLine1", addressLine1);
-    form.setValue("shipmentAddress.addressLine2", addressLine2);
+    form.setValue("shipmentAddress.label", addressLine1 ?? "");
+    form.setValue("shipmentAddress.country", country ?? "");
+    form.setValue("shipmentAddress.state", state ?? "");
+    form.setValue("shipmentAddress.pinCode", pinCode ?? "");
+    form.setValue("shipmentAddress.gst", gst ?? "");
+    form.setValue("shipmentAddress.addressLine1", addressLine1 ?? "");
+    form.setValue("shipmentAddress.addressLine2", addressLine2 ?? "");
     // form.setValue("useAsShipmentAddress", true);
   };
 
   useEffect(() => {
-    if (status && data) {
-      console.log(data);
-    }
-  }, [data]);
-  console.log(data, "+++", form.getValues());
-  const onSubmit = async (values: z.infer<typeof branchAddressSchema>) => {
+    dispatch(fetchCountries());
+    dispatch(fetchStates());
+  }, []);
+
+  const onSubmit = async (
+    values: z.infer<typeof updateBranchAddressSchema>
+  ) => {
     try {
       const resultAction = await dispatch(
-        createBranch({
-          endpoint: "/client/addBranch",
+        updateBranch({
+          endpoint: "/client/updateBranch",
           payload: {
             ...values,
-            clientCode: clientId,
+            shipmentAddress: {
+              ...values.shipmentAddress,
+              clientCode: data?.clientCode,
+            },
+            status: "active",
+            addressID: data?.addressID,
+            clientCode: data?.clientCode,
           },
         })
       ).unwrap();
 
       if (resultAction.code === 200) {
         toast({
-          title: resultAction.message || "Branch created successfully",
+          title:
+            typeof resultAction.message === "string"
+              ? resultAction.message
+              : JSON.stringify(resultAction.message),
           className: "bg-green-600 text-white items-center",
         });
-        onClose(false);
       } else {
         toast({
-          title: resultAction.message || "Failed to Create Branch",
+          title:
+            typeof resultAction.message === "string"
+              ? resultAction.message
+              : JSON.stringify(resultAction.message),
           className: "bg-red-600 text-white items-center",
         });
       }
+      onClose(false);
     } catch (error) {
       console.error("An error occurred:", error);
     }
@@ -147,16 +171,11 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
       <SheetContent className="min-w-[60%]">
         <SheetHeader>
           <SheetTitle className="text-slate-600">
-            {params?.data?.name} ({clientId})
+            Update Branch: {data?.addressID}
           </SheetTitle>
         </SheetHeader>
-        <div className="my-[20px]">
-          <h3 className="text-[17px] text-slate-600 font-[600]">
-            Bill To Information
-          </h3>
-          <p className="text-[14px]">Please provide Bill To address info</p>
-        </div>
-        <div>
+
+        <div className="pt-10">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
               <div className="grid grid-cols-4 gap-[20px]">
@@ -183,22 +202,33 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
                 <FormField
                   control={form.control}
                   name="country"
-                  render={() => (
-                    <FormItem>
+                  render={({ field }) => (
+                    <FormItem className="border-b border-black">
                       <FormLabel className={LableStyle}>
-                        Country{" "}
+                        Country
                         <span className="pl-1 text-red-500 font-bold">*</span>
                       </FormLabel>
                       <FormControl>
-                        <ReusableAsyncSelect
-                          placeholder="Country"
-                          endpoint="tally/backend/countries"
-                          transform={transformPlaceData}
-                          fetchOptionWith="query"
-                          onChange={(e: any) =>
-                            form.setValue("country", e.value)
-                          }
-                        />
+                        <div className="border-0 focus:outline-none focus:ring-0">
+                          <Select
+                            value={field.value}
+                            onValueChange={(value) => {
+                              form.setValue("country", value);
+                              field.onChange(value);
+                            }}
+                          >
+                            <SelectTrigger className="border-0 focus:outline-none focus:ring-0">
+                              <SelectValue placeholder="Select a filter type" />
+                            </SelectTrigger>
+                            <SelectContent className="border-0 focus:outline-none focus:ring-0">
+                              {countries?.map((item: any) => (
+                                <SelectItem key={item.code} value={item.code}>
+                                  {item.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -207,34 +237,44 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
                 <FormField
                   control={form.control}
                   name="state"
-                  render={() => (
-                    <FormItem>
+                  render={({ field }) => (
+                    <FormItem className="border-b border-black">
                       <FormLabel className={LableStyle}>
-                        State{" "}
+                        State
                         <span className="pl-1 text-red-500 font-bold">*</span>
                       </FormLabel>
                       <FormControl>
-                        <ReusableAsyncSelect
-                          placeholder="State"
-                          endpoint="tally/backend/states"
-                          transform={transformPlaceData}
-                          fetchOptionWith="query"
-                          onChange={(e: any) => form.setValue("state", e.value)}
-                        />
+                        <div className="border-0 focus:outline-none focus:ring-0">
+                          <Select
+                            value={field.value}
+                            onValueChange={(value) => {
+                              form.setValue("state", value);
+                            }}
+                          >
+                            <SelectTrigger className="border-0 focus:outline-none focus:ring-0">
+                              <SelectValue placeholder="Select a filter type" />
+                            </SelectTrigger>
+                            <SelectContent className="border-0 focus:outline-none focus:ring-0">
+                              {states?.map((item: any) => (
+                                <SelectItem key={item.code} value={item.code}>
+                                  {item.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="city"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={LableStyle}>
-                        City{" "}
-                        <span className="pl-1 text-red-500 font-bold">*</span>
-                      </FormLabel>
+                      <FormLabel className={LableStyle}>City </FormLabel>
                       <FormControl>
                         <Input
                           className={InputStyle}
@@ -248,18 +288,35 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
                 />
                 <FormField
                   control={form.control}
-                  name="pinCode"
+                  name="gst"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className={LableStyle}>
-                        ZIP Code{" "}
+                        GST Number{" "}
                         <span className="pl-1 text-red-500 font-bold">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
+                          placeholder="GST Number"
+                          {...field}
+                          className={InputStyle}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="pinCode"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={LableStyle}>PIN Code </FormLabel>
+                      <FormControl>
+                        <Input
                           className={InputStyle}
                           type="number"
-                          placeholder="ZIP Code"
+                          placeholder="PIN Code"
                           {...field}
                         />
                       </FormControl>
@@ -288,21 +345,18 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
-                  name="gst"
+                  name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className={LableStyle}>
-                        GST Number{" "}
-                        <span className="pl-1 text-red-500 font-bold">*</span>
-                      </FormLabel>
+                      <FormLabel className={LableStyle}>Email </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="GST Number"
-                          {...field}
                           className={InputStyle}
+                          type="email"
+                          placeholder="Email"
+                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -387,8 +441,8 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
                     </FormItem>
                   )}
                 />
-                <p className="text-[14px]"></p>
-                <Switch onChange={copyAddressToShipment} />
+                {/* <p className="text-[14px]"></p> */}
+                {/* <Switch onChange={copyAddressToShipment} /> */}
               </div>
               <div className="grid grid-cols-4 gap-[20px]">
                 <FormField
@@ -485,14 +539,34 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className={LableStyle}>
-                        ZIP Code
+                        PIN Code
                         <span className="pl-1 text-red-500 font-bold">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
                           className={InputStyle}
                           type="number"
-                          placeholder="ZIP Code"
+                          placeholder="PIN Code"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="shipmentAddress.pan"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className={LableStyle}>
+                        PAN Number{" "}
+                        <span className="pl-1 text-red-500 font-bold">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          className={InputStyle}
+                          placeholder="PAN Number"
                           {...field}
                         />
                       </FormControl>
@@ -514,26 +588,6 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
                           placeholder="GST Number"
                           {...field}
                           className={InputStyle}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="shipmentAddress.pan"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className={LableStyle}>
-                        PAN Number{" "}
-                        <span className="pl-1 text-red-500 font-bold">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          className={InputStyle}
-                          placeholder="PAN Number"
-                          {...field}
                         />
                       </FormControl>
                       <FormMessage />
@@ -583,6 +637,30 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
                   )}
                 />
               </div>
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Switch className="flex items-center gap-[10px]">
+                        <label className="switch">
+                          <input
+                            type="checkbox"
+                            checked={field.value || true}
+                            onChange={(e: any) => {
+                              form.setValue("status", e.target.checked);
+                            }}
+                          />
+                          <span className="slider"></span>
+                        </label>
+                        <p className="text-slate-600 text-[13px]">Active</p>
+                      </Switch>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <Button
                 type="submit"
                 className="bg-cyan-700 hover:bg-cyan-600 shadow-slate-500"

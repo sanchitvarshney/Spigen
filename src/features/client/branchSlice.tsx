@@ -2,20 +2,16 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { spigenAxios } from "@/axiosIntercepter";
 
 interface BranchPayload {
-    state:string,
-    country:string,
-    addressLine1:string,
-    addressLine2:string,
-    city:string,
-    pinCode:string,
-    phoneNo:string,
-    gst:string,
-    clientCode:string
-   
-
-
+  state: string;
+  country: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  pinCode: string;
+  phoneNo: string;
+  gst: string;
+  clientCode: string;
 }
-
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -24,18 +20,21 @@ export interface ApiResponse<T> {
   code?: number | null;
 }
 
-
-
-
-
 export const createBranch = createAsyncThunk<
   ApiResponse<any>,
-  { endpoint: string; payload:BranchPayload }
+  { endpoint: string; payload: BranchPayload }
 >("/client/addBranch", async ({ endpoint, payload }) => {
   const response = await spigenAxios.post(endpoint, payload);
   return response.data;
 });
 
+export const updateBranch = createAsyncThunk<
+  ApiResponse<any>,
+  { endpoint: string; payload: any }
+>("/client/updateBranch", async ({ endpoint, payload }) => {
+  const response = await spigenAxios.put(endpoint, payload);
+  return response.data;
+});
 
 interface clientBranchState {
   data: any[];
@@ -56,7 +55,6 @@ const BranchSlice = createSlice({
   extraReducers: (builder) => {
     builder
 
-
       // Handle createProduct action
       .addCase(createBranch.pending, (state) => {
         state.loading = true;
@@ -69,8 +67,7 @@ const BranchSlice = createSlice({
       .addCase(createBranch.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Failed to create Branch";
-      })
-     
+      });
   },
 });
 

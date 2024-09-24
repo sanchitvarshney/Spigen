@@ -34,8 +34,8 @@ interface ProductPayload {
   p_fnsku?:string,
   p_item_code?:string,
   p_fsnid?:string,
-
-
+  hsncode?:string,
+  p_croma_code?:string,
 
 
 
@@ -71,6 +71,14 @@ export const fetchImageProduct = createAsyncThunk<
 
 
 export const fetchProducts = createAsyncThunk<
+  ApiResponse<any>,
+  string
+>("/products", async (endpoint) => {
+  const response = await spigenAxios.get(endpoint);
+  return response.data;
+});
+
+export const fetchUom = createAsyncThunk<
   ApiResponse<any>,
   string
 >("/products", async (endpoint) => {

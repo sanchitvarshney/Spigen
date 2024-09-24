@@ -26,15 +26,24 @@ import { customStyles } from "@/config/reactSelect/SelectColorConfig";
 import DropdownIndicator from "@/config/reactSelect/DropdownIndicator";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  InputStyle,
+  LableStyle,
   modelFixFooterStyle,
   modelFixHeaderStyle,
 } from "@/constants/themeContants";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { fetchImageProduct, getProductForUpdate, updateProduct, uploadProductImages } from "@/features/product/productSlice";
+import {
+  fetchImageProduct,
+  getProductForUpdate,
+  updateProduct,
+  uploadProductImages,
+} from "@/features/product/productSlice";
 import { useDispatch } from "react-redux";
 import { RootState } from "@/store";
 import { useToast } from "@/components/ui/use-toast";
+import { transformUomData } from "@/helper/transform";
+import ReusableAsyncSelect from "@/components/shared/ReusableAsyncSelect";
 
 const productSchema = z.object({
   product_name: z.string().optional(),
@@ -47,7 +56,7 @@ const productSchema = z.object({
   description: z.string().optional(),
   gsttype: z.string().optional(),
   gstrate: z.string().optional(),
-  
+
   hsn: z.string().optional(),
   brand: z.string().optional(),
   ean: z.string().optional(),
@@ -63,16 +72,15 @@ const productSchema = z.object({
   packingcost: z.string().optional(),
   jobworkcost: z.string().optional(),
   othercost: z.string().optional(),
-  batchstock:z.string().optional(),
-  caption:z.string().optional(),
- 
+  batchstock: z.string().optional(),
+  caption: z.string().optional(),
 });
 
 const ProductActionCellRender = (params: any) => {
   const { productKey } = params.params.data;
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
- 
+
   const { toast } = useToast();
   const dispatch = useDispatch();
 
@@ -81,19 +89,16 @@ const ProductActionCellRender = (params: any) => {
       state.prod.data.find((prod: any) => prod?.pKey === productKey) || {}
   );
 
-
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
     defaultValues: {
       product_name: "",
       caption: "",
-      
     },
   });
 
-
   useEffect(() => {
-    if (productData) {
+    if (productData && productData.pKey === productKey) {
       form.reset({
         // pKey: productData.pKey,
         // sku: productData.sku,
@@ -125,16 +130,11 @@ const ProductActionCellRender = (params: any) => {
         batchstock: productData.batchstock,
         location: productData.loc,
         description: productData.description,
-        
-        
-      
-        
 
         // description: productData.description,
       });
     }
-  }, [productData,form]);
-
+  }, [productData]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -142,7 +142,7 @@ const ProductActionCellRender = (params: any) => {
       setSelectedFiles(files);
 
       // Generate preview URLs
-      const previews = files.map(file => URL.createObjectURL(file));
+      const previews = files.map((file) => URL.createObjectURL(file));
       setImagePreviews(previews);
     }
   };
@@ -152,11 +152,13 @@ const ProductActionCellRender = (params: any) => {
       const uploadPayload = {
         files: selectedFiles,
         product: productKey,
-        caption: form.getValues('caption') || '',
+        caption: form.getValues("caption") || "",
       };
 
       try {
-        const uploadAction = await dispatch(uploadProductImages(uploadPayload) as any);
+        const uploadAction = await dispatch(
+          uploadProductImages(uploadPayload) as any
+        );
 
         if (uploadProductImages.fulfilled.match(uploadAction)) {
           toast({
@@ -165,7 +167,9 @@ const ProductActionCellRender = (params: any) => {
           });
         } else if (uploadProductImages.rejected.match(uploadAction)) {
           toast({
-            title: (uploadAction.payload as { message: string })?.message || "Failed to upload images",
+            title:
+              (uploadAction.payload as { message: string })?.message ||
+              "Failed to upload images",
             className: "bg-red-600 text-white items-center",
           });
         }
@@ -186,24 +190,26 @@ const ProductActionCellRender = (params: any) => {
   async function onSubmit(value: any) {
     const payload = {
       ...value,
-      
+
       producttKey: productKey,
       status: value.active ? "active" : "inactive",
     };
-  
+
     try {
-      const action= await dispatch(updateProduct({ endpoint: `/products/updateProduct`, payload }) as any);
-  
+      const action = await dispatch(
+        updateProduct({ endpoint: `/products/updateProduct`, payload }) as any
+      );
+
       if (updateProduct.fulfilled.match(action)) {
-      
         toast({
           title: "Product updated successfully",
           className: "bg-green-600 text-white items-center",
         });
       } else if (updateProduct.rejected.match(action)) {
-       
         toast({
-          title: (action.payload as { message: string })?.message || "Failed to update product",
+          title:
+            (action.payload as { message: string })?.message ||
+            "Failed to update product",
           className: "bg-red-600 text-white items-center",
         });
       }
@@ -214,9 +220,8 @@ const ProductActionCellRender = (params: any) => {
         className: "bg-red-600 text-white items-center",
       });
     }
-  
   }
-  
+
   return (
     <div className="flex items-center gap-[10px]">
       <Sheet>
@@ -233,8 +238,11 @@ const ProductActionCellRender = (params: any) => {
           />
         </SheetTrigger>
         <SheetContent className="min-w-[60%] p-0">
-          <SheetHeader className={modelFixHeaderStyle}>
-            <SheetTitle>Updating: Oakmist 5 Ltr {productKey}</SheetTitle>
+          <SheetHeader
+            className={modelFixHeaderStyle}
+            style={{ padding: "40px" }}
+          >
+            <SheetTitle>Updating: {productData?.productname}</SheetTitle>
           </SheetHeader>
           <div className=" h-[calc(100vh-50px)]">
             <Form {...form}>
@@ -256,11 +264,11 @@ const ProductActionCellRender = (params: any) => {
                           name="product_name"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className=" text-slate-600 ml-[10px]">
+                              <FormLabel className={LableStyle}>
                                 Product name
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder="Product Name" {...field} />
+                                <Input placeholder="Product Name" {...field} className={InputStyle}/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -270,33 +278,22 @@ const ProductActionCellRender = (params: any) => {
                           control={form.control}
                           name="uom"
                           render={() => (
-                            <FormItem className="flex flex-col w-full">
-                              <FormLabel className=" text-slate-600 ml-[10px]">
-                                Umo Name
+                            <FormItem>
+                              <FormLabel className={LableStyle}>
+                                UOM{" "}
+                                <span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>
                               </FormLabel>
                               <FormControl>
-                                <Select
-                                  styles={customStyles}
-                                  placeholder="Product Type"
-                                  className="border-0 basic-single"
-                                  classNamePrefix="select border-0"
-                                  components={{ DropdownIndicator }}
-                                  isDisabled={false}
-                                  isLoading={true}
-                                  isClearable={true}
-                                  isSearchable={true}
-                                  name="color"
-                                  options={[
-                                    { label: "Good", value: "good" },
-                                    { label: "Service", value: "service" },
-                                  ]}
-                                  onChange={(value: any) =>
-                                    form.setValue("uom", value!.value)
+                                <ReusableAsyncSelect
+                                  placeholder="UOM"
+                                  endpoint="/uom"
+                                  transform={transformUomData}
+                                  fetchOptionWith="query"
+                                  onChange={(e: any) =>
+                                    form.setValue("uom", e.value)
                                   }
-                                  defaultValue={{
-                                    label: "Good",
-                                    value: "good",
-                                  }}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -309,10 +306,14 @@ const ProductActionCellRender = (params: any) => {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel className=" text-slate-600 ml-[10px]">
-                                productCategory
+                                ProductCategory
                               </FormLabel>
                               <FormControl>
-                              <Input placeholder="Product category" {...field} />
+                                <Input
+                                  placeholder="Product category"
+                                  {...field}
+                                  className={InputStyle}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -364,7 +365,7 @@ const ProductActionCellRender = (params: any) => {
                                 MRP
                               </FormLabel>
                               <FormControl>
-                              <Input placeholder="Mrp" {...field} />
+                                <Input placeholder="Mrp" {...field} className={InputStyle}/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -395,10 +396,7 @@ const ProductActionCellRender = (params: any) => {
                                     { label: "Service", value: "service" },
                                   ]}
                                   onChange={(value: any) =>
-                                    form.setValue(
-                                      "producttype",
-                                      value!.value
-                                    )
+                                    form.setValue("producttype", value!.value)
                                   }
                                   defaultValue={{
                                     label: "Good",
@@ -410,7 +408,7 @@ const ProductActionCellRender = (params: any) => {
                             </FormItem>
                           )}
                         />
-                         <FormField
+                        <FormField
                           control={form.control}
                           name="isenabled"
                           render={() => (
@@ -435,10 +433,7 @@ const ProductActionCellRender = (params: any) => {
                                   //   { label: "No", value: "N" },
                                   // ]}
                                   onChange={(value: any) =>
-                                    form.setValue(
-                                      "isenabled",
-                                      value.value
-                                    )
+                                    form.setValue("isenabled", value.value)
                                   }
                                   defaultValue={
                                     productData.enablestatus_name === "Y"
@@ -527,7 +522,7 @@ const ProductActionCellRender = (params: any) => {
                                 GST Rate
                               </FormLabel>
                               <FormControl>
-                              <Input placeholder="Gst Rate" {...field} />
+                                <Input placeholder="Gst Rate" {...field} className={InputStyle} />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -542,7 +537,7 @@ const ProductActionCellRender = (params: any) => {
                                 HSN
                               </FormLabel>
                               <FormControl>
-                              <Input placeholder="Hsn code" {...field} />
+                                <Input placeholder="Hsn code" {...field} className={InputStyle}/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -568,7 +563,7 @@ const ProductActionCellRender = (params: any) => {
                                 Brand
                               </FormLabel>
                               <FormControl>
-                              <Input placeholder="Brand" {...field} />
+                                <Input placeholder="Brand" {...field} className={InputStyle}/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -583,7 +578,7 @@ const ProductActionCellRender = (params: any) => {
                                 EAN
                               </FormLabel>
                               <FormControl>
-                              <Input placeholder="Ean" {...field} />
+                                <Input placeholder="Ean" {...field} className={InputStyle}/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -598,7 +593,7 @@ const ProductActionCellRender = (params: any) => {
                                 Weight
                               </FormLabel>
                               <FormControl>
-                              <Input placeholder="weight" {...field} />
+                                <Input placeholder="weight" {...field} className={InputStyle}/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -613,7 +608,7 @@ const ProductActionCellRender = (params: any) => {
                                 Volumetric Weight
                               </FormLabel>
                               <FormControl>
-                              <Input placeholder="vweight" {...field} />
+                                <Input placeholder="vweight" {...field} className={InputStyle}/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -628,7 +623,7 @@ const ProductActionCellRender = (params: any) => {
                                 Height
                               </FormLabel>
                               <FormControl>
-                              <Input placeholder="vweight" {...field} />
+                                <Input placeholder="vweight" {...field} className={InputStyle}/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -643,7 +638,7 @@ const ProductActionCellRender = (params: any) => {
                                 Width
                               </FormLabel>
                               <FormControl>
-                              <Input placeholder="width" {...field} />
+                                <Input placeholder="width" {...field} className={InputStyle}/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -669,7 +664,7 @@ const ProductActionCellRender = (params: any) => {
                                 MIN Stock (FG)
                               </FormLabel>
                               <FormControl>
-                              <Input placeholder="min stock" {...field} />
+                                <Input placeholder="min stock" {...field} className={InputStyle}/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -684,7 +679,7 @@ const ProductActionCellRender = (params: any) => {
                                 MIN Stock(RM)
                               </FormLabel>
                               <FormControl>
-                              <Input placeholder="min stock rm" {...field} />
+                                <Input placeholder="min stock rm" {...field} className={InputStyle}/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -699,7 +694,11 @@ const ProductActionCellRender = (params: any) => {
                                 MFG Batch Size
                               </FormLabel>
                               <FormControl>
-                              <Input placeholder="mfg batch size" {...field} />
+                                <Input
+                                  placeholder="mfg batch size"
+                                  {...field}
+                                  className={InputStyle}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -717,7 +716,7 @@ const ProductActionCellRender = (params: any) => {
                                 <Input
                                   placeholder="Default Stock Location"
                                   {...field}
-                                  className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0"
+                                  className={InputStyle}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -733,7 +732,7 @@ const ProductActionCellRender = (params: any) => {
                                 Labour Cost
                               </FormLabel>
                               <FormControl>
-                              <Input placeholder="labour cost" {...field} />
+                                <Input placeholder="labour cost" {...field} className={InputStyle}/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -752,7 +751,7 @@ const ProductActionCellRender = (params: any) => {
                                   type="number"
                                   placeholder="Sec Packing Cost"
                                   {...field}
-                                  className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0"
+                                  className={InputStyle}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -772,7 +771,7 @@ const ProductActionCellRender = (params: any) => {
                                   type="number"
                                   placeholder="JW Cost"
                                   {...field}
-                                  className="border-0 border-b rounded-none shadow-none placeholder:text-neutral-500 text-[15px] border-slate-600 focus:outline-none focus:ring-0 focus-visible:ring-0"
+                                  className={InputStyle}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -788,7 +787,7 @@ const ProductActionCellRender = (params: any) => {
                                 Other Cost
                               </FormLabel>
                               <FormControl>
-                              <Input placeholder="other cost" {...field} />
+                                <Input placeholder="other cost" {...field} className={InputStyle}/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -813,13 +812,14 @@ const ProductActionCellRender = (params: any) => {
       </Sheet>
       <Sheet>
         <SheetTrigger>
-          <Eye className="text-cyan-700 h-[20px] w-[20px]" onClick={() => {
+          <Eye
+            className="text-cyan-700 h-[20px] w-[20px]"
+            onClick={() => {
               if (productKey) {
-                dispatch(
-                  fetchImageProduct(productKey) as any
-                );
+                dispatch(fetchImageProduct(productKey) as any);
               }
-            }} />
+            }}
+          />
         </SheetTrigger>
         <SheetContent className="p-0">
           <SheetHeader className={modelFixHeaderStyle}>
@@ -832,60 +832,60 @@ const ProductActionCellRender = (params: any) => {
         </SheetContent>
       </Sheet>
       <Sheet>
-      <SheetTrigger>
-        <Upload className="text-cyan-700 h-[20px] w-[20px]" />
-      </SheetTrigger>
-      <SheetContent className="p-0">
-        <SheetHeader className={modelFixHeaderStyle}>
-          <SheetTitle className="text-slate-600">Oakmist Plus</SheetTitle>
-        </SheetHeader>
-        <div>
-          <div className="mt-[20px] flex flex-col gap-[20px] px-[20px]">
-            <Input 
-              placeholder="caption" 
-              className="border-slate-400" 
-              {...form.register('caption')}
-            />
-            <Label
-              htmlFor="image"
-              className="flex items-center justify-center border border-dashed border-slate-400 shadow h-[150px] rounded-md flex-col"
-            >
-              <Upload className="text-slate-300 h-[50px] w-[50px]" />
-              <p className="text-slate-500 mt-[20px]">
-                Select images to upload for this product.
-              </p>
-              <Input 
-                id="image" 
-                type="file" 
-                multiple 
-                onChange={handleFileChange} 
-                className="hidden" 
+        <SheetTrigger>
+          <Upload className="text-cyan-700 h-[20px] w-[20px]" />
+        </SheetTrigger>
+        <SheetContent className="p-0">
+          <SheetHeader className={modelFixHeaderStyle}>
+            <SheetTitle className="text-slate-600">Oakmist Plus</SheetTitle>
+          </SheetHeader>
+          <div>
+            <div className="mt-[20px] flex flex-col gap-[20px] px-[20px]">
+              <Input
+                placeholder="caption"
+                className="border-slate-400"
+                {...form.register("caption")}
               />
-            </Label>
-            {imagePreviews.length > 0 && (
-              <div className="flex flex-wrap gap-4 mt-4">
-                {imagePreviews.map((src, index) => (
-                  <img 
-                    key={index} 
-                    src={src} 
-                    alt={`Preview ${index + 1}`} 
-                    className="h-[100px] w-[100px] object-cover rounded-md shadow" 
-                  />
-                ))}
-              </div>
-            )}
+              <Label
+                htmlFor="image"
+                className="flex items-center justify-center border border-dashed border-slate-400 shadow h-[150px] rounded-md flex-col"
+              >
+                <Upload className="text-slate-300 h-[50px] w-[50px]" />
+                <p className="text-slate-500 mt-[20px]">
+                  Select images to upload for this product.
+                </p>
+                <Input
+                  id="image"
+                  type="file"
+                  multiple
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+              </Label>
+              {imagePreviews.length > 0 && (
+                <div className="flex flex-wrap gap-4 mt-4">
+                  {imagePreviews.map((src, index) => (
+                    <img
+                      key={index}
+                      src={src}
+                      alt={`Preview ${index + 1}`}
+                      className="h-[100px] w-[100px] object-cover rounded-md shadow"
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className={modelFixFooterStyle}>
+              <Button
+                className="bg-cyan-700 hover:bg-cyan-600"
+                onClick={uploadImages}
+              >
+                Upload Images
+              </Button>
+            </div>
           </div>
-          <div className={modelFixFooterStyle}>
-            <Button 
-              className="bg-cyan-700 hover:bg-cyan-600" 
-              onClick={uploadImages}
-            >
-              Upload Images
-            </Button>
-          </div>
-        </div>
-      </SheetContent>
-    </Sheet>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
