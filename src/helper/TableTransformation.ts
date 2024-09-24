@@ -95,5 +95,14 @@ export const transformProductTable = (data:any[])=>{
     
   }))
 }
+
+export const transformUomTable = (data:any[])=>{
+  return data.map((item)=>({
+    unit:item.units_name,
+    specification:item.units_details,
+    id:item.units_id,
+    
+  }))
+}
 export type TransformFunction = (data: any[]) => TransformedDataItem[];
 

@@ -36,7 +36,7 @@ interface ProductPayload {
   p_fsnid?:string,
   hsncode?:string,
   p_croma_code?:string,
-
+  specification?:string
 
 
   

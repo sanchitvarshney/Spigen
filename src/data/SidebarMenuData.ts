@@ -119,7 +119,7 @@ export const materialmenu = [
       //   ],
       // },
       // { name: "Component Map", path: "/not-permission" },
-      { name: "UOM", path: "/not-permission" },
+      { name: "UOM", path: "/master/uom" },
       { name: "Products", path: "/master/product/fg" },
       // { name: "HSN map", path: "/not-permission" },
       // { name: "Groups", path: "/not-permission" },

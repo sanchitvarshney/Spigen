@@ -33,6 +33,7 @@ import MasterCustomerPage from "./pages/masterModule/MasterCustomerPage";
 import NotPermissionPage from "./pages/NotPermissionPage";
 import CreateSalesOrderPage from "./pages/salesModule/CreateSalesOrderPage";
 import CreateEwayBill from "@/config/agGrid/invoiceModule/CreateEwayBill";
+import UomPage from "@/pages/masterModule/uom/UomPage";
 // Define the authenticated routes
 const router = createBrowserRouter([
   {
@@ -220,6 +221,16 @@ const router = createBrowserRouter([
       </Protected>
     ),
     path: "/master/product/fg",
+  },
+  {
+    element: (
+      <Protected authentication>
+        <MainLayout>
+            <UomPage />
+        </MainLayout>
+      </Protected>
+    ),
+    path: "/master/uom",
   },
   {
     element: (

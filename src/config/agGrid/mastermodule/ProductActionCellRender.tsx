@@ -56,7 +56,11 @@ const productSchema = z.object({
   description: z.string().optional(),
   gsttype: z.string().optional(),
   gstrate: z.string().optional(),
-
+  asin: z.string({ required_error: "Asin is required" }),
+  fnsku: z.string({ required_error: "Fnsku is required" }),
+  item_code: z.string({ required_error: "Item code is required" }),
+  fsnid: z.string({ required_error: "Fsnid is required" }),
+  croma_code: z.string({ required_error: "Croma code is required" }),
   hsn: z.string().optional(),
   brand: z.string().optional(),
   ean: z.string().optional(),
@@ -109,6 +113,11 @@ const ProductActionCellRender = (params: any) => {
         mrp: productData.mrp,
         producttype: productData.producttype_name,
         // costprice: productData.costprice,
+        asin: productData.asin,
+        fnsku: productData.fnsku,
+        item_code: productData.item_code,
+        fsnid: productData.fsnid,
+        croma_code: productData.croma_code,
         isenabled: productData.enablestatus_name,
         gsttype: productData.tax_type_name,
         gstrate: productData.gstrate_name,
@@ -135,7 +144,7 @@ const ProductActionCellRender = (params: any) => {
       });
     }
   }, [productData]);
-
+  console.log(productData, "productData", form.getValues());
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const files = Array.from(event.target.files);
@@ -268,7 +277,11 @@ const ProductActionCellRender = (params: any) => {
                                 Product name
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder="Product Name" {...field} className={InputStyle}/>
+                                <Input
+                                  placeholder="Product Name"
+                                  {...field}
+                                  className={InputStyle}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -294,6 +307,7 @@ const ProductActionCellRender = (params: any) => {
                                   onChange={(e: any) =>
                                     form.setValue("uom", e.value)
                                   }
+                                  value={productData?.uomid}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -365,7 +379,12 @@ const ProductActionCellRender = (params: any) => {
                                 MRP
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder="Mrp" {...field} className={InputStyle}/>
+                                <Input
+                                  placeholder="Mrp"
+                                  {...field}
+                                  className={InputStyle}
+                                  readOnly
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -392,8 +411,8 @@ const ProductActionCellRender = (params: any) => {
                                   isSearchable={true}
                                   name="color"
                                   options={[
-                                    { label: "Good", value: "good" },
-                                    { label: "Service", value: "service" },
+                                    { label: "FG", value: "fg" },
+                                    { label: "SFG", value: "sfg" },
                                   ]}
                                   onChange={(value: any) =>
                                     form.setValue("producttype", value!.value)
@@ -471,6 +490,127 @@ const ProductActionCellRender = (params: any) => {
                   <Card className="border rounded-md shadow-sm">
                     <CardHeader className="h-[50px] p-0 px-[10px] flex justify-center bg-hbg">
                       <CardTitle className="font-[500] text-slate-600">
+                        Other Details
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="mt-[20px] px-[10px]">
+                      <div className="grid grid-cols-3 gap-[30px] items-center ">
+                        <FormField
+                          control={form.control}
+                          name="item_code"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                Item Code{" "}
+                                <span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Item Code"
+                                  {...field}
+                                  className={InputStyle}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="fsnid"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                FSN ID{" "}
+                                <span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="FSN ID"
+                                  {...field}
+                                  className={InputStyle}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="croma_code"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                Croma Code{" "}
+                                <span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Croma Code"
+                                  {...field}
+                                  className={InputStyle}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="fnsku"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                FNSKU{" "}
+                                <span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="FNSKU"
+                                  {...field}
+                                  className={InputStyle}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="asin"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className=" text-slate-600 ml-[10px]">
+                                ASIN{" "}
+                                <span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="ASIN"
+                                  {...field}
+                                  className={InputStyle}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card className="border rounded-md shadow-sm">
+                    <CardHeader className="h-[50px] p-0 px-[10px] flex justify-center bg-hbg">
+                      <CardTitle className="font-[500] text-slate-600">
                         Tax Details
                       </CardTitle>
                     </CardHeader>
@@ -522,7 +662,11 @@ const ProductActionCellRender = (params: any) => {
                                 GST Rate
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder="Gst Rate" {...field} className={InputStyle} />
+                                <Input
+                                  placeholder="Gst Rate"
+                                  {...field}
+                                  className={InputStyle}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -537,7 +681,11 @@ const ProductActionCellRender = (params: any) => {
                                 HSN
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder="Hsn code" {...field} className={InputStyle}/>
+                                <Input
+                                  placeholder="Hsn code"
+                                  {...field}
+                                  className={InputStyle}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -563,7 +711,11 @@ const ProductActionCellRender = (params: any) => {
                                 Brand
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder="Brand" {...field} className={InputStyle}/>
+                                <Input
+                                  placeholder="Brand"
+                                  {...field}
+                                  className={InputStyle}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -578,7 +730,11 @@ const ProductActionCellRender = (params: any) => {
                                 EAN
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder="Ean" {...field} className={InputStyle}/>
+                                <Input
+                                  placeholder="Ean"
+                                  {...field}
+                                  className={InputStyle}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -593,7 +749,11 @@ const ProductActionCellRender = (params: any) => {
                                 Weight
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder="weight" {...field} className={InputStyle}/>
+                                <Input
+                                  placeholder="weight"
+                                  {...field}
+                                  className={InputStyle}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -608,7 +768,11 @@ const ProductActionCellRender = (params: any) => {
                                 Volumetric Weight
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder="vweight" {...field} className={InputStyle}/>
+                                <Input
+                                  placeholder="vweight"
+                                  {...field}
+                                  className={InputStyle}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -623,7 +787,11 @@ const ProductActionCellRender = (params: any) => {
                                 Height
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder="vweight" {...field} className={InputStyle}/>
+                                <Input
+                                  placeholder="vweight"
+                                  {...field}
+                                  className={InputStyle}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -638,7 +806,11 @@ const ProductActionCellRender = (params: any) => {
                                 Width
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder="width" {...field} className={InputStyle}/>
+                                <Input
+                                  placeholder="width"
+                                  {...field}
+                                  className={InputStyle}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -664,7 +836,11 @@ const ProductActionCellRender = (params: any) => {
                                 MIN Stock (FG)
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder="min stock" {...field} className={InputStyle}/>
+                                <Input
+                                  placeholder="min stock"
+                                  {...field}
+                                  className={InputStyle}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -679,7 +855,11 @@ const ProductActionCellRender = (params: any) => {
                                 MIN Stock(RM)
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder="min stock rm" {...field} className={InputStyle}/>
+                                <Input
+                                  placeholder="min stock rm"
+                                  {...field}
+                                  className={InputStyle}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -732,7 +912,11 @@ const ProductActionCellRender = (params: any) => {
                                 Labour Cost
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder="labour cost" {...field} className={InputStyle}/>
+                                <Input
+                                  placeholder="labour cost"
+                                  {...field}
+                                  className={InputStyle}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -787,7 +971,11 @@ const ProductActionCellRender = (params: any) => {
                                 Other Cost
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder="other cost" {...field} className={InputStyle}/>
+                                <Input
+                                  placeholder="other cost"
+                                  {...field}
+                                  className={InputStyle}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
