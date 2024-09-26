@@ -161,7 +161,12 @@ const AddSalesOrder = ({
   );
 
   const onBtExport = useCallback(() => {
-    gridRef.current!.api.exportDataAsExcel();
+    const link = document.createElement('a');
+    link.href = 'https://spigen.mscapi.live/files/excel/Sales%20Order%20Sample.xlsx';
+    link.setAttribute('download', 'Sales_Order_Sample.xlsx'); // Specify the download name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }, []);
 
   const materials = {

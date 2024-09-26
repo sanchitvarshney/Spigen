@@ -32,7 +32,7 @@ const MasterEditViewBranch: React.FC<Props> = ({ uiState }) => {
         useEffect(() => {
           if (params.data.clientID) {
             console.log("dispatch");
-            dispatch(fetchClientDetails(params.data.clientID) as any)
+            dispatch(fetchClientDetails(params.data.clientID) as any);
           }
         }, [params]);
         return (
@@ -50,7 +50,7 @@ const MasterEditViewBranch: React.FC<Props> = ({ uiState }) => {
     }),
     []
   );
-  
+
   useEffect(() => {
     if (clientDetails) {
       const foundClient = clientDetails.find(
@@ -63,7 +63,12 @@ const MasterEditViewBranch: React.FC<Props> = ({ uiState }) => {
   console.log(clientDetails, rowId, "++++", clientData);
   return (
     <Sheet open={editView} onOpenChange={setEditView}>
-      <SheetContent className="min-w-[100%]">
+      <SheetContent
+        className="min-w-[100%]"
+        onInteractOutside={(e: any) => {
+          e.preventDefault();
+        }}
+      >
         <SheetHeader>
           <SheetTitle>All Branch: {params?.data?.clientID}</SheetTitle>
         </SheetHeader>

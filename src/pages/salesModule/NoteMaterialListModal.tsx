@@ -31,7 +31,10 @@ const NoteMaterialListModal: React.FC<NoteMaterialListModalProps> = ({
   onClose,
   isGenerate,
 }) => {
-  const { materialListData,loading }: { materialListData: any, loading:boolean } = useSelector(
+  const {
+    materialListData,
+    loading,
+  }: { materialListData: any; loading: boolean } = useSelector(
     (state: RootState) => state.creditDebitRegister
   );
 
@@ -78,7 +81,12 @@ const NoteMaterialListModal: React.FC<NoteMaterialListModalProps> = ({
   return (
     <Sheet open={visible} onOpenChange={onClose}>
       <SheetHeader></SheetHeader>
-      <SheetContent side={"bottom"}>
+      <SheetContent
+        side={"bottom"}
+        onInteractOutside={(e: any) => {
+          e.preventDefault();
+        }}
+      >
         <SheetTitle>
           Invoice Details : {materialListData?.header?.note_id}
         </SheetTitle>

@@ -77,7 +77,9 @@ const CreateSalesOrder: React.FC<Props> = ({
   const uiState: MasterCustomer = {
     clientEdit: false,
     setClientEdit: () => {},
-    params: data?.client?.find((value:any) => value.code === form.getValues("customer")),
+    params: data?.client?.find(
+      (value: any) => value.code === form.getValues("customer")
+    ),
     clientBranch,
     setClientBranch,
     editView: false,
@@ -85,7 +87,7 @@ const CreateSalesOrder: React.FC<Props> = ({
     clientId: data?.client?.code,
     module: "create",
   };
-console.log(data)
+
   useEffect(() => {
     dispatch(updateFormData(form.control._formValues));
   }, [form]);
@@ -1262,10 +1264,14 @@ console.log(data)
                 <SheetTitle className="text-slate-600">
                   Notifications
                 </SheetTitle>
-                
               </SheetHeader>
-              <SheetContent className="min-w-[90%]">
-                <MasterCustomerPage  module="salesorder"/>
+              <SheetContent
+                className="min-w-[90%]"
+                onInteractOutside={(e: any) => {
+                  e.preventDefault();
+                }}
+              >
+                <MasterCustomerPage module="salesorder" />
               </SheetContent>
             </Sheet>
           </div>

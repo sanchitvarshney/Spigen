@@ -102,7 +102,12 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
 
   return (
     <Sheet open={clientBranch} onOpenChange={setClientBranch}>
-      <SheetContent className="min-w-[60%]">
+      <SheetContent
+        className="min-w-[60%]"
+        onInteractOutside={(e: any) => {
+          e.preventDefault();
+        }}
+      >
         <SheetHeader>
           <SheetTitle className="text-slate-600">
             {module === "create"

@@ -100,7 +100,12 @@ const MasterClientEdit: React.FC<Props> = ({
 
   return (
     <Sheet open={clientEdit} onOpenChange={setClientEdit}>
-      <SheetContent className="min-w-[50%]">
+      <SheetContent
+        className="min-w-[50%]"
+        onInteractOutside={(e: any) => {
+          e.preventDefault();
+        }}
+      >
         <SheetHeader>
           <SheetTitle>Update Bill To Details: {clientId}</SheetTitle>
           <div>

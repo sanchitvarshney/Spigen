@@ -115,7 +115,12 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
   return (
     <Sheet open={visible} onOpenChange={onClose}>
       <SheetHeader></SheetHeader>
-      <SheetContent side={"bottom"}>
+      <SheetContent
+        side={"bottom"}
+        onInteractOutside={(e: any) => {
+          e.preventDefault();
+        }}
+      >
         <SheetTitle>
           Invoice Details : {sellRequestDetails?.header?.invoiceNo}
         </SheetTitle>

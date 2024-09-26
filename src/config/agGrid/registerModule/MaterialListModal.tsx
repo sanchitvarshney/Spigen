@@ -37,7 +37,12 @@ const MaterialListModal: React.FC<MaterialListModalProps> = ({
   return (
     <Sheet open={visible} onOpenChange={onClose}>
       <SheetHeader></SheetHeader>
-      <SheetContent side={"bottom"}>
+      <SheetContent
+        side={"bottom"}
+        onInteractOutside={(e: any) => {
+          e.preventDefault();
+        }}
+      >
         <SheetTitle>Material List of</SheetTitle>
         <div className="ag-theme-quartz h-[calc(100vh-140px)]">
           <AgGridReact

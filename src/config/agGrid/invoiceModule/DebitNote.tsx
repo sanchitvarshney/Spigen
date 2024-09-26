@@ -173,7 +173,12 @@ const DebitNote: React.FC<DebitNoteProps> = ({
   return (
     <Sheet open={visible} onOpenChange={onClose}>
       <SheetHeader></SheetHeader>
-      <SheetContent side={"bottom"}>
+      <SheetContent
+        side={"bottom"}
+        onInteractOutside={(e: any) => {
+          e.preventDefault();
+        }}
+      >
         <SheetTitle>
           Create Debit Note of {sellRequestDetails?.header?.invoiceNo}
         </SheetTitle>
@@ -394,7 +399,6 @@ const DebitNote: React.FC<DebitNoteProps> = ({
             Submit
           </Button>
         </div>
-        
       </SheetContent>
       <SheetFooter></SheetFooter>
     </Sheet>

@@ -168,10 +168,15 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
-      <SheetContent className="min-w-[60%]">
+      <SheetContent
+        className="min-w-[60%]"
+        onInteractOutside={(e: any) => {
+          e.preventDefault();
+        }}
+      >
         <SheetHeader>
           <SheetTitle className="text-slate-600">
-            Update Branch: {data?.addressID} 
+            Update Branch: {data?.addressID}
           </SheetTitle>
         </SheetHeader>
 

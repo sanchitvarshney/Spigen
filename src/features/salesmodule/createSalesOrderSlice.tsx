@@ -201,6 +201,22 @@ export const fetchBillingAddressList = createAsyncThunk<
   }
 });
 
+export const uploadExcel = createAsyncThunk<
+  any, // Define the type of the data you expect to return
+  { file: File } // Define the type of the argument you expect
+>("/client/uploadExcel", async ({ file }) => {
+  const formData = new FormData();
+  formData.append('file', file); // Append the file to FormData
+
+  const response = await spigenAxios.post("/sellRequest/uploadSOItems", formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data', // Set appropriate headers
+    },
+  });
+
+  return response.data;
+});
+
 // Define the async thunk for fetching client address detail
 export const fetchClientAddressDetail = createAsyncThunk<
   ClientAddressDetail,
