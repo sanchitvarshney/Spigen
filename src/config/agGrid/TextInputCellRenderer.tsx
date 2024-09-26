@@ -52,11 +52,11 @@ const frameworks = [
 const type = [
   {
     value: "product",
-    label: "Product",
+    label: "product",
   },
   {
     value: "component",
-    label: "Component",
+    label: "component",
   },
 ];
 
@@ -100,7 +100,7 @@ const TextInputCellRenderer = (props: any) => {
       // Example payload for deleteProduct
       const payload: DeletePayload = {
         item: data?.material?.text,
-        so_id: (params.id as string).replace(/_/g, "/"),
+        so_id: (params?.id as string)?.replace(/_/g, "/"),
         updaterow: data?.updateid,
       };
       if (window.location.pathname.includes("update")) {
@@ -254,7 +254,12 @@ const TextInputCellRenderer = (props: any) => {
             filterOption={false}
             showSearch
             placeholder="Select Material"
-            onSearch={(e) => props.setSearch(e)}
+            onSearch={(e) => {
+              props.setSearch(e);
+              if (data.type) {
+                props.onSearch(e, data.type);
+              }
+            }}
             options={transformOptionData(componentDetails || [])}
             onChange={(e) => handleChange(e.value)}
             value={typeof value === "string" ? { value } : value?.text}

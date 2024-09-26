@@ -43,7 +43,7 @@ const AddSalesOrder = ({
   const [cgstTotal, setCgstTotal] = useState(0);
   const [sgstTotal, setSgstTotal] = useState(0);
   const [igstTotal, setIgstTotal] = useState(0);
-  const [search, setSearch] = useState("");
+  const [search] = useState("");
   const dispatch = useDispatch<AppDispatch>();
   const params = useParams();
 
@@ -114,11 +114,13 @@ const AddSalesOrder = ({
     return () => clearInterval(intervalId); // Clean up on unmount
   }, [rowData]);
 
-  useEffect(() => {
-    if (search) {
-      dispatch(fetchComponentDetail({ search }));
+  const handleSearch = (searchKey: string, type: any) => {
+    if (searchKey) { // Ensure there's a search key before dispatching
+      console.log(searchKey, type);
+      dispatch(fetchComponentDetail({ search: searchKey, type }));
     }
-  }, [search]);
+  };
+  
 
   const defaultColDef = useMemo<ColDef>(() => {
     return {
@@ -145,8 +147,9 @@ const AddSalesOrder = ({
         <TextInputCellRenderer
           {...props}
           componentDetails={componentDetails}
-          setSearch={setSearch}
+          setSearch={handleSearch}
           search={search}
+          onSearch={handleSearch}
           currency={currency}
           setRowData={setRowData}
         />

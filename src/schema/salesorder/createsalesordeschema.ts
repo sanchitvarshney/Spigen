@@ -53,54 +53,52 @@ import { z } from "zod";
 const baseSchema = z.object({
   channel: z.string({ required_error: "Please select a channel name" }),
   bill_id: z.string({ required_error: "Please select Billing Address" }),
-  billing_address1: z.string({
-    required_error:
+  billing_address1: z.string().min(10, {
+    message:  "Please add your Billing Address (Description must be between 10 and 100 characters)",
+  }),
+  billing_address2: z.string().min(10, {
+    message:  "Please add your Billing Address (Description must be between 10 and 100 characters)",
+  }),
+  bill_from_gst: z.string().min(15,{
+    message: "Please enter Billing GSTIN Number",
+  }),
+  bill_pan: z.string().min(10,{ message: "Plenter Billing PAN Number" }),
+  customer_address1: z.string().min(10, {
+    message:
       "Please add your Billing Address (Description must be between 10 and 100 characters)",
   }),
-  billing_address2: z.string({
-    required_error:
+  customer_address2: z.string().min(10, {
+    message:
       "Please add your Billing Address (Description must be between 10 and 100 characters)",
   }),
-  bill_from_gst: z.string({
-    required_error: "Please enter Billing GSTIN Number",
-  }),
-  bill_pan: z.string({ required_error: "Plenter Billing PAN Number" }),
-  customer_address1: z.string({
-    required_error:
-      "Please add your Billing Address (Description must be between 10 and 100 characters)",
-  }),
-  customer_address2: z.string({
-    required_error:
-      "Please add your Billing Address (Description must be between 10 and 100 characters)",
-  }),
-  customer_gstin: z.string({ required_error: "Please provide GST" }),
+  customer_gstin: z.string().min(15,{ message: "Please provide GST" }),
   isSameClientAdd: z.string().optional(),
   customer_branch: z.string({ required_error: "Please select Vendor Branch" }),
   // customr_branch:z.object({
   //   value: z.string({ required_error: "Customer Branch is required" }),
   //   label: z.string({ required_error: "Customer Branch is required" }),
   // }),
-  shipping_gstin: z.string({
-    required_error: "Please enter Shipping GSTIN Number",
+  shipping_gstin: z.string().min(15, {
+    message: "Please enter Shipping GSTIN Number",
   }),
-  shipping_pinCode: z.string({
-    required_error: "Please enter Shipping Pincode",
+  shipping_pinCode: z.string().min(6, {
+    message: "Please enter Shipping Pincode",
   }),
-  shipping_id: z.string({ required_error: "Please select Shipping Address" }),
-  shipping_address1: z.string({
-    required_error:
+  shipping_id: z.string().min(1, { message: "Please select Shipping Address" }),
+  shipping_address1: z.string().min(10, {
+    message:
       "Please add your Shipping Address (Description must be between 10 and 100 characters)",
   }),
-  shipping_address2: z.string({
-    required_error:
+  shipping_address2: z.string().min(10, {
+    message:
       "Please add your Shipping Address (Description must be between 10 and 100 characters)",
   }),
   shipping_state: z.string({ required_error: "Please select Shipping State" }),
-  shipping_pan: z.string({
-    required_error: "Please enter Shipping PAN Number",
+  shipping_pan: z.string().min(6, {
+    message: "Please enter Shipping PAN Number",
   }),
-  place_of_supply: z.string({
-    required_error: "Please provide place of supply",
+  place_of_supply: z.string().min(1, {
+    message: "Please provide place of supply",
   }),
   bill_name: z.string(),
   // Optional fields
@@ -117,40 +115,40 @@ const baseSchema = z.object({
 const channelSchemas = z.discriminatedUnion("channel", [
   z.object({
     channel: z.literal("BLK"),
-    po_number: z.string({ required_error: "Please enter PO number" }),
-    blkt_vendor_code: z.string({ required_error: "Please enter Vendor Code" }),
+    po_number: z.string().min(1, { message: "Please enter PO number" }),
+    blkt_vendor_code: z.string().min(1, { message: "Please enter Vendor Code" }),
   }),
   z.object({
     channel: z.literal("AMZ"),
-    amz_fba_ship_id: z.string({ required_error: "Please enter FBA Shipment" }),
-    amz_fba_app: z.string({ required_error: "Please enter FBA Appointment" }),
-    amz_hawb: z.string({ required_error: "Please enter HAWB number" }),
-    customer: z.string({ required_error: "Please select client Name" }),
+    amz_fba_ship_id: z.string().min(1,{ message: "Please enter FBA Shipment" }),
+    amz_fba_app: z.string().min(1,{ message: "Please enter FBA Appointment" }),
+    amz_hawb: z.string().min(1,{ message: "Please enter HAWB number" }),
+    customer: z.string().min(1,{ message: "Please select client Name" }),
   }),
   z.object({
     channel: z.literal("AMZ_IMP"),
-    amz_fba_ship_id: z.string({ required_error: "Please enter FBA Shipment" }),
-    amz_fba_app: z.string({ required_error: "Please enter FBA Appointment" }),
-    customer: z.string({ required_error: "Please select client Name" }),
+    amz_fba_ship_id: z.string().min(1,{ message: "Please enter FBA Shipment" }),
+    amz_fba_app: z.string().min(1,{ message: "Please enter FBA Appointment" }),
+    customer: z.string().min(1,{ message: "Please select client Name" }),
   }),
   z.object({
     channel: z.literal("FLK"),
-    flk_consg_id: z.string({ required_error: "Please enter Consignment Id" }),
-    customer: z.string({ required_error: "Please select client Name" }),
+    flk_consg_id: z.string().min(1,{ message: "Please enter Consignment Id" }),
+    customer: z.string().min(1,{ message: "Please select client Name" }),
   }),
   z.object({
     channel: z.literal("FLK_VC"),
-    po_number: z.string({ required_error: "Please enter PO number" }),
-    customer: z.string({ required_error: "Please select client Name" }),
+    po_number: z.string().min(1,{ message: "Please enter PO number" }),
+    customer: z.string().min(1,{ message: "Please select client Name" }),
   }),
   z.object({
     channel: z.literal("CROMA"),
-    po_number: z.string({ required_error: "Please enter PO number" }),
-    customer: z.string({ required_error: "Please select client Name" }),
+    po_number: z.string().min(1,{ message: "Please enter PO number" }),
+    customer: z.string().min(1,{ message: "Please select client Name" }),
   }),
   z.object({
     channel: z.literal("B2B"),
-    b2b_order_id: z.string({ required_error: "Please enter Order Id" }),
+    b2b_order_id: z.string().min(1,{ message: "Please enter Order Id" }),
   }),
 ]);
 

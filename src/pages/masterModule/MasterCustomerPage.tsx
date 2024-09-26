@@ -32,7 +32,7 @@ import {
 import { InputStyle, LableStyle } from "@/constants/themeContants";
 import { Tooltip } from "antd";
 
-const MasterCustomerPage: React.FC = () => {
+const MasterCustomerPage: React.FC<any> = (props: any) => {
   const { toast } = useToast();
   const dispatch = useDispatch<AppDispatch>();
   const { channelList } = useSelector((state: RootState) => state.client);
@@ -67,14 +67,21 @@ const MasterCustomerPage: React.FC = () => {
         })
       ).unwrap();
 
-      if (resultAction.message) {
+      if (resultAction.code === 200) {
         toast({
-          title: "Client created successfully",
+          title:
+            typeof resultAction.message === "string"
+              ? resultAction.message
+              : JSON.stringify(resultAction.message),
           className: "bg-green-600 text-white items-center",
         });
+        form.reset();
       } else {
         toast({
-          title: resultAction.message || "Failed to Create Product",
+          title:
+            typeof resultAction.message === "string"
+              ? resultAction.message
+              : JSON.stringify(resultAction.message),
           className: "bg-red-600 text-white items-center",
         });
       }
@@ -116,6 +123,11 @@ const MasterCustomerPage: React.FC = () => {
   return (
     <div className="h-[calc(100vh-50px)] grid grid-cols-[450px_1fr]">
       <div className="h-[calc(100vh-50px)] overflow-y-auto bg-white">
+        {props?.module === "salesorder" && (
+          <h3 className="text-[17px] text-slate-600 font-[600]">
+            Add Bill To Details
+          </h3>
+        )}
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -302,7 +314,7 @@ const MasterCustomerPage: React.FC = () => {
           </form>
         </Form>
       </div>
-      <div>
+      <div className={props.module === "salesorder" ? "pt-10" : "pt-0"}>
         <ReusableTable
           components={components}
           heigth="h-[calc(100vh-50px)]"

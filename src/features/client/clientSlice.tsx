@@ -30,6 +30,7 @@ export interface ApiResponse<T> {
   data: T;
   message?: string | null;
   status?: string | null;
+  code?: number;
 }
 
 export const fetchClient = createAsyncThunk<
@@ -61,6 +62,13 @@ export const fetchchannelList = createAsyncThunk<
   ApiResponse<any>
 >("/products", async () => {
   const response = await spigenAxios.get("channel/getChannel");
+  return response.data;
+});
+
+export const fetchClientList = createAsyncThunk<
+  ApiResponse<any>
+>("/products", async () => {
+  const response = await spigenAxios.get("client/getClient");
   return response.data;
 });
 

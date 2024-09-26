@@ -31,7 +31,7 @@ import { InputStyle, LableStyle } from "@/constants/themeContants";
 import styled from "styled-components";
 
 const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
-  const { clientBranch, setClientBranch, params } = uiState;
+  const { clientBranch, setClientBranch, params, module } = uiState;
   const clientId = params?.data?.clientID;
 
   const { toast } = useToast();
@@ -72,20 +72,26 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
           endpoint: "/client/addBranch",
           payload: {
             ...values,
-            clientCode: clientId,
+            clientCode: module === "create" ? params?.code : clientId,
           },
         })
       ).unwrap();
 
       if (resultAction.code === 200) {
         toast({
-          title: resultAction.message || "Branch created successfully",
+          title:
+            typeof resultAction.message === "string"
+              ? resultAction.message
+              : JSON.stringify(resultAction.message),
           className: "bg-green-600 text-white items-center",
         });
         setClientBranch(false);
       } else {
         toast({
-          title: resultAction.message || "Failed to Create Branch",
+          title:
+            typeof resultAction.message === "string"
+              ? resultAction.message
+              : JSON.stringify(resultAction.message),
           className: "bg-red-600 text-white items-center",
         });
       }
@@ -99,7 +105,9 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
       <SheetContent className="min-w-[60%]">
         <SheetHeader>
           <SheetTitle className="text-slate-600">
-            {params?.data?.name} ({clientId})
+            {module === "create"
+              ? `${params?.name} (${params?.code})`
+              : `${params?.data?.name} (${clientId})`}
           </SheetTitle>
         </SheetHeader>
         <div className="my-[20px]">
@@ -320,15 +328,19 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                             <input
                               type="checkbox"
                               checked={field.value}
-                              onChange={(e: any) =>
-                                {form.setValue("useAsShipmentAddress", e.target.checked)
-                                  copyAddressToShipment();
-                                }
-                              }
+                              onChange={(e: any) => {
+                                form.setValue(
+                                  "useAsShipmentAddress",
+                                  e.target.checked
+                                );
+                                copyAddressToShipment();
+                              }}
                             />
                             <span className="slider"></span>
                           </label>
-                          <p className="text-slate-600 text-[13px]">Same as Bill To</p>
+                          <p className="text-slate-600 text-[13px]">
+                            Same as Bill To
+                          </p>
                         </Switch>
                       </FormControl>
                       <FormMessage />
@@ -544,8 +556,6 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
     </Sheet>
   );
 };
-
-
 
 const Switch = styled.div`
   .switch {

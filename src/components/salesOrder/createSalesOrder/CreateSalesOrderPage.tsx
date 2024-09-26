@@ -1,8 +1,7 @@
-import AddSalesOrder from "@/components/shared/AddSalesOrder";
-import CreateSalesOrder from "@/components/shared/CreateSalesOrder";
+import AddSalesOrder from "@/components/salesOrder/createSalesOrder/AddSalesOrder";
+import CreateSalesOrder from "@/components/salesOrder/createSalesOrder/CreateSalesOrder";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import {
-  fetchBillingAddress,
   fetchBillingAddressList,
   fetchClient,
   fetchClientAddressDetail,
@@ -171,7 +170,6 @@ useEffect(() => {
   }, [channel]);
 
   useEffect(() => {
-    dispatch(fetchBillingAddress({ billing_code: "R26331LI" }));
     dispatch(fetchBillingAddressList({ search: "" }));
     dispatch(fetchCountries());
     dispatch(fetchStates());

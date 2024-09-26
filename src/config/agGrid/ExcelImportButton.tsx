@@ -36,6 +36,7 @@ const ExcelImportButton: React.FC<ExcelImportButtonProps> = ({ onImport }) => {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
+      console.log(file)
       handleFileRead(file);
     }
   }, []);

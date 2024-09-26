@@ -4,10 +4,16 @@ import Select from "react-select";
 import { customStyles } from "@/config/reactSelect/SelectColorConfig";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import DropdownIndicator from "@/config/reactSelect/DropdownIndicator";
 import { Badge } from "@/components/ui/badge";
 import styled from "styled-components";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store";
 import {
@@ -41,6 +47,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { createSalesFormSchema } from "@/schema/salesorder/createsalesordeschema";
+import { toast } from "@/components/ui/use-toast";
+import MasterClientBranch from "@/components/shared/MasterClientBranch";
+import { MasterCustomer } from "@/types/masterModule/masterCustomerTypes";
+import MasterCustomerPage from "@/pages/masterModule/MasterCustomerPage";
 
 interface Props {
   setTab: Dispatch<SetStateAction<string>>;
@@ -62,24 +72,55 @@ const CreateSalesOrder: React.FC<Props> = ({
   handleClientChange,
 }: any) => {
   const dispatch = useDispatch<AppDispatch>();
-
+  const [clientBranch, setClientBranch] = useState<boolean>(false);
+  const [addBillToDetails, setEditBillToDetails] = useState<boolean>(false);
+  const uiState: MasterCustomer = {
+    clientEdit: false,
+    setClientEdit: () => {},
+    params: data?.client?.find((value:any) => value.code === form.getValues("customer")),
+    clientBranch,
+    setClientBranch,
+    editView: false,
+    setEditView: () => {},
+    clientId: data?.client?.code,
+    module: "create",
+  };
+console.log(data)
   useEffect(() => {
     dispatch(updateFormData(form.control._formValues));
   }, [form]);
 
   const handleBillingAddressChange = (e: any) => {
-    form.setValue("bill_to_label", e.label, { shouldValidate: true, shouldDirty: true });
+    form.setValue("bill_to_label", e.label, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
     const billingCode = e.value;
-    form.setValue("bill_id", billingCode, { shouldValidate: true, shouldDirty: true });
+    form.setValue("bill_id", billingCode, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
 
     dispatch(fetchBillingAddress({ billing_code: billingCode })).then(
       (response: any) => {
         if (response.meta.requestStatus === "fulfilled") {
           const billingData = response.payload;
-          form.setValue("billing_address1", billingData.billing_address1, { shouldValidate: true, shouldDirty: true });
-          form.setValue("billing_address2", billingData.billing_address2, { shouldValidate: true, shouldDirty: true });
-          form.setValue("bill_from_gst", billingData.gstin, { shouldValidate: true, shouldDirty: true });
-          form.setValue("bill_pan", billingData.pan, { shouldValidate: true, shouldDirty: true });
+          form.setValue("billing_address1", billingData.billing_address1, {
+            shouldValidate: true,
+            shouldDirty: true,
+          });
+          form.setValue("billing_address2", billingData.billing_address2, {
+            shouldValidate: true,
+            shouldDirty: true,
+          });
+          form.setValue("bill_from_gst", billingData.gstin, {
+            shouldValidate: true,
+            shouldDirty: true,
+          });
+          form.setValue("bill_pan", billingData.pan, {
+            shouldValidate: true,
+            shouldDirty: true,
+          });
         }
       }
     );
@@ -90,40 +131,103 @@ const CreateSalesOrder: React.FC<Props> = ({
   ) => {
     if (e.target.checked) {
       form.setValue("isSameClientAdd", "Y");
-      form.setValue("shipping_id", form.getValues("bill_name"), { shouldValidate: true, shouldDirty: true });
-      form.setValue("shipping_pan", "", { shouldValidate: true, shouldDirty: true });
-      form.setValue("shipping_pinCode", "", { shouldValidate: true, shouldDirty: true });
-      form.setValue("shipping_gstin", form.getValues("customer_gstin"), { shouldValidate: true, shouldDirty: true });
+      form.setValue("shipping_id", form.getValues("bill_name"), {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+      form.setValue("shipping_pan", "", {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+      form.setValue("shipping_pinCode", "", {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+      form.setValue("shipping_gstin", form.getValues("customer_gstin"), {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
       // form.setValue("shipping_state", form.getValues("place_of_supply"));
-      form.setValue("shipping_address1", form.getValues("customer_address1"), { shouldValidate: true, shouldDirty: true });
-      form.setValue("shipping_address2", form.getValues("customer_address2"), { shouldValidate: true, shouldDirty: true });
+      form.setValue("shipping_address1", form.getValues("customer_address1"), {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+      form.setValue("shipping_address2", form.getValues("customer_address2"), {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
     }
   };
 
   const handleClientSelected = (e: any) => {
-    form.setValue("bill_name", e.label, { shouldValidate: true, shouldDirty: true });
+    form.setValue("bill_name", e.label, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
     const bill_to_name = e.value;
-    form.setValue("customer", bill_to_name, { shouldValidate: true, shouldDirty: true });
+    form.setValue("customer", bill_to_name, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
 
     dispatch(fetchClientDetails(bill_to_name)).then((response: any) => {
       if (response.meta.requestStatus === "fulfilled") {
         const data = response.payload[0];
-        form.setValue("customer", data.clientCode, { shouldValidate: true, shouldDirty: true });
-        form.setValue("customer_branch",(data?.addressID), { shouldValidate: true, shouldDirty: true });
+        form.setValue("customer", data.clientCode, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        form.setValue("customer_branch", data?.addressID, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
         //   label: data?.label || "",
         //   value: data?.addressID || ""
         // }), { shouldValidate: true, shouldDirty: true });
-        form.setValue("customer_gstin", data.gst, { shouldValidate: true, shouldDirty: true });
-        form.setValue("place_of_supply", data.state?.label, { shouldValidate: true, shouldDirty: true });
-        form.setValue("customer_address1", data.addressLine1, { shouldValidate: true, shouldDirty: true });
-        form.setValue("customer_address2", data.addressLine2, { shouldValidate: true, shouldDirty: true });
-        form.setValue("shipping_id", data?.shipmentAddress?.Company, { shouldValidate: true, shouldDirty: true });
-        form.setValue("shipping_pan", data?.shipmentAddress?.Pan, { shouldValidate: true, shouldDirty: true });
-        form.setValue("shipping_gstin", data?.shipmentAddress?.Gstin, { shouldValidate: true, shouldDirty: true });
-        form.setValue("shipping_state", data?.shipmentAddress?.State?.value, { shouldValidate: true, shouldDirty: true });
-        form.setValue("shipping_pinCode", data?.shipmentAddress?.Pin, { shouldValidate: true, shouldDirty: true });
-        form.setValue("shipping_address1", data?.shipmentAddress?.Address1, { shouldValidate: true, shouldDirty: true });
-        form.setValue("shipping_address2", data?.shipmentAddress?.Address2, { shouldValidate: true, shouldDirty: true });
+        form.setValue("customer_gstin", data.gst, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        form.setValue("place_of_supply", data.state?.label, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        form.setValue("customer_address1", data.addressLine1, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        form.setValue("customer_address2", data.addressLine2, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        form.setValue("shipping_id", data?.shipmentAddress?.Company, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        form.setValue("shipping_pan", data?.shipmentAddress?.Pan, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        form.setValue("shipping_gstin", data?.shipmentAddress?.Gstin, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        form.setValue("shipping_state", data?.shipmentAddress?.State?.value, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        form.setValue("shipping_pinCode", data?.shipmentAddress?.Pin, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        form.setValue("shipping_address1", data?.shipmentAddress?.Address1, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+        form.setValue("shipping_address2", data?.shipmentAddress?.Address2, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
         form.setValue("isSameClientAdd", "N");
       }
     });
@@ -145,6 +249,7 @@ const CreateSalesOrder: React.FC<Props> = ({
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="rounded p-[30px] shadow bg-[#fff] max-h-[calc(100vh-150px)] overflow-y-auto">
             <div className="grid grid-cols-2 gap-[30px]">
+              {/* Channel Details */}
               <Card className="rounded shadow bg-[#fff]">
                 <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
                   <h3 className="text-[17px] font-[600] text-slate-600">
@@ -418,6 +523,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                   </div>
                 </CardContent>
               </Card>
+              {/* Bill to Details */}
               <Card className="rounded shadow bg-[#fff]">
                 <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
                   <h3 className="text-[17px] font-[600] text-slate-600">
@@ -431,14 +537,17 @@ const CreateSalesOrder: React.FC<Props> = ({
                   <div className="grid grid-cols-2 gap-[40px] mt-[30px]">
                     <div>
                       <div className="flex justify-end">
-                        <Badge className="p-0 text-[13px] bg-transparent border-none shadow-none font-[400] max-h-max text-cyan-600 py-[3px] px-[10px] cursor-pointer hover:bg-blue-100 hover:shadow shadow-slate-500 rounded-full">
+                        <Badge
+                          className="p-0 text-[13px] bg-transparent border-none shadow-none font-[400] max-h-max text-cyan-600 py-[3px] px-[10px] cursor-pointer hover:bg-blue-100 hover:shadow shadow-slate-500 rounded-full"
+                          onClick={() => setEditBillToDetails(true)}
+                        >
                           Add Bill to details
                         </Badge>
                       </div>
                       <FormField
                         control={form.control}
                         name="customer"
-                        render={({field}) => (
+                        render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
                               Name
@@ -464,74 +573,104 @@ const CreateSalesOrder: React.FC<Props> = ({
                                     ? transformCustomerData([data.client]) // Wrap single object into an array
                                     : [] // Fallback to empty array if data.client is null or undefined
                                 }
-                                value={data.client ? transformCustomerData([data.client]).find(option => option.value === field.value) : null} 
-                                />
-                                
+                                value={
+                                  data.client
+                                    ? transformCustomerData([data.client]).find(
+                                        (option) => option.value === field.value
+                                      )
+                                    : null
+                                }
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
                     </div>
-                    {channel?.value !== "BLK" && channel?.value !== "B2B" && channel!=="BLK" && channel!=="B2B" && (
-                      <div>
-                        <div className="flex justify-end">
-                          <Badge className="p-0 text-[13px] bg-transparent border-none shadow-none font-[400] max-h-max text-cyan-600 py-[3px] px-[10px] cursor-pointer hover:bg-blue-100 hover:shadow shadow-slate-500 rounded-full">
-                            Add Branch
-                          </Badge>
-                        </div>
+                    {channel?.value !== "BLK" &&
+                      channel?.value !== "B2B" &&
+                      channel !== "BLK" &&
+                      channel !== "B2B" && (
+                        <div>
+                          <div className="flex justify-end">
+                            <Badge
+                              className="p-0 text-[13px] bg-transparent border-none shadow-none font-[400] max-h-max text-cyan-600 py-[3px] px-[10px] cursor-pointer hover:bg-blue-100 hover:shadow shadow-slate-500 rounded-full"
+                              onClick={() => {
+                                form.getValues("customer")
+                                  ? setClientBranch(true)
+                                  : toast({
+                                      title: "Please Select a client First",
+                                      className:
+                                        "bg-red-600 text-white items-center",
+                                    });
+                              }}
+                            >
+                              Add Branch
+                            </Badge>
+                          </div>
 
-                        <FormField
-                          control={form.control}
-                          name="customer_branch"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className={LableStyle}>
-                                {channel?.value == "FLK"
-                                  ? "Warehouse"
-                                  : channel?.value == "FLK_VC"
-                                  ? "FC Code"
-                                  : channel?.value == "CROMA"
-                                  ? "DC"
-                                  : "Label"}
-                                <span className="pl-1 text-red-500 font-bold">
-                                  *
-                                </span>
-                              </FormLabel>
-                              <FormControl>
-                                <Select
-                                  styles={customStyles}
-                                  placeholder={
-                                    channel?.value == "FLK"
-                                      ? "Warehouse"
-                                      : channel?.value == "FLK_VC"
-                                      ? "FC Code"
-                                      : channel?.value == "CROMA"
-                                      ? "DC"
-                                      : "Label"
-                                  }
-                                  className="border-0 basic-single"
-                                  classNamePrefix="select border-0"
-                                  components={{ DropdownIndicator }}
-                                  onChange={handleClientChange}
-                                  isDisabled={false}
-                                  isClearable={true}
-                                  isSearchable={true}
-                                  options={
-                                    data.clientDetails
-                                      ? transformClientData(data.clientDetails)
-                                      : []
-                                  }
-                                  value={data.clientDetails ? transformClientData(data.clientDetails).find(option => option.value === field.value) : null} 
-                                  // value={field.value}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    )}
+                          <FormField
+                            control={form.control}
+                            name="customer_branch"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className={LableStyle}>
+                                  {channel?.value == "FLK"
+                                    ? "Warehouse"
+                                    : channel?.value == "FLK_VC"
+                                    ? "FC Code"
+                                    : channel?.value == "CROMA"
+                                    ? "DC"
+                                    : "Label"}
+                                  <span className="pl-1 text-red-500 font-bold">
+                                    *
+                                  </span>
+                                </FormLabel>
+                                <FormControl>
+                                  <Select
+                                    styles={customStyles}
+                                    placeholder={
+                                      channel?.value == "FLK"
+                                        ? "Warehouse"
+                                        : channel?.value == "FLK_VC"
+                                        ? "FC Code"
+                                        : channel?.value == "CROMA"
+                                        ? "DC"
+                                        : "Label"
+                                    }
+                                    className="border-0 basic-single"
+                                    classNamePrefix="select border-0"
+                                    components={{ DropdownIndicator }}
+                                    onChange={handleClientChange}
+                                    isDisabled={false}
+                                    isClearable={true}
+                                    isSearchable={true}
+                                    options={
+                                      data.clientDetails
+                                        ? transformClientData(
+                                            data.clientDetails
+                                          )
+                                        : []
+                                    }
+                                    value={
+                                      data.clientDetails
+                                        ? transformClientData(
+                                            data.clientDetails
+                                          ).find(
+                                            (option) =>
+                                              option.value === field.value
+                                          )
+                                        : null
+                                    }
+                                    // value={field.value}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      )}
                     <div className="">
                       <FormField
                         control={form.control}
@@ -635,6 +774,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                   </div>
                 </CardContent>
               </Card>
+              {/* Bill From Details */}
               <Card className="rounded shadow bg-[#fff]">
                 <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
                   <h3 className="text-[17px] font-[600] text-slate-600">
@@ -650,7 +790,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                       <FormField
                         control={form.control}
                         name="bill_id"
-                        render={({  field }) => (
+                        render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
                               Billing Name
@@ -676,7 +816,15 @@ const CreateSalesOrder: React.FC<Props> = ({
                                       )
                                     : []
                                 }
-                                value={data.billingAddressList ? transformOptionData(data.billingAddressList).find(option => option.value === field.value) : null} 
+                                value={
+                                  data.billingAddressList
+                                    ? transformOptionData(
+                                        data.billingAddressList
+                                      ).find(
+                                        (option) => option.value === field.value
+                                      )
+                                    : null
+                                }
                               />
                             </FormControl>
                             <FormMessage />
@@ -785,7 +933,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                   </div>
                 </CardContent>
               </Card>
-
+              {/*Ship To  */}
               <Card className="rounded shadow bg-[#fff]">
                 <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
                   <h3 className="text-[17px] font-[600] text-slate-600">
@@ -903,19 +1051,27 @@ const CreateSalesOrder: React.FC<Props> = ({
                                 classNamePrefix="select border-0"
                                 components={{ DropdownIndicator }}
                                 isDisabled={false}
-                                isLoading={true}
+                                isLoading={false}
                                 isClearable={true}
                                 isSearchable={true}
-                                name="color"
+                                name="shipping_state"
                                 options={
                                   data.states
                                     ? transformPlaceData(data.states)
                                     : []
                                 }
-                                onChange={(e: any) =>
-                                  form.setValue("shipping_state", e.value)
+                                onChange={(e: any) => {
+                                  form.setValue("shipping_state", e.value);
+                                }}
+                                value={
+                                  data.states
+                                    ? data.states.find(
+                                        (state: any) =>
+                                          state.value ===
+                                          form.getValues("shipping_state")
+                                      )
+                                    : null
                                 }
-                                value={form.getValues("shipping_state")}
                               />
                             </FormControl>
                             <FormMessage />
@@ -1000,6 +1156,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                   </div>
                 </CardContent>
               </Card>
+              {/* SO Terms */}
               <Card className="rounded shadow bg-[#fff]">
                 <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
                   <h3 className="text-[17px] font-[600] text-slate-600">
@@ -1099,10 +1256,32 @@ const CreateSalesOrder: React.FC<Props> = ({
                 </CardContent>
               </Card>
             </div>
+            <MasterClientBranch uiState={uiState} />
+            <Sheet open={addBillToDetails} onOpenChange={setEditBillToDetails}>
+              <SheetHeader>
+                <SheetTitle className="text-slate-600">
+                  Notifications
+                </SheetTitle>
+                
+              </SheetHeader>
+              <SheetContent className="min-w-[90%]">
+                <MasterCustomerPage  module="salesorder"/>
+              </SheetContent>
+            </Sheet>
           </div>
           <div className="h-[50px] w-full flex justify-end items-center px-[20px] bg-white shadow-md border-t border-slate-300">
             <Button
               onClick={() => {
+                const errors = form.formState.errors;
+                if (Object.keys(errors).length > 0) {
+                  // Iterate over the errors and show a toast
+                  Object.values(errors).forEach((error: any) => {
+                    toast({
+                      title: error.message || "Failed to Create Branch",
+                      className: "bg-red-600 text-white items-center",
+                    });
+                  });
+                }
                 //   setTab("add");
                 dispatch(updateFormData(form.control._formValues));
               }}

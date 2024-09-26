@@ -14,6 +14,7 @@ const AddPOPopovers: React.FC<Props> = ({ uiState }) => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const handleImport = (data: any[]) => {
+    console.log(data)
     try {
       // Convert keys to camelCase
       const updatedData = data.map((d) => toCamelCase(d));

@@ -17,7 +17,6 @@ import {
   CountryResponse,
   Currency,
   CurrencyResponse,
-  GeneralResponse,
   ProjectDescription,
   ProjectDescriptionResponse,
   State2,
@@ -107,11 +106,11 @@ export const fetchBillingAddress = createAsyncThunk<
 });
 
 export const fetchClient = createAsyncThunk<
-  GeneralResponse, // Return type on success
+  any, // Return type on success
   { clientCode: string } // The argument type passed to the thunk
 >("client/fetchClient", async ({ clientCode }, { rejectWithValue }) => {
   try {
-    const response = await spigenAxios.post<GeneralResponse>(
+    const response = await spigenAxios.post<any>(
       "/client/getClient",
       { channel: clientCode }
     );
@@ -222,21 +221,31 @@ export const fetchClientAddressDetail = createAsyncThunk<
 // Define the async thunk for fetching component details
 export const fetchComponentDetail = createAsyncThunk<
   ComponentDetail[],
-  { search: string }
->("client/fetchComponentDetail", async ({ search }) => {
+  { search: string; type: 'product' | 'component' }
+>("client/fetchComponentDetail", async ({ search, type }) => {
+  if (!type) {
+    throw new Error('Type is required and cannot be undefined');
+  }
+
+  const endpoint = type === 'product'
+    ? '/backend/getProductByNameAndNo'
+    : '/backend/getComponentByNameAndNo';
+
   const response = await spigenAxios.post<ComponentDetailResponse>(
-    `/backend/getProductByNameAndNo`,
+    endpoint,
     { search }
   );
+
   if (response.data.success) {
     return response.data.data;
   } else {
-    // Redux Toolkit will automatically handle the error
     throw new Error(
       response.data.message || "Failed to fetch component details"
     );
   }
 });
+
+
 
 export const fetchProductData = createAsyncThunk<
   ComponentDetail[],
@@ -307,7 +316,7 @@ const clientSlice = createSlice({
       })
       .addCase(fetchClient.fulfilled, (state, action) => {
         state.loading = false;
-        state.client = action.payload.data?.[0] || null;
+        state.client = action.payload.data;
       })
       .addCase(fetchClient.rejected, (state, action) => {
         state.loading = false;

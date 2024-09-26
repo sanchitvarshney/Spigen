@@ -47,14 +47,20 @@ const UomPage: React.FC = () => {
         })
       ).unwrap();
 
-      if (resultAction.success) {
+      if (resultAction.code === 200) {
         toast({
-          title: "Product created successfully",
+          title:
+            typeof resultAction.message === "string"
+              ? resultAction.message
+              : JSON.stringify(resultAction.message),
           className: "bg-green-600 text-white items-center",
         });
       } else {
         toast({
-          title: resultAction.message || "Failed to Create Product",
+          title:
+            typeof resultAction.message === "string"
+              ? resultAction.message
+              : JSON.stringify(resultAction.message),
           className: "bg-red-600 text-white items-center",
         });
       }
@@ -142,7 +148,7 @@ const UomPage: React.FC = () => {
                           <FormControl>
                             <Textarea
                               className={InputStyle}
-                              placeholder="Address Line 1"
+                              placeholder="Specification"
                               {...field}
                             />
                           </FormControl>

@@ -171,7 +171,7 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
       <SheetContent className="min-w-[60%]">
         <SheetHeader>
           <SheetTitle className="text-slate-600">
-            Update Branch: {data?.addressID}
+            Update Branch: {data?.addressID} 
           </SheetTitle>
         </SheetHeader>
 

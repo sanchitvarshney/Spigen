@@ -31,7 +31,7 @@ import MasterShippingAddressPage from "./pages/masterModule/MasterShippingAddres
 import BlockedPageRenderPage from "./pages/BlockedPageRenderPage";
 import MasterCustomerPage from "./pages/masterModule/MasterCustomerPage";
 import NotPermissionPage from "./pages/NotPermissionPage";
-import CreateSalesOrderPage from "./pages/salesModule/CreateSalesOrderPage";
+import CreateSalesOrderPage from "./components/salesOrder/createSalesOrder/CreateSalesOrderPage";
 import CreateEwayBill from "@/config/agGrid/invoiceModule/CreateEwayBill";
 import UomPage from "@/pages/masterModule/uom/UomPage";
 // Define the authenticated routes
@@ -237,7 +237,8 @@ const router = createBrowserRouter([
       <Protected authentication>
         <MainLayout>
           <MasterProductLayout>
-            <MasterProductSfgPage />
+            {/* <MasterProductSfgPage /> */}
+            <NotPermissionPage/>
           </MasterProductLayout>
         </MainLayout>
       </Protected>
