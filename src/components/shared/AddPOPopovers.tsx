@@ -29,7 +29,7 @@ const AddPOPopovers: React.FC<Props> = ({ uiState }) => {
     //map data from excel
     const mappedData = data.data.map((item: any) => ({
       type: item.item_type,
-      material: item.item.text,
+      material: item.item,
       materialDescription: item.item_desc,
       asinNumber: item.asin === "." ? undefined : item.asin,
       orderQty: Number(item.qty),

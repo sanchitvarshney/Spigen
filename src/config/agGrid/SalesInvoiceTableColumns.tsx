@@ -64,7 +64,7 @@ const ActionMenu: React.FC<any> = ({ row }) => {
       });
   };
 
-  const isDisabled = row.hasInvoice === true || row.status === "Cancelled";
+  const isDisabled = row?.hasInvoice === true || row.status === "Cancelled";
 
   const menuItems = [
     {

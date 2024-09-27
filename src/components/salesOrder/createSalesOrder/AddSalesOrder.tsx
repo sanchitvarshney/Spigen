@@ -24,6 +24,7 @@ import {
   updateSellRequest,
 } from "@/features/salesmodule/SalesSlice";
 import { useNavigate, useParams } from "react-router-dom";
+import ConfirmationModal from "@/components/shared/ConfirmationModal";
 
 const AddSalesOrder = ({
   setTab,
@@ -40,6 +41,7 @@ const AddSalesOrder = ({
   const [excelModel, setExcelModel] = useState<boolean>(false);
   const [backModel, setBackModel] = useState<boolean>(false);
   const [resetModel, setResetModel] = useState<boolean>(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const [cgstTotal, setCgstTotal] = useState(0);
   const [sgstTotal, setSgstTotal] = useState(0);
   const [igstTotal, setIgstTotal] = useState(0);
@@ -121,6 +123,9 @@ const AddSalesOrder = ({
     }
   };
   
+  const handleSubmit = () => {
+    setShowConfirmation(true); // Open the confirmation modal
+  };
 
   const defaultColDef = useMemo<ColDef>(() => {
     return {
@@ -173,7 +178,7 @@ const AddSalesOrder = ({
     so_type: rowData?.map((component: RowData) => component.type || ""),
     items: rowData?.map((component: RowData) =>
       typeof component.material === "object" && component.material !== null
-        ? (component.material as any).id || ""
+        ? (component.material as any).id || (component.material as any).value ||""
         : component.material || ""
     ),
     qty: rowData?.map((component: RowData) =>
@@ -199,34 +204,29 @@ const AddSalesOrder = ({
     updaterow: rowData?.map((component: RowData) => component.updateid || 0),
   };
   const soId = (params.id as string)?.replace(/_/g, "/");
-  const payloadData2 = {
-    headers: { ...form?.getValues(), so_id: soId },
-    materials,
-  };
-  const handleSubmit = () => {
-    if (!payloadData2 || Object.keys(payloadData2).length === 0) {
-      console.error("Payload data is missing or undefined.");
-      return;
-    }
-    if (window.location.pathname.includes("update")) {
-      dispatch(updateSellRequest(payloadData2)).then((response: any) => {
-        if (response.payload.success) {
-          navigate("/sales/order/update");
-        }
-      });
-    } else {
-      try {
-        dispatch(createSellRequest(payloadData2)).then((response: any) => {
-          if (response.meta.requestStatus === "fulfilled") {
-            navigate("/sales/order/create");
+
+  const confirmSubmit = (confirmed: boolean) => {
+    if (confirmed) {
+      // Proceed with the submission
+      const payloadData2 = {
+        headers: { ...form.getValues(), so_id: soId },
+        materials,
+      };
+      if (window.location.pathname.includes("update")) {
+        dispatch(updateSellRequest(payloadData2)).then((response:any) => {
+          if (response.payload.success) {
+            navigate("/sales/order/");
           }
         });
-        // setTab("create");
-      } catch (error) {
-        console.error("Error submitting data:", error);
-        // Handle error, e.g., show a message to the user
+      } else {
+        dispatch(createSellRequest(payloadData2)).then((response:any) => {
+          if (response.payload.success) {
+            navigate("/sales/order/");
+          }
+        });
       }
     }
+    setShowConfirmation(false); // Close the modal
   };
 
   const totalSum = rowData?.reduce((sum: number, item: any) => {
@@ -392,6 +392,12 @@ const AddSalesOrder = ({
           Submit
         </Button>
       </div>
+      <ConfirmationModal
+        open={showConfirmation}
+        onClose={confirmSubmit}
+        title="Confirm Submit!"
+        description="Are you sure to submit details of all components of this Sales Order?"
+      />
     </Wrapper>
   );
 };

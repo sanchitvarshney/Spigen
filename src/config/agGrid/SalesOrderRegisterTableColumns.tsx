@@ -120,7 +120,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
     });
   };
 
-  const isDisabled = row.hasInvoice === true || row.status === "Cancelled";
+  const isDisabled = row?.hasInvoice === true || row?.status === "Cancelled";
 
   const menu = (
     <Menu>

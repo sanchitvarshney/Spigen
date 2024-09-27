@@ -206,7 +206,7 @@ export const generateEInvoice = createAsyncThunk(
   async (payload: any, { rejectWithValue }) => {
     try {
       const response = await spigenAxios.post(
-        "so_challan_shipment/generateEinvoice",
+        "so_invoice/createEinvoice",
         payload
       );
       return response.data;
@@ -325,7 +325,7 @@ export const fetchDataForInvoice = createAsyncThunk(
   async ({ shipment_id }: { shipment_id: string }, { rejectWithValue }) => {
     try {
       const response = await spigenAxios.post<any>(
-        "/so_challan_shipment/fetchDataForinvoice",
+        "/so_invoice/fetchDataForinvoice",
         { shipment_id: shipment_id }
       );
 

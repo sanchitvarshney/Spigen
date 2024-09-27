@@ -27,18 +27,12 @@ const supplyTypeOptions = [
   ];
   
   const subOptions = [
-    { value: "1", label: "Supply" },
-    { value: "2", label: "Import" },
-    { value: "3", label: "Export" },
-    { value: "4", label: "Job Work" },
-    { value: "5", label: "For Own Use" },
-    { value: "6", label: "Job Work Return" },
-    { value: "7", label: "Sale Return" },
-    { value: "8", label: "Others" },
-    { value: "9", label: "SKD/CKD/Lots" },
-    { value: "10", label: "Line Sales" },
-    { value: "11", label: "Recipient Not Known" },
-    { value: "12", label: "Exhibition or Fairs" },
+    { value: "B2B", label: "Business to Business" },
+    { value: "SEZWP", label: "SEZ with payment" },
+    { value: "SEZWOP", label: "SEZ without payment" },
+    { value: "EXPWP", label: "Export with Payment" },
+    { value: "EXPWOP ", label: "Export without payment" },
+    { value: "DEXP", label: "Deemed Export" },
   ];
   
   const docType = [
@@ -56,7 +50,17 @@ const supplyTypeOptions = [
     { value: "4", label: "Ship" },
     { value: "5", label: "In Transit" },
   ];
-  
+ 
+  const reverseOptions = [
+    {
+      label: "Yes",
+      value: "Y",
+    },
+    {
+      label: "No",
+      value: "N",
+    },
+  ];
   
   
 
@@ -141,7 +145,10 @@ const supplyTypeOptions = [
 
 });
 
-const eInvoiceSchema = z.object({
+const eInvoiceSchema2 = z.object({
+
+
+
   supply_type: z.string({ required_error: "Please Select Supply Type" }),
   sub_supply_type:z.string({ required_error: "Please Select Sub Supply Type" }),
   invoice_id:z.string({ required_error: "Please enter Invoice Id" }),
@@ -187,14 +194,14 @@ const eInvoiceSchema = z.object({
 
 });
 
-const debitNoteSchema = eInvoiceSchema.extend({
+const debitNoteSchema = eInvoiceSchema2.extend({
   debit_no: z.string({ required_error: "Please select Note Id" }),
   other_ref: z.string({ required_error: "Please enter Other Reference" }),
   document_date: z.string({ required_error: "Please select Document Date" }),
   documnet_date:z.string().optional(),
 })
 
-const creditNoteSchema = eInvoiceSchema.extend({
+const creditNoteSchema = eInvoiceSchema2.extend({
   credit_no: z.string({ required_error: "Please select Note Id" }),
   other_ref: z.string({ required_error: "Please enter Other Reference" }),
   document_date: z.string({ required_error: "Please select Document Date" }),
@@ -202,4 +209,98 @@ const creditNoteSchema = eInvoiceSchema.extend({
 })
 
 
-  export { supplyTypeOptions, subOptions , docType, transportationMode, vehicleTypeOptions, transactionTypeOptions ,columnDefs,ewayBillSchema ,eInvoiceSchema,debitNoteSchema,creditNoteSchema};
+const stateSchema = z.object({
+  code: z.string(),
+  name: z.string(),
+});
+
+const header= z.object({
+  documentType: z.string({ required_error: "Document Type is required" }),
+  supplyType: z.string({ required_error: "Supply Type is required" }),
+  subSupplyType: z.string({ required_error: "Sub Supply Type is required" }),
+  documentNo: z.string({ required_error: "Document No is required" }),
+  documentDate: z.string({ required_error: "Document Date is required" }),
+  transactionType: z.enum(["1", "2", "3", "4"], {
+    required_error: "Transaction Type is required",
+  }),
+  reverseCharge: z.enum(["Y", "N"]).optional(),
+  igstOnIntra: z.enum(["Y", "N"]).optional(),
+});
+
+const billFrom = z.object({
+  gstin: z.string({ required_error: "GSTIN is required" }),
+  legalName: z.string({ required_error: "Legal Name is required" }),
+  tradeName: z.string().optional(),
+  addressLine1: z.string({ required_error: "Address Line 1 is required" }),
+  addressLine2: z.string().optional(),
+  location: z.string({ required_error: "Location is required" }),
+  state: stateSchema.refine((val) => val.code && val.name, {
+    message: "State must contain both code and name",
+  }),
+  pincode: z.string({ required_error: "Pincode is required" }),
+  email: z.string().email().optional(),
+  phone: z.string().optional(),
+});
+
+const billTo = z.object({
+  gstin: z.string({ required_error: "GSTIN is required" }),
+  legalName: z.string({ required_error: "Legal Name is required" }),
+  addressLine1: z.string({ required_error: "Address Line 1 is required" }),
+  addressLine2: z.string().optional(),
+  location: z.string({ required_error: "Location is required" }),
+  state: stateSchema.refine((val) => val.code && val.name, {
+    message: "State must contain both code and name",
+  }),
+  pincode: z.string({ required_error: "Pincode is required" }),
+  email: z.string().email().optional(),
+  phone: z.string().optional(),
+});
+
+const dispatchFrom = z.object({
+  legalName: z.string({ required_error: "Legal Name is required" }),
+  addressLine1: z.string({ required_error: "Address Line 1 is required" }),
+  addressLine2: z.string().optional(),
+  location: z.string({ required_error: "Location is required" }),
+  state: stateSchema.refine((val) => val.code && val.name, {
+    message: "State must contain both code and name",
+  }),
+  pincode: z.string({ required_error: "Pincode is required" }),
+});
+
+const shipTo = z.object({
+  gstin: z.string({ required_error: "GSTIN is required" }),
+  legalName: z.string({ required_error: "Legal Name is required" }),
+  tradeName: z.string().optional(),
+  addressLine1: z.string({ required_error: "Address Line 1 is required" }),
+  addressLine2: z.string().optional(),
+  location: z.string({ required_error: "Location is required" }),
+  state: stateSchema.refine((val) => val.code && val.name, {
+    message: "State must contain both code and name",
+  }),
+  pincode: z.string({ required_error: "Pincode is required" }),
+});
+
+const ewaybillDetails = z.object({
+  transporterId: z.string().optional(),
+  transporterName: z.string().optional(),
+  tradeName: z.string().optional(),
+  transMode: z.string().optional(),
+  transporterDocNo: z.string().optional(),
+  transporterDate: z.string().optional(),
+  vehicleNo: z.string().optional(),
+  vehicleType: z.string().optional(),
+  transDistance: z.string({ required_error: "Trans Distance is required" }),
+  });
+
+// Main schema
+const eInvoiceSchema = z.object({
+  header: header,
+  billFrom: billFrom,
+  billTo: billTo,
+  dispatchFrom: dispatchFrom,
+  shipTo: shipTo,
+  ewaybillDetails: ewaybillDetails
+});
+
+
+  export { supplyTypeOptions, subOptions , docType, transportationMode, vehicleTypeOptions, transactionTypeOptions ,columnDefs,ewayBillSchema ,eInvoiceSchema,debitNoteSchema,creditNoteSchema,reverseOptions};
