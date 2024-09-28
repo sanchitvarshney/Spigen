@@ -23,7 +23,7 @@ const MaterialListModal: React.FC<MaterialListModalProps> = ({
   const columnDefs: ColDef[] = [
     { headerName: "#", valueGetter: "node.rowIndex + 1", maxWidth: 50 },
     { headerName: "Item Type", field: "so_type" },
-    { headerName: "Item Name", field: "item_name", width: 500 },
+    { headerName: "Item Name", field: "item_name", width: 500,cellRenderer: TruncateCellRenderer },
     { headerName: "Item Details", field: "item_details" },
     { headerName: "SKU Code", field: "item_code" },
     { headerName: "Qty", field: "qty" },
@@ -50,6 +50,9 @@ const MaterialListModal: React.FC<MaterialListModalProps> = ({
             columnDefs={columnDefs}
             pagination={true}
             suppressCellFocus={true}
+            components={{
+              truncateCellRenderer: TruncateCellRenderer,
+            }}
           />
         </div>
       </SheetContent>
@@ -59,3 +62,15 @@ const MaterialListModal: React.FC<MaterialListModalProps> = ({
 };
 
 export default MaterialListModal;
+
+export const TruncateCellRenderer = (props: any) => {
+  const style = {
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    width: "100%", // Ensure the width of the cell
+    display: "block", // Ensure that the content respects the overflow
+  };
+
+  return <div style={style}>{props.value}</div>;
+};

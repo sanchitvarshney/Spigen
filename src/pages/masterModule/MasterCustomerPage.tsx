@@ -21,7 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { useDispatch, useSelector } from "react-redux";
 import { useToast } from "@/components/ui/use-toast";
 import { AppDispatch, RootState } from "@/store";
-import { createClient, fetchchannelList } from "@/features/client/clientSlice";
+import { createClient, fetchchannelList, fetchClientList } from "@/features/client/clientSlice";
 import {
   Select,
   SelectContent,
@@ -76,6 +76,7 @@ const MasterCustomerPage: React.FC<any> = (props: any) => {
           className: "bg-green-600 text-white items-center",
         });
         form.reset();
+        dispatch(fetchClientList());
       } else {
         toast({
           title:

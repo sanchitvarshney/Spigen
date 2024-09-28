@@ -361,6 +361,9 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
                 columnDefs={columnDefs}
                 pagination={true}
                 suppressCellFocus={true}
+                components={{
+                  truncateCellRenderer: TruncateCellRenderer,
+                }}
               />
             </div>
           </div>
@@ -372,3 +375,15 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
 };
 
 export default ViewInvoiceModal;
+
+export const TruncateCellRenderer = (props: any) => {
+  const style = {
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    width: "100%", // Ensure the width of the cell
+    display: "block", // Ensure that the content respects the overflow
+  };
+
+  return <div style={style}>{props.value}</div>;
+};

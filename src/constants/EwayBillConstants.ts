@@ -93,7 +93,7 @@ const supplyTypeOptions = [
     },
   ];
 
-  const ewayBillSchema = z.object({
+  const ewayBillSchema2 = z.object({
     supply_type: z.string({ required_error: "Please Select Supply Type" }),
     sub_supply_type:z.string({ required_error: "Please Select Sub Supply Type" }),
     invoice_id:z.string({ required_error: "Please enter Invoice Id" }),
@@ -235,7 +235,7 @@ const billFrom = z.object({
   addressLine2: z.string().optional(),
   location: z.string({ required_error: "Location is required" }),
   state: stateSchema.refine((val) => val.code && val.name, {
-    message: "State must contain both code and name",
+    message: "State is required",
   }),
   pincode: z.string({ required_error: "Pincode is required" }),
   email: z.string().email().optional(),
@@ -249,7 +249,7 @@ const billTo = z.object({
   addressLine2: z.string().optional(),
   location: z.string({ required_error: "Location is required" }),
   state: stateSchema.refine((val) => val.code && val.name, {
-    message: "State must contain both code and name",
+    message: "State is required",
   }),
   pincode: z.string({ required_error: "Pincode is required" }),
   email: z.string().email().optional(),
@@ -262,7 +262,7 @@ const dispatchFrom = z.object({
   addressLine2: z.string().optional(),
   location: z.string({ required_error: "Location is required" }),
   state: stateSchema.refine((val) => val.code && val.name, {
-    message: "State must contain both code and name",
+    message: "State is required",
   }),
   pincode: z.string({ required_error: "Pincode is required" }),
 });
@@ -275,7 +275,7 @@ const shipTo = z.object({
   addressLine2: z.string().optional(),
   location: z.string({ required_error: "Location is required" }),
   state: stateSchema.refine((val) => val.code && val.name, {
-    message: "State must contain both code and name",
+    message: "State is required",
   }),
   pincode: z.string({ required_error: "Pincode is required" }),
 });
@@ -302,5 +302,14 @@ const eInvoiceSchema = z.object({
   ewaybillDetails: ewaybillDetails
 });
 
+// const ewayBillSchema = z.object({
+//   header: header,
+//   billFrom: billFrom,
+//   billTo: billTo,
+//   dispatchFrom: dispatchFrom,
+//   shipTo: shipTo,
+//   ewaybillDetails: ewaybillDetails
+// });
 
-  export { supplyTypeOptions, subOptions , docType, transportationMode, vehicleTypeOptions, transactionTypeOptions ,columnDefs,ewayBillSchema ,eInvoiceSchema,debitNoteSchema,creditNoteSchema,reverseOptions};
+
+  export { supplyTypeOptions, subOptions , docType, transportationMode, vehicleTypeOptions, transactionTypeOptions ,columnDefs ,eInvoiceSchema,debitNoteSchema,creditNoteSchema,reverseOptions};

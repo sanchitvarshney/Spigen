@@ -36,7 +36,6 @@ import {
   debitNoteSchema,
   docType,
   eInvoiceSchema,
-  ewayBillSchema,
   reverseOptions,
   subOptions,
   supplyTypeOptions,
@@ -65,28 +64,25 @@ export default function CreateEwayBill() {
     window.location.href?.includes("CRN");
   const form = useForm({
     resolver: zodResolver(
-      isCnDn
-        ? isCrNote
-          ? creditNoteSchema
-          : debitNoteSchema
-        : isEwayBill
-        ? ewayBillSchema
-        : eInvoiceSchema
+      isCnDn ? (isCrNote ? creditNoteSchema : debitNoteSchema) : eInvoiceSchema
     ),
     mode: "onBlur",
   });
   const { ewayBillData, loading } = useSelector(
     (state: RootState) => state.sellInvoice
   );
-  const { states } = useSelector(
-    (state: RootState) => state.createSalesOrder
-  );
+  const { states } = useSelector((state: RootState) => state.createSalesOrder);
   const [rowData, setRowData] = useState(ewayBillData || []);
   // const transTypeSelected = Form?.useWatch("transactionType", form);
 
   useEffect(() => {
     dispatch(fetchStates());
   }, []);
+
+  const stateOptions: any = states?.map((state) => ({
+    value: state, // Store the entire state object
+    label: state.name,
+  }));
 
   useEffect(() => {
     if (!isCnDn) {
@@ -146,6 +142,7 @@ export default function CreateEwayBill() {
     }
   }, [params]);
   console.log(form.getValues(), form.formState.errors);
+
   useEffect(() => {
     setRowData(ewayBillData);
   }, [ewayBillData]);
@@ -253,6 +250,7 @@ export default function CreateEwayBill() {
         });
       } else {
         dispatch(generateEInvoice(payload)).then((response) => {
+          console.log(response);
           if (response.meta.requestStatus === "fulfilled") {
             toast({
               title: "Data Fetched Successfully",
@@ -279,7 +277,7 @@ export default function CreateEwayBill() {
       sum += itemValue + itemSGST + itemGSTRate + itemCGST;
     });
     setTotalSum(sum);
-  }, [ewayBillData]);
+  }, [ewayBillData, rowData]);
 
   return (
     <div className="h-[calc(100vh-150px)] flex flex-col">
@@ -334,7 +332,7 @@ export default function CreateEwayBill() {
                                   selectedOption ? selectedOption?.value : ""
                                 );
                               }}
-                              value={supplyTypeOptions.find(
+                              value={supplyTypeOptions?.find(
                                 (option) => option.value === field.value
                               )}
                             />
@@ -373,7 +371,7 @@ export default function CreateEwayBill() {
                                   selectedOption ? selectedOption?.value : ""
                                 );
                               }}
-                              value={subOptions.find(
+                              value={subOptions?.find(
                                 (option) => option.value === field.value
                               )}
                             />
@@ -436,7 +434,7 @@ export default function CreateEwayBill() {
                               isClearable={true}
                               isSearchable={true}
                               options={docType}
-                              value={docType.find(
+                              value={docType?.find(
                                 (option) => option.value === field.value
                               )}
                             />
@@ -569,7 +567,7 @@ export default function CreateEwayBill() {
                                   selectedOption?.value
                                 );
                               }}
-                              value={transactionTypeOptions.find(
+                              value={transactionTypeOptions?.find(
                                 (option) => option.value === field.value
                               )}
                             />
@@ -605,7 +603,7 @@ export default function CreateEwayBill() {
                                 selectedOption ? selectedOption?.value : ""
                               );
                             }}
-                            value={subOptions.find(
+                            value={subOptions?.find(
                               (option) => option.value === field.value
                             )}
                           />
@@ -640,7 +638,7 @@ export default function CreateEwayBill() {
                                 selectedOption ? selectedOption?.value : ""
                               );
                             }}
-                            value={subOptions.find(
+                            value={subOptions?.find(
                               (option) => option.value === field.value
                             )}
                           />
@@ -744,7 +742,7 @@ export default function CreateEwayBill() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
-                              State{" "}
+                              State
                               <span className="pl-1 text-red-500 font-bold">
                                 *
                               </span>
@@ -760,15 +758,18 @@ export default function CreateEwayBill() {
                                 isDisabled={false}
                                 isClearable={true}
                                 isSearchable={true}
-                                options={transportationMode}
+                                options={stateOptions}
                                 onChange={(selectedOption) => {
                                   field.onChange(
                                     selectedOption ? selectedOption.value : null
                                   );
                                 }}
-                                value={transportationMode.find(
-                                  (option) => option.value === field.value
-                                )}
+                                value={
+                                  stateOptions?.find(
+                                    (option: any) =>
+                                      option.value.code === field.value?.code // Match by code
+                                  ) || null
+                                }
                               />
                             </FormControl>
                             <FormMessage />
@@ -1004,15 +1005,18 @@ export default function CreateEwayBill() {
                                 isDisabled={false}
                                 isClearable={true}
                                 isSearchable={true}
-                                options={transactionTypeOptions}
+                                options={stateOptions}
                                 onChange={(selectedOption) => {
                                   field.onChange(
                                     selectedOption ? selectedOption.value : null
                                   );
                                 }}
-                                value={transactionTypeOptions.find(
-                                  (option) => {console.log(option)}
-                                )}
+                                value={
+                                  stateOptions?.find(
+                                    (option: any) =>
+                                      option.value.code === field.value?.code // Match by code
+                                  ) || null
+                                }
                               />
                             </FormControl>
                             <FormMessage />
@@ -1272,7 +1276,7 @@ export default function CreateEwayBill() {
                                   isDisabled={false}
                                   isClearable={true}
                                   isSearchable={true}
-                                  options={transactionTypeOptions}
+                                  options={stateOptions}
                                   onChange={(selectedOption) => {
                                     field.onChange(
                                       selectedOption
@@ -1280,9 +1284,12 @@ export default function CreateEwayBill() {
                                         : null
                                     );
                                   }}
-                                  value={transactionTypeOptions.find(
-                                    (option) => option.value === field.value
-                                  )}
+                                  value={
+                                    stateOptions?.find(
+                                      (option: any) =>
+                                        option.value.code === field.value?.code // Match by code
+                                    ) || null
+                                  }
                                 />
                               </FormControl>
                               <FormMessage />
@@ -1449,7 +1456,7 @@ export default function CreateEwayBill() {
                                   isDisabled={false}
                                   isClearable={true}
                                   isSearchable={true}
-                                  options={transactionTypeOptions}
+                                  options={stateOptions}
                                   onChange={(selectedOption) => {
                                     field.onChange(
                                       selectedOption
@@ -1457,9 +1464,12 @@ export default function CreateEwayBill() {
                                         : null
                                     );
                                   }}
-                                  value={transactionTypeOptions.find(
-                                    (option) => option.value === field.value
-                                  )}
+                                  value={
+                                    stateOptions?.find(
+                                      (option: any) =>
+                                        option.value.code === field.value?.code // Match by code
+                                    ) || null
+                                  }
                                 />
                               </FormControl>
                               <FormMessage />
@@ -1567,6 +1577,8 @@ export default function CreateEwayBill() {
                   </CardContent>
                 </Card>
               )}
+            </div>
+            <div className="grid grid-cols-2 gap-[30px] pt-8">
               {/* Transporter Details */}
               <Card className="rounded shadow bg-[#fff]">
                 <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
@@ -1757,7 +1769,7 @@ export default function CreateEwayBill() {
                                     selectedOption ? selectedOption.value : null
                                   );
                                 }}
-                                value={transportationMode.find(
+                                value={transportationMode?.find(
                                   (option) => option.value === field.value
                                 )}
                               />
@@ -1798,7 +1810,7 @@ export default function CreateEwayBill() {
                                     selectedOption ? selectedOption.value : null
                                   );
                                 }}
-                                value={vehicleTypeOptions.find(
+                                value={vehicleTypeOptions?.find(
                                   (option) => option.value === field.value
                                 )}
                               />

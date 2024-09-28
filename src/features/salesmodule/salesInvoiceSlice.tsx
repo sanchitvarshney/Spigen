@@ -152,7 +152,7 @@ export const createEwayBill = createAsyncThunk(
   async (payload: any, { rejectWithValue }) => {
     try {
       const response = await spigenAxios.post(
-        "/so_challan_shipment/createEwayBill",
+        "so_invoice/createEwaybill",
         payload
       );
       return response.data;
@@ -279,7 +279,7 @@ export const fetchDataForEwayBill = createAsyncThunk(
   async ({ shipment_id }: { shipment_id: string }, { rejectWithValue }) => {
     try {
       const response = await spigenAxios.post<any>(
-        "/so_challan_shipment/fetchDataForEwayBill",
+        "/so_invoice/getDetailsForEwaybill",
         { shipment_id: shipment_id }
       );
 
