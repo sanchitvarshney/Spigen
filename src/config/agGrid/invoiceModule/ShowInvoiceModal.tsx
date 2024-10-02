@@ -67,7 +67,7 @@ const DataDialog = ({ open, onClose, data,orderId,module }: any) => {
             </div>
             <div className="grid grid-cols-2 gap-[40px] mt-[30px]">
               <h3>Info Details:</h3>
-              <p>{data?.InfoDtls[0].Desc[0] || "--"}</p>
+              <p>{data?.InfoDtls[0].Desc || "--"}</p>
             </div>
             <div className="grid grid-cols-2 gap-[40px] mt-[30px]">
               <h3>Remarks:</h3>

@@ -52,7 +52,6 @@ import { toast } from "@/components/ui/use-toast";
 import { fetchStates } from "@/features/salesmodule/createSalesOrderSlice";
 import ShowInvoiceModal from "@/config/agGrid/invoiceModule/ShowInvoiceModal";
 
-
 export default function CreateEwayBill() {
   const dispatch = useDispatch<AppDispatch>();
   const params = useParams();
@@ -84,7 +83,7 @@ export default function CreateEwayBill() {
   );
   const { states } = useSelector((state: RootState) => state.createSalesOrder);
   const [rowData, setRowData] = useState(ewayBillData || []);
-  const [orderId,setOrderId] = useState("");
+  const [orderId, setOrderId] = useState("");
   // const transTypeSelected = Form?.useWatch("transactionType", form);
 
   useEffect(() => {
@@ -101,56 +100,67 @@ export default function CreateEwayBill() {
       const shipId = (params?.id as string).replace(/_/g, "/");
       const action = isEwayBill ? fetchDataForEwayBill : fetchDataForInvoice;
       dispatch(action({ shipment_id: shipId })).then((res) => {
-        var data = res.payload?.header;
-        form.setValue("header.documentNo", data?.documentDetail?.documentNo);
-        setOrderId(data?.documentDetail?.documentNo)
-        form.setValue(
-          "header.documentDate",
-          data?.documentDetail?.documentDate
-        );
-        form.setValue("billFrom.legalName", data?.billFrom?.legalName);
-        form.setValue("billFrom.tradeName", data?.billFrom?.tradeName);
-        form.setValue("billFrom.state", data?.billFrom?.state);
-        form.setValue("billFrom.location", data?.billFrom?.location);
-        form.setValue("billFrom.gstin", data?.billFrom?.gstin);
-        form.setValue("billFrom.pincode", data?.billFrom?.pincode);
-        form.setValue("billFrom.email", data?.billFrom?.email);
-        form.setValue("billFrom.phone", data?.billFrom?.phone);
-        form.setValue("billFrom.addressLine1", data?.billFrom?.addressLine1);
-        form.setValue("billFrom.addressLine2", data?.billFrom?.addressLine2);
+        if (res.payload?.success) {
+          var data = res.payload?.header;
+          form.setValue("header.documentNo", data?.documentDetail?.documentNo);
+          setOrderId(data?.documentDetail?.documentNo);
+          form.setValue(
+            "header.documentDate",
+            data?.documentDetail?.documentDate
+          );
+          form.setValue("billFrom.legalName", data?.billFrom?.legalName);
+          form.setValue("billFrom.tradeName", data?.billFrom?.tradeName);
+          form.setValue("billFrom.state", data?.billFrom?.state);
+          form.setValue("billFrom.location", data?.billFrom?.location);
+          form.setValue("billFrom.gstin", data?.billFrom?.gstin);
+          form.setValue("billFrom.pincode", data?.billFrom?.pincode);
+          form.setValue("billFrom.email", data?.billFrom?.email);
+          form.setValue("billFrom.phone", data?.billFrom?.phone);
+          form.setValue("billFrom.addressLine1", data?.billFrom?.addressLine1);
+          form.setValue("billFrom.addressLine2", data?.billFrom?.addressLine2);
 
-        form.setValue("billTo.legalName", data?.billTo?.legalName);
-        form.setValue("billTo.tradeName", data?.billTo?.tradeName);
-        form.setValue("billTo.state", data?.billTo?.state);
-        form.setValue("billTo.location", data?.billTo?.location);
-        form.setValue("billTo.gstin", data?.billTo?.gstin);
-        form.setValue("billTo.pincode", data?.billTo?.pincode);
-        form.setValue("billTo.email", data?.billTo?.email);
-        form.setValue("billTo.phone", data?.billTo?.phone);
-        form.setValue("billTo.addressLine1", data?.billTo?.addressLine1);
-        form.setValue("billTo.addressLine2", data?.billTo?.addressLine2);
+          form.setValue("billTo.legalName", data?.billTo?.legalName);
+          form.setValue("billTo.tradeName", data?.billTo?.tradeName);
+          form.setValue("billTo.state", data?.billTo?.state);
+          form.setValue("billTo.location", data?.billTo?.location);
+          form.setValue("billTo.gstin", data?.billTo?.gstin);
+          form.setValue("billTo.pincode", data?.billTo?.pincode);
+          form.setValue("billTo.email", data?.billTo?.email);
+          form.setValue("billTo.phone", data?.billTo?.phone);
+          form.setValue("billTo.addressLine1", data?.billTo?.addressLine1);
+          form.setValue("billTo.addressLine2", data?.billTo?.addressLine2);
 
-        form.setValue("dispatchFrom.legalName", data?.dispatchFrom?.legalName);
-        form.setValue("dispatchFrom.state", data?.dispatchFrom?.state);
-        form.setValue("dispatchFrom.location", data?.dispatchFrom?.location);
-        form.setValue("dispatchFrom.pincode", data?.dispatchFrom?.pincode);
-        form.setValue(
-          "dispatchFrom.addressLine1",
-          data?.dispatchFrom?.addressLine1
-        );
-        form.setValue(
-          "dispatchFrom.addressLine2",
-          data?.dispatchFrom?.addressLine2
-        );
+          form.setValue(
+            "dispatchFrom.legalName",
+            data?.dispatchFrom?.legalName
+          );
+          form.setValue("dispatchFrom.state", data?.dispatchFrom?.state);
+          form.setValue("dispatchFrom.location", data?.dispatchFrom?.location);
+          form.setValue("dispatchFrom.pincode", data?.dispatchFrom?.pincode);
+          form.setValue(
+            "dispatchFrom.addressLine1",
+            data?.dispatchFrom?.addressLine1
+          );
+          form.setValue(
+            "dispatchFrom.addressLine2",
+            data?.dispatchFrom?.addressLine2
+          );
 
-        form.setValue("shipTo.legalName", data?.shipTo?.legalName);
-        form.setValue("shipTo.state", data?.shipTo?.state);
-        form.setValue("shipTo.tradeName", data?.shipTo?.tradeName);
-        form.setValue("shipTo.gstin", data?.shipTo?.gstin);
-        form.setValue("shipTo.location", data?.shipTo?.location);
-        form.setValue("shipTo.pincode", data?.shipTo?.pincode);
-        form.setValue("shipTo.addressLine1", data?.shipTo?.addressLine1);
-        form.setValue("shipTo.addressLine2", data?.shipTo?.addressLine2);
+          form.setValue("shipTo.legalName", data?.shipTo?.legalName);
+          form.setValue("shipTo.state", data?.shipTo?.state);
+          form.setValue("shipTo.tradeName", data?.shipTo?.tradeName);
+          form.setValue("shipTo.gstin", data?.shipTo?.gstin);
+          form.setValue("shipTo.location", data?.shipTo?.location);
+          form.setValue("shipTo.pincode", data?.shipTo?.pincode);
+          form.setValue("shipTo.addressLine1", data?.shipTo?.addressLine1);
+          form.setValue("shipTo.addressLine2", data?.shipTo?.addressLine2);
+        } else {
+          console.log(res.payload);
+          toast({
+            title: res?.payload?.message || "Already Generated",
+            className: "bg-red-600 text-white items-center",
+          });
+        }
       });
     }
   }, [params]);
@@ -207,6 +217,11 @@ export default function CreateEwayBill() {
           form.setValue("shipToAddress2", data?.shipto?.shipToAddress2);
           form.setValue("fromPincode", data?.billfrom?.pin);
           form.setValue("toPincode", data?.shipto?.pin);
+        } else {
+          toast({
+            title: "Already Generated",
+            className: "bg-red-600 text-white items-center",
+          });
         }
       });
     }
@@ -254,6 +269,8 @@ export default function CreateEwayBill() {
               title: "Data Fetched Successfully",
               className: "bg-green-600 text-white items-center",
             });
+            setInvoiceData(response.payload.data);
+            setShowCreatedInvoiceModal(true);
           } else {
             toast({
               title: "Failed to Fetch Data",
@@ -269,6 +286,8 @@ export default function CreateEwayBill() {
               title: "Created Successfully",
               className: "bg-green-600 text-white items-center",
             });
+            setInvoiceData(response.payload.data);
+            setShowCreatedInvoiceModal(true);
           } else {
             toast({
               title: "Failed to Create",
@@ -294,25 +313,24 @@ export default function CreateEwayBill() {
 
   useEffect(() => {
     setInvoiceData({
-    AckNo: 142410023033487,
-    AckDt: "2024-09-30 15:09:54",
-    EwbDt: null,
-    EwbNo: null,
-    EwbValidTill: null,
-    InfoDtls: [
-      {
-        InfCd: "EWBERR",
-        Desc: [
-          /* additional description details here */
-        ],
-      },
-    ],
-    Irn: "ea08d0ea4a993761bc4f4549379ccbed045f1415a566a1e597e97d50199d23f1",
-    Remarks: null,
-    Status: "ACT",
-  });
-  },[])
-  
+      AckNo: 142410023033487,
+      AckDt: "2024-09-30 15:09:54",
+      EwbDt: null,
+      EwbNo: null,
+      EwbValidTill: null,
+      InfoDtls: [
+        {
+          InfCd: "EWBERR",
+          Desc: [
+            /* additional description details here */
+          ],
+        },
+      ],
+      Irn: "ea08d0ea4a993761bc4f4549379ccbed045f1415a566a1e597e97d50199d23f1",
+      Remarks: null,
+      Status: "ACT",
+    });
+  }, []);
 
   return (
     <div className="h-[calc(100vh-150px)] flex flex-col">
@@ -332,10 +350,7 @@ export default function CreateEwayBill() {
             {/*Document Details*/}
             <Card className="rounded shadow bg-[#fff] mb-8">
               <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
-                <h3
-                  className="text-[17px] font-[600] text-slate-600"
-                 
-                >
+                <h3 className="text-[17px] font-[600] text-slate-600">
                   Document Details
                 </h3>
               </CardHeader>
@@ -562,7 +577,14 @@ export default function CreateEwayBill() {
                                     formattedDate
                                   );
                                 }}
-                                value={form.getValues("header.documentDate") ? dayjs(form.getValues("header.documentDate"), "DD-MM-YYYY") : null}
+                                value={
+                                  form.getValues("header.documentDate")
+                                    ? dayjs(
+                                        form.getValues("header.documentDate"),
+                                        "DD-MM-YYYY"
+                                      )
+                                    : null
+                                }
                               />
                             </Space>
                           </FormControl>
