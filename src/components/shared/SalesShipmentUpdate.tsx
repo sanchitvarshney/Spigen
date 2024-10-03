@@ -24,6 +24,7 @@ import columnDefs, {
 } from "@/config/agGrid/salesmodule/shipmentUpdateTable";
 import { AgGridReact } from "ag-grid-react";
 import SalesShipmentUpadetTextCellrender from "@/config/agGrid/cellRenders.tsx/SalesShipmentUpadetTextCellrender";
+import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
 
 const SalesShipmentUpdate: React.FC<Props> = ({ uiState }) => {
   const { update, setUpdate } = uiState;
@@ -173,6 +174,7 @@ const SalesShipmentUpdate: React.FC<Props> = ({ uiState }) => {
                 animateRows={true}
                 suppressCellFocus={true}
                 suppressRowClickSelection={false}
+                overlayNoRowsTemplate={OverlayNoRowsTemplate}
               />
             </div>
           </div>

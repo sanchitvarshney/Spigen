@@ -22,6 +22,7 @@ import { RootState } from "@/store";
 import { fetchSalesOrderShipmentList } from "@/features/salesmodule/SalesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
+import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
 
 const { RangePicker } = DatePicker;
 const dateFormat = "YYYY/MM/DD";
@@ -189,6 +190,7 @@ const SalesShipmentPage: React.FC = () => {
           paginationPageSize={10}
           paginationAutoPageSize={true}
           components={components}
+          overlayNoRowsTemplate={OverlayNoRowsTemplate}
         />
       </div>
     </Wrapper>

@@ -17,6 +17,7 @@ import { AgGridReact } from "ag-grid-react";
 import columnDefs, {
   dummyRowData,
 } from "@/config/agGrid/salesmodule/shipmentViewTable";
+import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
 
 const SalesShipmentView: React.FC<Props> = ({ uiState }) => {
   const { view, setView } = uiState;
@@ -71,6 +72,7 @@ const SalesShipmentView: React.FC<Props> = ({ uiState }) => {
                 animateRows={true}
                 suppressCellFocus={true}
                 suppressRowClickSelection={false}
+                overlayNoRowsTemplate={OverlayNoRowsTemplate}
               />
             </div>
           </div>

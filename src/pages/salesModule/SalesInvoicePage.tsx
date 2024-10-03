@@ -42,6 +42,7 @@ import { setDateRange } from "@/features/salesmodule/SalesSlice";
 import moment from "moment";
 import CopyCellRenderer from "@/components/shared/CopyCellRenderer";
 import { CsvExportModule } from "ag-grid-community";
+import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
 
 const { RangePicker } = DatePicker;
 const dateFormat = "DD-MM-YYYY";
@@ -269,6 +270,7 @@ const SalesInvoicePage: React.FC = () => {
           components={{
             copyCellRenderer: CopyCellRenderer,
           }}
+          overlayNoRowsTemplate={OverlayNoRowsTemplate}
         />
       </div>
     </Wrapper>

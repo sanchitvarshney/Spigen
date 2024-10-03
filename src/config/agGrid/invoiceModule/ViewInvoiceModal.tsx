@@ -17,6 +17,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"; // Adjust path as needed
 import { Button } from "@/components/ui/button"; // Adjust path as needed
+import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
 
 interface ViewInvoiceModalProps {
   visible: boolean;
@@ -353,6 +354,7 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
                 components={{
                   truncateCellRenderer: TruncateCellRenderer,
                 }}
+                overlayNoRowsTemplate={OverlayNoRowsTemplate}
               />
             </div>
           </div>

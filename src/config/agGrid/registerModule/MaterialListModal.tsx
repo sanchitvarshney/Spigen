@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
+import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
 
 interface MaterialListModalProps {
   visible: boolean;
@@ -84,6 +85,7 @@ const MaterialListModal: React.FC<MaterialListModalProps> = ({
             components={{
               truncateCellRenderer: TruncateCellRenderer,
             }}
+            overlayNoRowsTemplate={OverlayNoRowsTemplate}
           />
         </div>
       </SheetContent>

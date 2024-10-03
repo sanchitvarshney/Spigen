@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
 import { fetchTableData } from "@/features/agGrid/aggridSlice";
 import CustomLoadingCellRenderer from "@/config/agGrid/CustomLoadingCellRenderer";
+import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
 
 interface Payload {
   wise: string;
@@ -68,6 +69,7 @@ const ReusableTable: React.FC<GridTableProps> = ({ endpoint, columns, payload, t
           paginationPageSize={20}
           paginationPageSizeSelector={[10, 20, 30, 50, 100]}
           suppressCellFocus={true}
+          overlayNoRowsTemplate={OverlayNoRowsTemplate}
         />
       </div>
     </div>

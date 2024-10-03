@@ -58,6 +58,7 @@ import {
 } from "@/components/ui/select";
 import CopyCellRenderer from "@/components/shared/CopyCellRenderer";
 import { CsvExportModule } from "ag-grid-community";
+import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
 const { RangePicker } = DatePicker;
 const dateFormat = "DD-MM-YYYY";
 const wises = [
@@ -348,6 +349,7 @@ const SalesETransactionRegisterPage: React.FC = () => {
             truncateCellRenderer: TruncateCellRenderer,
             copyCellRenderer: CopyCellRenderer,
           }}
+          overlayNoRowsTemplate={OverlayNoRowsTemplate}
         />
       </div>
     </Wrapper>

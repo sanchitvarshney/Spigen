@@ -51,6 +51,7 @@ import { DatePicker, Space } from "antd";
 import { toast } from "@/components/ui/use-toast";
 import { fetchStates } from "@/features/salesmodule/createSalesOrderSlice";
 import ShowInvoiceModal from "@/config/agGrid/invoiceModule/ShowInvoiceModal";
+import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
 
 export default function CreateEwayBill() {
   const dispatch = useDispatch<AppDispatch>();
@@ -1986,6 +1987,7 @@ export default function CreateEwayBill() {
                     pagination={true}
                     suppressCellFocus={true}
                     paginationPageSize={10}
+                    overlayNoRowsTemplate={OverlayNoRowsTemplate}
                   />
                 </div>
               </CardContent>

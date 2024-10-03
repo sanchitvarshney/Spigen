@@ -11,6 +11,7 @@ import CustomLoadingCellRenderer from "@/config/agGrid/CustomLoadingCellRenderer
 import { getFakeServer } from "@/config/agGrid/getFakeServer";
 import { getServerSideDatasource } from "@/config/agGrid/getServerSideDatasource";
 import { menuresult } from "@/config/agGrid/GetContextmenu";
+import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
 
 
 
@@ -123,6 +124,7 @@ const DataTable = () => {
       allowContextMenuWithControlKey={true}
       getContextMenuItems={getContextMenuItems}
       serverSideInitialRowCount={10}
+      overlayNoRowsTemplate={OverlayNoRowsTemplate}
     />
   </div>
   )

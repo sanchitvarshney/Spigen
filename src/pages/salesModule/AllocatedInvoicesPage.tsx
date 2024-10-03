@@ -35,6 +35,7 @@ import { Input } from "@/components/ui/input";
 import moment from "moment";
 import CopyCellRenderer from "@/components/shared/CopyCellRenderer";
 import { CsvExportModule } from "ag-grid-community";
+import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
 
 const { RangePicker } = DatePicker;
 const dateFormat = "DD-MM-YYYY";
@@ -254,6 +255,7 @@ const AllocatedInvoicesPage: React.FC = () => {
             copyCellRenderer: CopyCellRenderer,
           }}
           loading={loading}
+          overlayNoRowsTemplate={OverlayNoRowsTemplate}
         />
       </div>
     </Wrapper>

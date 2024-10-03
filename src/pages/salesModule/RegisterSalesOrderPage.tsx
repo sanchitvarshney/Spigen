@@ -35,6 +35,7 @@ import { useToast } from "@/components/ui/use-toast";
 import FullPageLoading from "@/components/shared/FullPageLoading";
 import moment from "moment";
 import CopyCellRenderer from "@/components/shared/CopyCellRenderer";
+import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
 
 const { RangePicker } = DatePicker;
 const dateFormat = "DD-MM-YYYY";
@@ -225,6 +226,7 @@ const RegisterSalesOrderPage: React.FC = () => {
           paginationAutoPageSize={true}
           suppressCellFocus={true}
           components={{ copyCellRenderer: CopyCellRenderer }}
+          overlayNoRowsTemplate={OverlayNoRowsTemplate}
         />
       </div>
     </Wrapper>

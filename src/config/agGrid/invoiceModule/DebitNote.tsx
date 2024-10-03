@@ -18,6 +18,7 @@ import { AppDispatch, RootState } from "@/store";
 import { createDebitNote } from "@/features/salesmodule/salesInvoiceSlice";
 import { Button, Form } from "antd";
 import { ConfirmSubmissionDialog } from "@/config/agGrid/invoiceModule/ConfirmSubmissionDialog";
+import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
 
 interface Item {
   item_value: number;
@@ -375,6 +376,7 @@ const DebitNote: React.FC<DebitNoteProps> = ({
               pagination={true}
               suppressCellFocus={true}
               components={components}
+              overlayNoRowsTemplate={OverlayNoRowsTemplate}
             />
           </div>
           <ConfirmSubmissionDialog
