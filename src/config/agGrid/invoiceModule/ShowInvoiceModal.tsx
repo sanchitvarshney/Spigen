@@ -14,8 +14,6 @@ const DataDialog = ({ open, onClose, data,orderId,module }: any) => {
         downloadFunction(response?.payload?.data.buffer.data,response?.payload?.data?.filename);
       }
     });
-    // Add your download logic here
-    console.log("Download clicked");
   };
 
   const handleBack = () => {
