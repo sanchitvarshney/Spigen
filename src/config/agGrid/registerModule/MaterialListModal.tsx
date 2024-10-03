@@ -16,12 +16,16 @@ interface MaterialListModalProps {
   visible: boolean;
   onClose: () => void;
   sellRequestDetails: any[];
+  row:{
+    req_id: string;
+  };
 }
 
 const MaterialListModal: React.FC<MaterialListModalProps> = ({
   visible,
   onClose,
   sellRequestDetails,
+  row,
 }) => {
   const gridRef = useRef<AgGridReact<any>>(null);
 
@@ -60,7 +64,7 @@ const MaterialListModal: React.FC<MaterialListModalProps> = ({
         }}
       >
         <div className="flex justify-between items-center mb-4">
-          <SheetTitle>Material List</SheetTitle>
+          <SheetTitle>Material List of {row?.req_id}</SheetTitle>
           <div className="flex-grow flex justify-center">
             {" "}
             {/* Centering container */}

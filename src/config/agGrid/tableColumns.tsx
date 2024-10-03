@@ -8,7 +8,7 @@ export const tablecolumns = (
 ) => [
   {
     field: "index",
-    headerName: "INDEX",
+    headerName: "#",
     editable: false,
     flex: 1,
     cellRenderer: "textInputCellRenderer",

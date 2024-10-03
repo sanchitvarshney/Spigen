@@ -24,7 +24,7 @@ export interface RowData {
 
 export const columnDefs= [
   { headerName: "", valueGetter: "node.rowIndex + 1",cellRenderer: "textInputCellRenderer",maxWidth: 100,field:"delete" },
-  { headerName: "Index", valueGetter: "node.rowIndex + 1",maxWidth: 100 },
+  { headerName: "#", valueGetter: "node.rowIndex + 1",maxWidth: 100 },
   { headerName: "Type", field: "type", cellEditor: "selectEditor", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
   { headerName: "Material", field: "material", editable: false, flex: 4, cellRenderer: "textInputCellRenderer", minWidth: 500 },
   { headerName: "Material Description	", field: "materialDescription", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 300 },

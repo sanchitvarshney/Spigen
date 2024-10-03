@@ -174,6 +174,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
         visible={isMaterialListModalVisible}
         onClose={handleMaterialListModalClose}
         sellRequestDetails={sellRequestDetails}
+        row={{ req_id: row?.req_id }}
       />
     </>
   );
