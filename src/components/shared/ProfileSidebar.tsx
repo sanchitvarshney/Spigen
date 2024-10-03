@@ -12,7 +12,7 @@ const ProfileSidebar: React.FC<Props> = ({ uiState }) => {
   const { sidebaref, setSheet2Open, sheet2Open, setLogotAlert } = uiState;
   const userData = localStorage.getItem("loggedInUser");
   const user = userData ? JSON.parse(userData) : null;
-  console.log(localStorage.getItem("loggedInUser"), user);
+  
   return (
     <div
       ref={sidebaref}
