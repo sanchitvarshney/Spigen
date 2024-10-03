@@ -60,7 +60,7 @@ const HelpAndSupportModel: React.FC<Props> = ({ uiState }) => {
               </TabsList>
             </SheetHeader>
             <div className="h-[calc(100vh-52px)] bg-white overflow-y-auto mt-[2px]">
-              <TabsContent value="resources" className="px-[10px] ">
+              {/* <TabsContent value="resources" className="px-[10px] ">
                 <div className="flex items-center rounded bg-white gap-[10px] shadow-sm  text-slate-600 border px-[10px] py-[2px] border-slate-300">
                   <Search className="h-[20px] w-[20px]" />
                   <span className="text-slate-400">|</span>
@@ -124,7 +124,7 @@ const HelpAndSupportModel: React.FC<Props> = ({ uiState }) => {
                     </AccordionItem>
                   </Accordion>
                 </div>
-              </TabsContent>
+              </TabsContent> */}
               <TabsContent value="contact" className="bg-white ">
                 <div className="p-[10px]">
                   <h2 className="h-[20px] text-slate-700 mt-[20px] font-[600] text-[17px]">Write to us</h2>

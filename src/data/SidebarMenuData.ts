@@ -140,69 +140,68 @@ export const materialmenu = [
       },
     ],
   },
-  {
-    name: "Procurement",
-    subMenu: [
-      { name: " Create PO", path: "/create-po" },
-      { name: "Manage PO", path: "/manage-po" },
-      { name: "Compleated PO", path: "/approve-po" },
-    ],
-  },
+  // {
+  //   name: "Procurement",
+  //   subMenu: [
+  //     { name: " Create PO", path: "/create-po" },
+  //     { name: "Manage PO", path: "/manage-po" },
+  //     { name: "Compleated PO", path: "/approve-po" },
+  //   ],
+  // },
   {
     name: "Sales Order",
     subMenu: [
       { name: "Create", path: "/sales/order/create" },
       { name: "Register", path: "/sales/order/register" },
-      // { name: "Shipment", path: "/sales/order/shipments" },
       { name: "Invoice", path: "/sales/order/invoice" },
       { name: "Allocated Invoices", path: "/sales/order/allocated" },
       { name: "E Transaction Invoices", path: "/sales/order/e-transaction-register" },
     ],
   },
-  {
-    name: "Warehouse",
-    subMenu: [
-      { name: "MR Approval", path: "/not-permission" },
-      { name: "Inward", path: "/not-permission" },
-      { name: "Transfer", path: "/not-permission" },
-      { name: "Pic Slip", path: "/not-permission" },
-      { name: "Batch Allocation", path: "/not-permission" },
-    ],
-  },
-  {
-    name: " FG(s) Inwarding",
-    subMenu: [
-      { name: "Pending FG(s)", path: "/not-permission" },
-      { name: "Complete FG(s)", path: "/not-permission" },
-    ],
-  },
-  {
-    name: "FG(s) OUT",
-    subMenu: [
-      { name: "Create FG(s) OUT", path: "/not-permission" },
-      { name: "View FG(s) OUT", path: "/not-permission" },
-    ],
-  },
-  {
-    name: "Production",
-    subMenu: [{ name: "PPC", path: "/not-permission" }],
-  },
-  {
-    name: "Report (s)",
-    subMenu: [
-      { name: "Inventory report", path: "/not-permission" },
-      { name: "Printing", path: "/not-permission" },
-    ],
-  },
-  {
-    name: "   Query (s)",
-    subMenu: [{ name: "Q1-Q2", path: "/not-permission" }],
-  },
-  {
-    name: " Physical Stock",
-    subMenu: [
-      { name: "Create Physical Stock", path: "/not-permission" },
-      { name: "View Physical Stock", path: "/not-permission" },
-    ],
-  },
+  // {
+  //   name: "Warehouse",
+  //   subMenu: [
+  //     { name: "MR Approval", path: "/not-permission" },
+  //     { name: "Inward", path: "/not-permission" },
+  //     { name: "Transfer", path: "/not-permission" },
+  //     { name: "Pic Slip", path: "/not-permission" },
+  //     { name: "Batch Allocation", path: "/not-permission" },
+  //   ],
+  // },
+  // {
+  //   name: " FG(s) Inwarding",
+  //   subMenu: [
+  //     { name: "Pending FG(s)", path: "/not-permission" },
+  //     { name: "Complete FG(s)", path: "/not-permission" },
+  //   ],
+  // },
+  // {
+  //   name: "FG(s) OUT",
+  //   subMenu: [
+  //     { name: "Create FG(s) OUT", path: "/not-permission" },
+  //     { name: "View FG(s) OUT", path: "/not-permission" },
+  //   ],
+  // },
+  // {
+  //   name: "Production",
+  //   subMenu: [{ name: "PPC", path: "/not-permission" }],
+  // },
+  // {
+  //   name: "Report (s)",
+  //   subMenu: [
+  //     { name: "Inventory report", path: "/not-permission" },
+  //     { name: "Printing", path: "/not-permission" },
+  //   ],
+  // },
+  // {
+  //   name: "   Query (s)",
+  //   subMenu: [{ name: "Q1-Q2", path: "/not-permission" }],
+  // },
+  // {
+  //   name: " Physical Stock",
+  //   subMenu: [
+  //     { name: "Create Physical Stock", path: "/not-permission" },
+  //     { name: "View Physical Stock", path: "/not-permission" },
+  //   ],
+  // },
 ];

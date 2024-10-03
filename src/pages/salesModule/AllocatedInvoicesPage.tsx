@@ -37,7 +37,7 @@ import CopyCellRenderer from "@/components/shared/CopyCellRenderer";
 import { CsvExportModule } from "ag-grid-community";
 
 const { RangePicker } = DatePicker;
-const dateFormat = "YYYY/MM/DD";
+const dateFormat = "DD-MM-YYYY";
 
 const types = [
   { label: "Debit Note", value: "debit" },
@@ -67,6 +67,7 @@ const AllocatedInvoicesPage: React.FC = () => {
   const [noteType, setNoteType] = useState<string>("debit");
   const [wiseType, setWiseType] = useState<string>("date");
   const dispatch = useDispatch<AppDispatch>();
+  const [isSearchPerformed, setIsSearchPerformed] = useState<boolean>(false);
   const { data: rowData, loading } = useSelector(
     (state: RootState) => state.creditDebitRegister
   );
@@ -103,6 +104,7 @@ const AllocatedInvoicesPage: React.FC = () => {
       ).unwrap();
 
       if (resultAction.success) {
+        setIsSearchPerformed(true);
         toast({
           title: "Invoice fetched successfully",
           className: "bg-green-600 text-white items-center",
@@ -193,6 +195,7 @@ const AllocatedInvoicesPage: React.FC = () => {
                             )
                           }
                           format={dateFormat}
+                          disabledDate={(current) => current && current > moment().endOf('day')} 
                         />
                       </Space>
                     </FormControl>
@@ -215,18 +218,20 @@ const AllocatedInvoicesPage: React.FC = () => {
               />
             )}
             <div className="flex space-x-2">
-              <Button
-                type="button"
-                onClick={onBtExport}
-                className="shadow bg-cyan-700 hover:bg-cyan-600 shadow-slate-500"
-              >
-                <Download />
-              </Button>
+              {isSearchPerformed && ( // Only show the download button if search is performed
+                <Button
+                  type="button"
+                  onClick={onBtExport}
+                  className="shadow bg-cyan-700 hover:bg-cyan-600 shadow-slate-500"
+                >
+                  <Download />
+                </Button>
+              )}
               <Button
                 type="submit"
                 className="shadow bg-cyan-700 hover:bg-cyan-600 shadow-slate-500"
               >
-                Submit
+                Search
               </Button>
             </div>
           </form>

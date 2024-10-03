@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Plus, Upload } from "lucide-react";
-import { FaFileExcel } from "react-icons/fa";
 import { StatusPanelDef, ColDef, ColGroupDef } from "@ag-grid-community/core";
 import { AgGridReact } from "@ag-grid-community/react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import TextInputCellRenderer from "@/config/agGrid/TextInputCellRenderer";
 import DatePickerCellRenderer from "@/config/agGrid/DatePickerCellRenderer";
 import StatusCellRenderer from "@/config/agGrid/StatusCellRenderer";
@@ -166,14 +165,14 @@ const AddSalesOrder = ({
     []
   );
 
-  const onBtExport = useCallback(() => {
-    const link = document.createElement('a');
-    link.href = 'https://spigen.mscapi.live/files/excel/Sales%20Order%20Sample.xlsx';
-    link.setAttribute('download', 'Sales_Order_Sample.xlsx'); // Specify the download name
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }, []);
+  // const onBtExport = useCallback(() => {
+  //   const link = document.createElement('a');
+  //   link.href = 'https://spigen.mscapi.live/files/excel/Sales%20Order%20Sample.xlsx';
+  //   link.setAttribute('download', 'Sales_Order_Sample.xlsx'); // Specify the download name
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // }, []);
 
   const materials = {
     so_type: rowData?.map((component: RowData) => component.type || ""),
@@ -342,19 +341,18 @@ const AddSalesOrder = ({
               <Plus className="font-[600]" /> Add Item
             </Button>
             <div className="flex items-center gap-[20px]">
-              <Button
+              {/* <Button
                 onClick={onBtExport}
                 className="bg-[#217346] text-white hover:bg-[#2fa062] hover:text-white flex items-center gap-[10px] text-[15px] shadow shadow-slate-600 rounded-md"
               >
                 <FaFileExcel className="text-white w-[20px] h-[20px]" /> Export
                 to Excel
-              </Button>
+              </Button> */}
               <Button
                 onClick={() => setExcelModel(true)}
                 className="bg-[#217346] text-white hover:bg-[#2fa062] hover:text-white flex items-center gap-[10px] text-[15px] shadow shadow-slate-600 rounded-md"
               >
                 <Upload className="text-white w-[20px] h-[20px]" /> Upload Excel
-                Here
               </Button>
             </div>
           </div>

@@ -37,7 +37,7 @@ import moment from "moment";
 import CopyCellRenderer from "@/components/shared/CopyCellRenderer";
 
 const { RangePicker } = DatePicker;
-const dateFormat = "YYYY/MM/DD";
+const dateFormat = "DD-MM-YYYY";
 const wises = [
   { label: "Date Wise", value: "DATE" },
   { label: "SO(s)Wise", value: "SONO" },
@@ -58,6 +58,7 @@ const RegisterSalesOrderPage: React.FC = () => {
   const { toast } = useToast();
   const gridRef = useRef<AgGridReact<any>>(null);
   const [wise, setWise] = useState<string>("DATE");
+  const [isSearchPerformed, setIsSearchPerformed] = useState<boolean>(false);
   const dispatch = useDispatch();
   const { data: rowData, loading } = useSelector(
     (state: RootState) => state.sellRequest
@@ -86,6 +87,7 @@ const RegisterSalesOrderPage: React.FC = () => {
         fetchSellRequestList({ wise, data: dataString }) as any
       ).unwrap();
       if (resultAction.success) {
+        setIsSearchPerformed(true);
         toast({
           title: "Register fetched successfully",
           className: "bg-green-600 text-white items-center",
@@ -112,6 +114,7 @@ const RegisterSalesOrderPage: React.FC = () => {
       gridRef.current.api.exportDataAsCsv();
     }
   }, []);
+
 
   return (
     <Wrapper className="h-[calc(100vh-100px)] grid grid-cols-[350px_1fr]">
@@ -166,6 +169,8 @@ const RegisterSalesOrderPage: React.FC = () => {
                             )
                           }
                           format={dateFormat}
+                          
+                          disabledDate={(current) => current && current > moment().endOf('day')} 
                         />
                       </Space>
                     </FormControl>
@@ -188,18 +193,20 @@ const RegisterSalesOrderPage: React.FC = () => {
               />
             )}
             <div className="flex space-x-2">
-              <Button
-                type="button"
-                onClick={onBtExport}
-                className="shadow bg-cyan-700 hover:bg-cyan-600 shadow-slate-500"
-              >
-                <Download />
-              </Button>
+              {isSearchPerformed && ( // Only show the download button if search is performed
+                <Button
+                  type="button"
+                  onClick={onBtExport}
+                  className="shadow bg-cyan-700 hover:bg-cyan-600 shadow-slate-500"
+                >
+                  <Download />
+                </Button>
+              )}
               <Button
                 type="submit"
                 className="shadow bg-cyan-700 hover:bg-cyan-600 shadow-slate-500"
               >
-                Submit
+                Search
               </Button>
             </div>
           </form>

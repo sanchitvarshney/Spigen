@@ -56,7 +56,12 @@ const AddPOPopovers: React.FC<Props> = ({ uiState }) => {
     <div>
       {/* excel upload model =============*/}
       <Dialog open={excelModel} onOpenChange={setExcelModel}>
-        <DialogContent className="grid grid-cols-2 min-w-[1000px] px-[50px] py-[100px]">
+        <DialogContent
+          className="grid grid-cols-2 min-w-[1000px] px-[50px] py-[100px]"
+          onInteractOutside={(e: any) => {
+            e.preventDefault();
+          }}
+        >
           <div>
             <ExcelImportButton onImport={handleImport} />
           </div>
@@ -82,6 +87,17 @@ const AddPOPopovers: React.FC<Props> = ({ uiState }) => {
                 To apply absolute discount in document currency, keep 'Discount
                 Type' column blank, whereas to apply percentage discount enter
                 '%' in 'Discount Type' column.
+              </li>
+              <li className="p-1">
+                Download<span> </span>
+                <a
+                  href="https://spigen.mscapi.live/files/excel/Sales%20Order%20Sample.xlsx"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-teal-500 hover:underline"
+                >
+                  Sample File
+                </a>
               </li>
             </ol>
           </div>

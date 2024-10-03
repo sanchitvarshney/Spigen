@@ -81,6 +81,7 @@ const SalesETransactionRegisterPage: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const dispatch = useDispatch();
   const [wise, setWise] = useState<any>("date");
+  const [isSearchPerformed, setIsSearchPerformed] = useState<boolean>(false);
   const [type, setType] = useState<any>("e-invoice");
   const { data: rowData, loading } = useSelector(
     (state: RootState) => state.invoice
@@ -145,6 +146,7 @@ const SalesETransactionRegisterPage: React.FC = () => {
       }
 
       if (resultAction.success) {
+        setIsSearchPerformed(true);
         toast({
           title: "Data fetched successfully",
           className: "bg-green-600 text-white items-center",
@@ -287,6 +289,7 @@ const SalesETransactionRegisterPage: React.FC = () => {
                                 )
                               }
                               format={dateFormat}
+                              disabledDate={(current) => current && current > moment().endOf('day')} 
                             />
                           </Space>
                         </FormControl>
@@ -309,18 +312,20 @@ const SalesETransactionRegisterPage: React.FC = () => {
                   />
                 )}
                 <div className="flex space-x-2">
-                  <Button
-                    type="button"
-                    onClick={onBtExport}
-                    className="shadow bg-cyan-700 hover:bg-cyan-600 shadow-slate-500"
-                  >
-                    <Download />
-                  </Button>
+                  {isSearchPerformed && ( // Only show the download button if search is performed
+                    <Button
+                      type="button"
+                      onClick={onBtExport}
+                      className="shadow bg-cyan-700 hover:bg-cyan-600 shadow-slate-500"
+                    >
+                      <Download />
+                    </Button>
+                  )}
                   <Button
                     type="submit"
                     className="shadow bg-cyan-700 hover:bg-cyan-600 shadow-slate-500 ml-[10px]"
                   >
-                    Submit
+                    Search
                   </Button>
                 </div>
               </form>
