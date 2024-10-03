@@ -232,7 +232,7 @@ const SalesInvoicePage: React.FC = () => {
                     </FormItem>
                   )}
                 />
-                <div className="flex space-x-2">
+                <div className="flex space-x-2 float-end pr-2">
                   {isSearchPerformed && ( // Only show the download button if search is performed
                     <Button
                       type="button"

@@ -220,6 +220,10 @@ const TextInputCellRenderer = (props: any) => {
     data[field] = value?.rate;
   };
 
+  const capitalizeFirstLetter = (string: string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
+  
   const renderContent = () => {
     switch (colDef.field) {
       case "delete":
@@ -381,7 +385,7 @@ const TextInputCellRenderer = (props: any) => {
                 aria-expanded={open}
                 className="w-[100%] justify-between  text-slate-600 items-center  border-slate-400 shadow-none"
               >
-                {value || colDef.headerName}
+                   {value ? capitalizeFirstLetter(value) : colDef.headerName} 
                 <FaSortDown className="w-5 h-5 ml-2 mb-[5px] opacity-50 shrink-0" />
               </Button>
             </PopoverTrigger>
