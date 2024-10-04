@@ -15,7 +15,10 @@ import columnDefs, {
 import DebitTextInputCellRenderer from "@/config/agGrid/invoiceModule/DebitTextInputCellRenderer";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
-import { createDebitNote } from "@/features/salesmodule/salesInvoiceSlice";
+import {
+  createCreditNote,
+  createDebitNote,
+} from "@/features/salesmodule/salesInvoiceSlice";
 import { Button, Form } from "antd";
 import { ConfirmSubmissionDialog } from "@/config/agGrid/invoiceModule/ConfirmSubmissionDialog";
 import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
@@ -38,6 +41,7 @@ interface DebitNoteProps {
   onClose: () => void;
   sellRequestDetails: any;
   row: any;
+  module?: string;
 }
 
 const DebitNote: React.FC<DebitNoteProps> = ({
@@ -45,6 +49,7 @@ const DebitNote: React.FC<DebitNoteProps> = ({
   onClose,
   sellRequestDetails,
   row,
+  module,
 }) => {
   const [rowData, setRowData] = useState<RowData[]>([]);
   const [cgstTotal, setCgstTotal] = useState(0);
@@ -67,9 +72,7 @@ const DebitNote: React.FC<DebitNoteProps> = ({
     (state: RootState) => state.createSalesOrder
   );
 
-  const { loading }:any = useSelector(
-    (state: RootState) => state.sellInvoice
-  );
+  const { loading }: any = useSelector((state: RootState) => state.sellInvoice);
 
   useEffect(() => {
     const updatedData: RowData[] = sellRequestDetails?.materials?.map(
@@ -171,14 +174,17 @@ const DebitNote: React.FC<DebitNoteProps> = ({
       // Dispatch the createDebitNote action
       // Close the modal after successful submission
       setIsDialogVisible(false);
-      await dispatch(createDebitNote(payload)).unwrap();
-
+      if (module === "debit") {
+        await dispatch(createDebitNote(payload)).unwrap();
+      } else if (module === "credit") {
+        await dispatch(createCreditNote(payload)).unwrap();
+      }
     } catch (error) {
       // Handle validation errors or submission errors
       console.error("Validation or submission error:", error);
     }
   };
-  const filteredColumnDefs = columnDefs.filter(col => col.field !== 'delete');
+  const filteredColumnDefs = columnDefs.filter((col) => col.field !== "delete");
 
   return (
     <Sheet open={visible} onOpenChange={onClose}>
@@ -189,9 +195,10 @@ const DebitNote: React.FC<DebitNoteProps> = ({
           e.preventDefault();
         }}
       >
-         {loading && <FullPageLoading />}
+        {loading && <FullPageLoading />}
         <SheetTitle>
-          Create Debit Note of {sellRequestDetails?.materials?.[0]?.orderid}
+          Create {module === "debit" ? "Debit Note" : "Credit Note"} of{" "}
+          {sellRequestDetails?.materials?.[0]?.orderid}
         </SheetTitle>
         <div className="ag-theme-quartz h-[calc(100vh-140px)] grid grid-cols-4 gap-4">
           <div className="col-span-1 max-h-[calc(100vh-150px)] overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-800 scrollbar-track-gray-300 bg-white border-r flex flex-col gap-4 p-4">

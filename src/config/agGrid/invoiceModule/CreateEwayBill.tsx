@@ -62,7 +62,7 @@ export default function CreateEwayBill() {
     ""
   );
   const [showCreatedInvoiceModal, setShowCreatedInvoiceModal] = useState(false);
-  const [invoiceData, setInvoiceData] = useState<any>();
+  const [invoiceData, setInvoiceData] = useState<any>({});
   const isEwayBill = window.location.href?.includes("e-way");
   const isCrNote = window.location.href?.includes("CRN");
   const isCnDn =
@@ -258,7 +258,8 @@ export default function CreateEwayBill() {
                 response?.payload?.message || "Data Submitted Successfully",
               className: "bg-green-600 text-white items-center",
             });
-            setInvoiceData(response.payload.data);
+            setInvoiceData(response?.payload?.data);
+            console.log(response.payload.data);
             setShowCreatedInvoiceModal(true);
           } else {
             toast({
@@ -734,7 +735,7 @@ export default function CreateEwayBill() {
                     <div className="">
                       <FormField
                         control={form.control}
-                        name="other_ref"
+                        name="header.other_ref"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>

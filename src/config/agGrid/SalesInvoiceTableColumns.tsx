@@ -18,6 +18,7 @@ const ActionMenu: React.FC<any> = ({ row }) => {
   const [viewInvoice , setViewInvoice] = useState(false);
   const [viewDebitNote , setViewDebitNote] = useState(false);
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
+  const [module,setModule] = useState("debit");
   const [form] = Form.useForm();
   const { challanDetails,dataNotes,loading }:any = useSelector(
     (state: RootState) => state.sellInvoice
@@ -104,7 +105,7 @@ const ActionMenu: React.FC<any> = ({ row }) => {
     {
       key: "print",
       label: (
-        <span onClick={() => handleViewDebitNote(row)}>Credit Note</span>
+        <span onClick={() => {handleViewDebitNote(row); setModule("credit")}}>Credit Note</span>
       ),
     },
   ];
@@ -134,6 +135,7 @@ const ActionMenu: React.FC<any> = ({ row }) => {
         onClose={() => setViewDebitNote(false)} 
         sellRequestDetails={dataNotes || []} 
         row={{ req_id: row.so_ship_invoice_id }} 
+        module = {module}
       />
     </>
   );

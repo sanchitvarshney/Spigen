@@ -249,6 +249,36 @@ export const createDebitNote = createAsyncThunk(
     }
   }
 );
+export const createCreditNote = createAsyncThunk(
+  "client/createcreditNote",
+  async (payload: DebitNote, { rejectWithValue }) => {
+    try {
+      const response = (await spigenAxios.post<any>(
+        "/soEnotes/createCreditNote",
+        payload
+      )) as any;
+
+      if (response?.data?.success) {
+        toast({
+          title: response?.data?.message,
+          className: "bg-green-600 text-white items-center",
+        });
+      } else {
+        toast({
+          title: response.data.message,
+          className: "bg-red-600 text-white items-center",
+        });
+      }
+
+      return response.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("An unknown error occurred");
+    }
+  }
+);
 
 export const fetchDataNotes = createAsyncThunk(
   "so_challan_shipment/fetchDataNotes",
@@ -444,6 +474,17 @@ const sellInvoiceSlice = createSlice({
         state.loading = false;
       })
       .addCase(createDebitNote.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(createCreditNote.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createCreditNote.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(createCreditNote.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
