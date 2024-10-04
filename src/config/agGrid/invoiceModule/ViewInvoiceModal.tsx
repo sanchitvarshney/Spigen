@@ -14,10 +14,10 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"; // Adjust path as needed
 import { Button } from "@/components/ui/button"; // Adjust path as needed
 import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
+import FullPageLoading from "@/components/shared/FullPageLoading";
 
 interface ViewInvoiceModalProps {
   visible: boolean;
@@ -56,6 +56,7 @@ interface ViewInvoiceModalProps {
     }[];
   };
   handlePrintInvoice: any;
+  loading:any;
 }
 
 const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
@@ -63,6 +64,7 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
   onClose,
   sellRequestDetails,
   handlePrintInvoice,
+  loading,
 }) => {
   const columnDefs: ColDef[] = [
     { headerName: "#", valueGetter: "node.rowIndex + 1", maxWidth: 50 },
@@ -117,6 +119,7 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
           e.preventDefault();
         }}
       >
+        {loading && <FullPageLoading />}
         <SheetTitle>
           Invoice Details : {sellRequestDetails?.header?.invoiceNo}
         </SheetTitle>
@@ -311,7 +314,6 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
                   <Button variant="outline">Print</Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={() =>
                       handlePrintInvoice(

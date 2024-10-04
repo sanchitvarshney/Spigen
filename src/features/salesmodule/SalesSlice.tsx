@@ -329,34 +329,16 @@ export const fetchSalesOrderShipmentList = createAsyncThunk<
   return response.data;
 });
 
-export const createInvoice = createAsyncThunk<ApiResponse<any>, InvoicePayload>(
-  "/invoice/createInvoice",
-  async (payload) => {
-    try {
-      const response = await spigenAxios.post(
-        "/so_challan_shipment/createDeliveryChallan",
-        payload
-      );
-      if (!response.data.success) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: response.data.message,
-          className: "bg-red-600 text-white items-center",
-        });
-      } else {
-        toast({
-          title: "Invoice Created",
-          description: response.data.message,
-          className: "bg-green-600 text-white items-center",
-        });
-      }
-      return response.data;
-    } catch (error) {
-      console.log(error);
-    }
-  }
-);
+export const createInvoice = createAsyncThunk<
+  ApiResponse<any>,
+  { payload: InvoicePayload }
+>("sellRequest/createInvoice", async (payload) => {
+  const response = await spigenAxios.post(
+    "/so_challan_shipment/createDeliveryChallan",
+    payload
+  );
+  return response.data;
+});
 
 const sellRequestSlice = createSlice({
   name: "sellRequest",

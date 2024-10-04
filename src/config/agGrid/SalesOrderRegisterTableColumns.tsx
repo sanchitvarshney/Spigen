@@ -18,6 +18,7 @@ import { printFunction } from "@/General";
 import { ConfirmCancellationDialog } from "@/config/agGrid/registerModule/ConfirmCancellationDialog";
 import { CreateInvoiceDialog } from "@/config/agGrid/registerModule/CreateInvoiceDialog";
 import CopyCellRenderer from "@/components/shared/CopyCellRenderer";
+import { toast } from "@/components/ui/use-toast";
 
 interface ActionMenuProps {
   row: RowData; // Use the RowData type here
@@ -86,7 +87,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
     invoiceForm
       .validateFields()
       .then((values) => {
-        const payload = {
+        const payload: any = {
           bill_id: row.bill_id,
           client_addr_id: row.client_addr_id,
           client_id: row.customer_code,
@@ -97,7 +98,25 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
           shipment_id: [row?.req_id],
           so_id: [row?.req_id],
         };
-        dispatch(createInvoice(payload));
+        dispatch(createInvoice(payload)).then((resultAction: any) => {
+          if (resultAction.payload?.success) {
+            toast({
+              title:
+                typeof resultAction?.payload?.message === "string"
+                  ? resultAction?.payload?.message
+                  : JSON.stringify(resultAction?.payload?.message),
+              className: "bg-green-600 text-white items-center",
+            });
+          } else {
+            toast({
+              title:
+                typeof resultAction?.error?.message === "string"
+                  ? resultAction?.error?.message
+                  : JSON.stringify(resultAction?.error?.message),
+              className: "bg-red-600 text-white items-center",
+            });
+          }
+        });
         setIsInvoiceModalVisible(false);
         dispatch(
           fetchSellRequestList({ wise: "DATE", data: dateRange }) as any

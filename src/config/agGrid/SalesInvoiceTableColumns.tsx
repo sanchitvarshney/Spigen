@@ -11,6 +11,7 @@ import { printFunction } from "@/General";
 import { ConfirmCancellationDialog } from "@/config/agGrid/registerModule/ConfirmCancellationDialog";
 import DebitNote from "@/config/agGrid/invoiceModule/DebitNote";
 import CopyCellRenderer from "@/components/shared/CopyCellRenderer";
+import { toast } from "@/components/ui/use-toast";
 
 const ActionMenu: React.FC<any> = ({ row }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -18,7 +19,7 @@ const ActionMenu: React.FC<any> = ({ row }) => {
   const [viewDebitNote , setViewDebitNote] = useState(false);
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
   const [form] = Form.useForm();
-  const { challanDetails,dataNotes }:any = useSelector(
+  const { challanDetails,dataNotes,loading }:any = useSelector(
     (state: RootState) => state.sellInvoice
   );
   const dateRange = useSelector(
@@ -40,6 +41,15 @@ const ActionMenu: React.FC<any> = ({ row }) => {
       if (response?.payload?.success) {
         printFunction(response?.payload?.data.buffer.data);
       }
+      else {
+          toast({
+            title:
+              typeof response?.error?.message === "string"
+                ? response?.error?.message
+                : JSON.stringify(response?.error?.message),
+            className: "bg-red-600 text-white items-center",
+          });
+        }
     });
   };
 
@@ -109,6 +119,7 @@ const ActionMenu: React.FC<any> = ({ row }) => {
         onClose={() => setViewInvoice(false)} 
         sellRequestDetails={challanDetails} 
         handlePrintInvoice={handlePrintInvoice} 
+        loading={loading}
       />
       <ConfirmCancellationDialog
         isDialogVisible={cancelModalVisible}

@@ -100,7 +100,7 @@ export default function CreateEwayBill() {
     if (!isCnDn) {
       const shipId = (params?.id as string).replace(/_/g, "/");
       const action = isEwayBill ? fetchDataForEwayBill : fetchDataForInvoice;
-      dispatch(action({ shipment_id: shipId })).then((res) => {
+      dispatch(action({ shipment_id: shipId })).then((res: any) => {
         if (res.payload?.success) {
           var data = res.payload?.header;
           form.setValue("header.documentNo", data?.documentDetail?.documentNo);
@@ -156,9 +156,11 @@ export default function CreateEwayBill() {
           form.setValue("shipTo.addressLine1", data?.shipTo?.addressLine1);
           form.setValue("shipTo.addressLine2", data?.shipTo?.addressLine2);
         } else {
-          console.log(res.payload);
           toast({
-            title: res?.payload?.message || "Already Generated",
+            title:
+              typeof res?.error?.message === "string"
+                ? res?.error?.message
+                : JSON.stringify(res?.error?.message),
             className: "bg-red-600 text-white items-center",
           });
         }
@@ -174,7 +176,7 @@ export default function CreateEwayBill() {
   useEffect(() => {
     const shipmentId = (params?.id as string).replace(/_/g, "/");
     if (isCnDn) {
-      dispatch(fetchNoteData({ note_no: shipmentId })).then((res) => {
+      dispatch(fetchNoteData({ note_no: shipmentId })).then((res: any) => {
         if (res.payload.success) {
           const materials = res.payload.data.materials || []; // Ensure it's an array
           setRowData(materials);
@@ -220,7 +222,10 @@ export default function CreateEwayBill() {
           form.setValue("toPincode", data?.shipto?.pin);
         } else {
           toast({
-            title: "Already Generated",
+            title:
+              typeof res?.error?.message === "string"
+                ? res?.error?.message
+                : JSON.stringify(res?.error?.message),
             className: "bg-red-600 text-white items-center",
           });
         }
