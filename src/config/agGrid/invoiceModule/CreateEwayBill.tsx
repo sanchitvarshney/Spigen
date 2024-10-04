@@ -52,6 +52,7 @@ import { toast } from "@/components/ui/use-toast";
 import { fetchStates } from "@/features/salesmodule/createSalesOrderSlice";
 import ShowInvoiceModal from "@/config/agGrid/invoiceModule/ShowInvoiceModal";
 import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
+import ConfirmationModal from "@/components/shared/ConfirmationModal";
 
 export default function CreateEwayBill() {
   const dispatch = useDispatch<AppDispatch>();
@@ -85,6 +86,7 @@ export default function CreateEwayBill() {
   const { states } = useSelector((state: RootState) => state.createSalesOrder);
   const [rowData, setRowData] = useState(ewayBillData || []);
   const [orderId, setOrderId] = useState("");
+  const [showConfirmation, setShowConfirmation] = useState(false);
   // const transTypeSelected = Form?.useWatch("transactionType", form);
 
   useEffect(() => {
@@ -181,45 +183,57 @@ export default function CreateEwayBill() {
           const materials = res.payload.data.materials || []; // Ensure it's an array
           setRowData(materials);
           const data = res.payload?.data?.header;
-          form.setValue("documentNo", data?.invoice_no);
-          form.setValue("other_ref", data?.other_ref);
-          !isCrNote
-            ? form.setValue("debit_no", data?.note_id)
-            : form.setValue("credit_no", data?.note_id);
-          form.setValue("legalName", data?.billfrom?.name);
-          form.setValue("dispatchfrom_gstin", data?.billfrom?.gst);
-          form.setValue("dispatchfrom_state", data?.billfrom?.state?.value);
-          form.setValue("dispatchfrom_pan", data?.billfrom?.pan);
-          form.setValue("dispatchfrom_place", data?.billfrom?.place);
-          form.setValue("dispatchfrom_pincode", data?.billfrom?.pin);
+          form.setValue("header.documentNo", data?.invoice_no);
+          form.setValue("header.other_ref", data?.other_ref);
+          isCrNote
+            ? form.setValue("header.creditNo", data?.note_id)
+            : form.setValue("header.debitNo", data?.note_id);
+          form.setValue("billFrom.legalName", data?.billFrom?.legalName);
+          form.setValue("billFrom.tradeName", data?.billFrom?.tradeName);
+          form.setValue("billFrom.state", data?.billFrom?.state);
+          form.setValue("billFrom.location", data?.billFrom?.location);
+          form.setValue("billFrom.gstin", data?.billFrom?.gstin);
+          form.setValue("billFrom.pincode", data?.billFrom?.pincode);
+          form.setValue("billFrom.email", data?.billFrom?.email);
+          form.setValue("billFrom.phone", data?.billFrom?.phone);
+          form.setValue("billFrom.addressLine1", data?.billFrom?.addressLine1);
+          form.setValue("billFrom.addressLine2", data?.billFrom?.addressLine2);
+
+          form.setValue("billTo.legalName", data?.billTo?.legalName);
+          form.setValue("billTo.tradeName", data?.billTo?.tradeName);
+          form.setValue("billTo.state", data?.billTo?.state);
+          form.setValue("billTo.location", data?.billTo?.location);
+          form.setValue("billTo.gstin", data?.billTo?.gstin);
+          form.setValue("billTo.pincode", data?.billTo?.pincode);
+          form.setValue("billTo.email", data?.billTo?.email);
+          form.setValue("billTo.phone", data?.billTo?.phone);
+          form.setValue("billTo.addressLine1", data?.billTo?.addressLine1);
+          form.setValue("billTo.addressLine2", data?.billTo?.addressLine2);
+
           form.setValue(
-            "dispatchfrom_address1",
-            data?.billfrom?.billFromaddress1
+            "dispatchFrom.legalName",
+            data?.dispatchFrom?.legalName
+          );
+          form.setValue("dispatchFrom.state", data?.dispatchFrom?.state);
+          form.setValue("dispatchFrom.location", data?.dispatchFrom?.location);
+          form.setValue("dispatchFrom.pincode", data?.dispatchFrom?.pincode);
+          form.setValue(
+            "dispatchFrom.addressLine1",
+            data?.dispatchFrom?.addressLine1
           );
           form.setValue(
-            "dispatchfrom_address2",
-            data?.billfrom?.billFromaddress2
+            "dispatchFrom.addressLine2",
+            data?.dispatchFrom?.addressLine2
           );
-          form.setValue("dispatchTo.name", data?.billTo?.name);
-          form.setValue("dispatchTo.state_code", data?.billTo?.state?.value);
-          form.setValue("bill_to_state", data?.billTo?.state?.value);
-          form.setValue("dispatchTo.label", data?.billTo?.name);
-          form.setValue("dispatchTo.pincode", data?.billTo?.pin);
-          form.setValue("bill_to_pincode", data?.billTo?.pin);
-          form.setValue("dispatchTo.gstin", data?.billTo?.gst);
-          form.setValue("dispatchTo.address1", data?.billTo?.billToaddress1);
-          form.setValue("billToaddress1", data?.billTo?.billToaddress1);
-          form.setValue("billToaddress2", data?.billTo?.billToaddress2);
-          form.setValue("dispatchTo.address2", data?.billTo?.billToaddress2);
-          form.setValue("dispatchTo.company", data?.shipToName);
-          form.setValue("shipto_place", data?.shipto?.place);
-          form.setValue("shipto_name", data?.shipto?.place);
-          form.setValue("shipto_pincode", data?.shipto?.pin);
-          form.setValue("shipto_gstin", data?.shipto?.gst);
-          form.setValue("shipToAddress1", data?.shipto?.shipToAddress1);
-          form.setValue("shipToAddress2", data?.shipto?.shipToAddress2);
-          form.setValue("fromPincode", data?.billfrom?.pin);
-          form.setValue("toPincode", data?.shipto?.pin);
+
+          form.setValue("shipTo.legalName", data?.shipTo?.legalName);
+          form.setValue("shipTo.state", data?.shipTo?.state);
+          form.setValue("shipTo.tradeName", data?.shipTo?.tradeName);
+          form.setValue("shipTo.gstin", data?.shipTo?.gstin);
+          form.setValue("shipTo.location", data?.shipTo?.location);
+          form.setValue("shipTo.pincode", data?.shipTo?.pin);
+          form.setValue("shipTo.addressLine1", data?.shipTo?.shipToAddress1);
+          form.setValue("shipTo.addressLine2", data?.shipTo?.shipToAddress2);
         } else {
           toast({
             title:
@@ -244,6 +258,8 @@ export default function CreateEwayBill() {
                 response?.payload?.message || "Data Submitted Successfully",
               className: "bg-green-600 text-white items-center",
             });
+            setInvoiceData(response.payload.data);
+            setShowCreatedInvoiceModal(true);
           } else {
             toast({
               title: response?.payload?.message || "Failed to Submit Data",
@@ -259,6 +275,8 @@ export default function CreateEwayBill() {
                 response?.payload?.message || "Data Submitted Successfully",
               className: "bg-green-600 text-white items-center",
             });
+            setInvoiceData(response.payload.data);
+            setShowCreatedInvoiceModal(true);
           } else {
             toast({
               title: response?.payload?.message || "Failed to Submit Data",
@@ -317,32 +335,35 @@ export default function CreateEwayBill() {
     setTotalSum(sum);
   }, [ewayBillData, rowData]);
 
-  useEffect(() => {
-    setInvoiceData({
-      AckNo: 142410023033487,
-      AckDt: "2024-09-30 15:09:54",
-      EwbDt: null,
-      EwbNo: null,
-      EwbValidTill: null,
-      InfoDtls: [
-        {
-          InfCd: "EWBERR",
-          Desc: [
-            /* additional description details here */
-          ],
-        },
-      ],
-      Irn: "ea08d0ea4a993761bc4f4549379ccbed045f1415a566a1e597e97d50199d23f1",
-      Remarks: null,
-      Status: "ACT",
-    });
-  }, []);
+  const handleSubmit = async () => {
+    const isValid = await form.trigger(); // Validate fields
+    if (isValid) {
+      setShowConfirmation(true); // Open the confirmation modal
+    } else {
+      toast({
+        title: "Please fill out all required fields correctly.",
+        className: "bg-red-600 text-white items-center",
+      });
+    }
+  };
+
+  const handleConfirmationClose = (confirmed: boolean) => {
+    setShowConfirmation(false);
+    if (confirmed) {
+      form.handleSubmit(onSubmit)(); // Proceed with submission
+    }
+  };
 
   return (
     <div className="h-[calc(100vh-150px)] flex flex-col">
       {loading && <FullPageLoading />}
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+        >
           <div className="rounded p-[30px] shadow bg-[#fff] overflow-y-auto mb-10">
             <div className="text-slate-600 font-[600] text-[20px] flex justify-center">
               {isCnDn
@@ -507,7 +528,7 @@ export default function CreateEwayBill() {
                     <div className="">
                       <FormField
                         control={form.control}
-                        name="credit_no"
+                        name="header.creditNo"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
@@ -533,7 +554,7 @@ export default function CreateEwayBill() {
                     <div className="">
                       <FormField
                         control={form.control}
-                        name="debit_no"
+                        name="header.debitNo"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
@@ -1163,12 +1184,7 @@ export default function CreateEwayBill() {
                         name="billTo.email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>
-                              Email
-                              <span className="pl-1 text-red-500 font-bold">
-                                *
-                              </span>
-                            </FormLabel>
+                            <FormLabel className={LableStyle}>Email</FormLabel>
                             <FormControl>
                               <Input
                                 className={InputStyle}
@@ -1189,9 +1205,6 @@ export default function CreateEwayBill() {
                           <FormItem>
                             <FormLabel className={LableStyle}>
                               Mobile Number
-                              <span className="pl-1 text-red-500 font-bold">
-                                *
-                              </span>
                             </FormLabel>
                             <FormControl>
                               <Input
@@ -1943,9 +1956,11 @@ export default function CreateEwayBill() {
                           <FormItem className="pl-[10px] w-full flex flex-col">
                             <FormLabel className={LableStyle}>
                               Transport Date
-                              <span className="pl-1 text-red-500 font-bold">
-                                *
-                              </span>
+                              {isEwayBill && (
+                                <span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>
+                              )}
                             </FormLabel>
                             <FormControl>
                               <Space direction="vertical" size={12}>
@@ -2005,6 +2020,7 @@ export default function CreateEwayBill() {
                 //   // Handle form submission here
                 // })}
                 disabled={Object.keys(form.formState.errors).length > 0}
+                onClick={handleSubmit}
               >
                 Submit
               </Button>
@@ -2012,8 +2028,22 @@ export default function CreateEwayBill() {
                 open={showCreatedInvoiceModal}
                 onClose={() => setShowCreatedInvoiceModal(false)}
                 data={invoiceData}
-                module={isEwayBill ? "E-WayBill" : "E-Invoice"}
+                module={
+                  isCnDn
+                    ? isCrNote
+                      ? "Credit Note Invoice"
+                      : "Debit Note Invoice"
+                    : isEwayBill
+                    ? "E-WayBill"
+                    : "E-Invoice"
+                }
                 orderId={orderId}
+              />
+              <ConfirmationModal
+                open={showConfirmation}
+                onClose={handleConfirmationClose}
+                title="Confirm Submit!"
+                description="Are you sure want to submit?"
               />
             </div>
           </div>

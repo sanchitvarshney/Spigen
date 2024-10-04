@@ -9,13 +9,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu"; // Adjust path as needed
-import { Button } from "@/components/ui/button"; // Adjust path as needed
+import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 
@@ -58,7 +52,11 @@ const NoteMaterialListModal: React.FC<NoteMaterialListModalProps> = ({
       width: 400,
       cellRenderer: "truncateCellRenderer",
     },
-    { headerName: "Component Number", field: "item_no",cellRenderer: "truncateCellRenderer" },
+    {
+      headerName: "Component Number",
+      field: "item_no",
+      cellRenderer: "truncateCellRenderer",
+    },
     { headerName: "Qty", field: "item_qty" },
     { headerName: "Rate", field: "item_rate" },
     { headerName: "CGST", field: "item_cgst" },
@@ -261,19 +259,13 @@ const NoteMaterialListModal: React.FC<NoteMaterialListModalProps> = ({
 
           <div className="col-span-3 flex flex-col h-full">
             <div className="flex justify-end mb-4 gap-4">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline">Generate</Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem
-                    disabled={isGenerate === "Active"}
-                    onClick={() => handleEwayClick("Invoice")}
-                  >
-                    E-Invoice
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <Button
+                disabled={isGenerate === "Active"}
+                onClick={() => handleEwayClick("Invoice")}
+                variant={"outline"}
+              >
+                Generate E-Invoice
+              </Button>
             </div>
             <div className="ag-theme-quartz flex-1">
               <AgGridReact
