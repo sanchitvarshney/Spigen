@@ -54,11 +54,11 @@ const DebitTextInputCellRenderer = (props: any) => {
         igst = 0;
       const calculation = (data.localValue * gstRate) / 100;
 
-      if (data.gstType === "L") {
+      if (data.gstType?.id === "L") {
         cgst = calculation / 2;
         sgst = calculation / 2;
         igst = 0;
-      } else if (data.gstType === "I") {
+      } else if (data.gstType?.id === "I") {
         igst = calculation;
         cgst = 0;
         sgst = 0;

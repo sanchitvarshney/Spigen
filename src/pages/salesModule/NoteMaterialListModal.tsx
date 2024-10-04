@@ -14,7 +14,6 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"; // Adjust path as needed
 import { Button } from "@/components/ui/button"; // Adjust path as needed
 import { useSelector } from "react-redux";
@@ -267,7 +266,6 @@ const NoteMaterialListModal: React.FC<NoteMaterialListModalProps> = ({
                   <Button variant="outline">Generate</Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuSeparator />
                   <DropdownMenuItem
                     disabled={isGenerate === "Active"}
                     onClick={() => handleEwayClick("Invoice")}

@@ -25,16 +25,27 @@ const ActionMenu: React.FC<any> = ({ row }) => {
 
   const handlePrintInvoice = async (orderId: string, section: string) => {
     if (section === "e-waybill") {
-      dispatch(printEwayBill({ ewayBillNo: orderId })).then((response: any) => {
-        if (response?.payload?.success) {
-          printFunction(response?.payload?.data.buffer.data);
-        } else {
-          toast({
-            title: response?.payload || "Print failed",
-            className: "bg-red-600 text-white items-center",
-          });
+      dispatch(printEwayBill({ ewayBillNo: orderId })).then(
+        (resultAction: any) => {
+          if (resultAction.payload?.success) {
+            toast({
+              title:
+                typeof resultAction?.payload?.message === "string"
+                  ? resultAction?.payload?.message
+                  : JSON.stringify(resultAction?.payload?.message),
+              className: "bg-green-600 text-white items-center",
+            });
+          } else {
+            toast({
+              title:
+                typeof resultAction?.error?.message === "string"
+                  ? resultAction?.error?.message
+                  : JSON.stringify(resultAction?.error?.message),
+              className: "bg-red-600 text-white items-center",
+            });
+          }
         }
-      });
+      );
     } else {
       dispatch(
         printSellInvoice({ so_invoice: orderId, printInvType: "Original" })
@@ -43,7 +54,10 @@ const ActionMenu: React.FC<any> = ({ row }) => {
           printFunction(response?.payload?.data.buffer.data);
         } else {
           toast({
-            title: response?.payload || "Print failed",
+            title:
+              typeof response?.error?.message === "string"
+                ? response?.error?.message
+                : JSON.stringify(response?.error?.message),
             className: "bg-red-600 text-white items-center",
           });
         }

@@ -19,6 +19,7 @@ import { createDebitNote } from "@/features/salesmodule/salesInvoiceSlice";
 import { Button, Form } from "antd";
 import { ConfirmSubmissionDialog } from "@/config/agGrid/invoiceModule/ConfirmSubmissionDialog";
 import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
+import FullPageLoading from "@/components/shared/FullPageLoading";
 
 interface Item {
   item_value: number;
@@ -46,20 +47,12 @@ const DebitNote: React.FC<DebitNoteProps> = ({
   row,
 }) => {
   const [rowData, setRowData] = useState<RowData[]>([]);
+  const [cgstTotal, setCgstTotal] = useState(0);
+  const [sgstTotal, setSgstTotal] = useState(0);
+  const [igstTotal, setIgstTotal] = useState(0);
   const dispatch = useDispatch<AppDispatch>();
   const [isDialogVisible, setIsDialogVisible] = useState(false);
   const [form] = Form.useForm();
-
-  // Calculate totals and rates
-  const itemCGSTs = sellRequestDetails?.materials?.map(
-    (item: Item) => parseFloat(item.cgst) || 0
-  );
-  const itemSGSTs = sellRequestDetails?.materials?.map(
-    (item: Item) => parseFloat(item.sgst) || 0
-  );
-  const itemIGSTs = sellRequestDetails?.materials?.map(
-    (item: Item) => parseFloat(item.igst) || 0
-  );
 
   const totalValue = sellRequestDetails?.materials?.reduce(
     (acc: number, item: Item) => {
@@ -70,21 +63,12 @@ const DebitNote: React.FC<DebitNoteProps> = ({
     0
   );
 
-  const totalCGST = itemCGSTs?.reduce(
-    (acc: number, value: number) => acc + value,
-    0
-  );
-  const totalSGST = itemSGSTs?.reduce(
-    (acc: number, value: number) => acc + value,
-    0
-  );
-  const totalIGST = itemIGSTs?.reduce(
-    (acc: number, value: number) => acc + value,
-    0
-  );
-
   const { currency } = useSelector(
     (state: RootState) => state.createSalesOrder
+  );
+
+  const { loading }:any = useSelector(
+    (state: RootState) => state.sellInvoice
   );
 
   useEffect(() => {
@@ -113,6 +97,30 @@ const DebitNote: React.FC<DebitNoteProps> = ({
     );
     setRowData(updatedData);
   }, [sellRequestDetails]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (rowData && rowData.length > 0) {
+        const cgstSum = rowData.reduce(
+          (sum: number, item: any) => sum + (parseFloat(item.cgst) || 0),
+          0
+        );
+        const sgstSum = rowData.reduce(
+          (sum: number, item: any) => sum + (parseFloat(item.sgst) || 0),
+          0
+        );
+        const igstSum = rowData.reduce(
+          (sum: number, item: any) => sum + (parseFloat(item.igst) || 0),
+          0
+        );
+
+        setCgstTotal(cgstSum);
+        setSgstTotal(sgstSum);
+        setIgstTotal(igstSum);
+      }
+    }, 5000);
+    return () => clearInterval(intervalId); // Clean up on unmount
+  }, [rowData]);
 
   const components = useMemo(
     () => ({
@@ -161,15 +169,16 @@ const DebitNote: React.FC<DebitNoteProps> = ({
       };
 
       // Dispatch the createDebitNote action
-      await dispatch(createDebitNote(payload)).unwrap();
-
       // Close the modal after successful submission
       setIsDialogVisible(false);
+      await dispatch(createDebitNote(payload)).unwrap();
+
     } catch (error) {
       // Handle validation errors or submission errors
       console.error("Validation or submission error:", error);
     }
   };
+  const filteredColumnDefs = columnDefs.filter(col => col.field !== 'delete');
 
   return (
     <Sheet open={visible} onOpenChange={onClose}>
@@ -180,8 +189,9 @@ const DebitNote: React.FC<DebitNoteProps> = ({
           e.preventDefault();
         }}
       >
+         {loading && <FullPageLoading />}
         <SheetTitle>
-          Create Debit Note of {sellRequestDetails?.header?.invoiceNo}
+          Create Debit Note of {sellRequestDetails?.materials?.[0]?.orderid}
         </SheetTitle>
         <div className="ag-theme-quartz h-[calc(100vh-140px)] grid grid-cols-4 gap-4">
           <div className="col-span-1 max-h-[calc(100vh-150px)] overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-800 scrollbar-track-gray-300 bg-white border-r flex flex-col gap-4 p-4">
@@ -323,7 +333,7 @@ const DebitNote: React.FC<DebitNoteProps> = ({
                       </div>
                       <div>
                         <p className="text-[14px]">
-                          (+){totalCGST?.toFixed(2)}
+                          (+){cgstTotal?.toFixed(2)}
                         </p>
                       </div>
                     </li>
@@ -333,7 +343,7 @@ const DebitNote: React.FC<DebitNoteProps> = ({
                       </div>
                       <div>
                         <p className="text-[14px]">
-                          (+){totalSGST?.toFixed(2)}
+                          (+){sgstTotal?.toFixed(2)}
                         </p>
                       </div>
                     </li>
@@ -343,7 +353,7 @@ const DebitNote: React.FC<DebitNoteProps> = ({
                       </div>
                       <div>
                         <p className="text-[14px]">
-                          (+){totalIGST?.toFixed(2)}
+                          (+){igstTotal?.toFixed(2)}
                         </p>
                       </div>
                     </li>
@@ -357,9 +367,9 @@ const DebitNote: React.FC<DebitNoteProps> = ({
                         <p className="text-[14px]">
                           {(
                             totalValue +
-                            totalCGST +
-                            totalSGST +
-                            totalIGST
+                            cgstTotal +
+                            sgstTotal +
+                            igstTotal
                           )?.toFixed(2)}
                         </p>
                       </div>
@@ -372,7 +382,7 @@ const DebitNote: React.FC<DebitNoteProps> = ({
           <div className="col-span-3">
             <AgGridReact
               rowData={rowData}
-              columnDefs={columnDefs as (ColDef | ColGroupDef)[]}
+              columnDefs={filteredColumnDefs as (ColDef | ColGroupDef)[]}
               pagination={true}
               suppressCellFocus={true}
               components={components}
@@ -389,13 +399,7 @@ const DebitNote: React.FC<DebitNoteProps> = ({
         </div>
         <div className="bg-white border-slate-300 h-[50px] flex items-center justify-end gap-[20px] px-[20px]">
           <Button
-            className="rounded-md shadow bg-cyan-700 hover:bg-cyan-600 shadow-slate-500 max-w-max px-[30px]"
-            onClick={onClose}
-          >
-            Back
-          </Button>
-          <Button
-            className="rounded-md shadow bg-green-700 hover:bg-green-600 shadow-slate-500 max-w-max px-[30px]"
+            className="rounded-md shadow bg-green-700 hover:bg-green-600 shadow-slate-500 max-w-max px-[30px] text-white"
             onClick={() => setIsDialogVisible(true)}
           >
             Submit

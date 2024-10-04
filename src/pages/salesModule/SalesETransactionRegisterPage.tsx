@@ -87,6 +87,9 @@ const SalesETransactionRegisterPage: React.FC = () => {
   const { data: rowData, loading } = useSelector(
     (state: RootState) => state.invoice
   );
+  const { loading:loading2 } = useSelector(
+    (state: RootState) => state.sellInvoice
+  );
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -181,7 +184,7 @@ const SalesETransactionRegisterPage: React.FC = () => {
 
   return (
     <Wrapper className="h-[calc(100vh-100px)] grid grid-cols-[350px_1fr] ">
-      {loading && <FullPageLoading />}
+      {(loading||loading2) && <FullPageLoading />}
       <div className=" bg-[#fff]">
         <Card className="border-none rounded shadow-none">
           <CardHeader className="bg-hbg p-0 h-[49px] border-b border-slate-300 flex justify-center pl-[10px]">
