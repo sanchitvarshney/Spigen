@@ -211,10 +211,12 @@ const ewayBillSchema = z.object({
 
 const debitNoteHeader = header.extend({
   debitNo: z.string().optional(),
+  other_ref: z.string({ required_error: "Please enter Other Reference" }),
 });
 
 const creditNoteHeader = header.extend({
   creditNo: z.string().optional(),
+  other_ref: z.string({ required_error: "Please enter Other Reference" }),
 });
 
 const debitNoteSchema = eInvoiceSchema.extend({

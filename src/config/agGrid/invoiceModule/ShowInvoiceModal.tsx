@@ -1,12 +1,15 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/store";
 import { printSellInvoice } from "@/features/salesmodule/salesInvoiceSlice";
 import { downloadFunction } from "@/General";
 
 const DataDialog = ({ open, onClose, data,orderId,module }: any) => {
+  const { invoiceData } = useSelector(
+    (state: RootState) => state.sellInvoice
+  );
   const dispatch = useDispatch<AppDispatch>();
   const handleDownload = () => {
     dispatch(printSellInvoice({ so_invoice: orderId , printInvType:"Original"})).then((response: any) => {
@@ -15,7 +18,7 @@ const DataDialog = ({ open, onClose, data,orderId,module }: any) => {
       }
     });
   };
-
+console.log(invoiceData);
   const handleBack = () => {
     onClose();
   };
@@ -35,21 +38,21 @@ const DataDialog = ({ open, onClose, data,orderId,module }: any) => {
             </h2>
             <div className="grid grid-cols-2 gap-[40px] mt-[30px]">
               <h3>E-Acknowledgement No:</h3>
-              <p>{data?.AckNo}</p>
+              <p>{data?.AckNo?data?.AckNo:"--"}</p>
             </div>
             <div className="grid grid-cols-2 gap-[40px] mt-[30px]">
               <h3>Acknowledgment Date:</h3>
-              <p>{data?.AckDt}</p>
+              <p>{data?.AckDt?data?.AckDt:"--"}</p>
             </div>
             <div className="grid grid-cols-2 gap-[40px] mt-[30px]">
               <h3>IRN No:</h3>
               <p className="truncate overflow-hidden whitespace-nowrap text-ellipsis max-w-full">
-                {data?.Irn}
+                {data?.Irn?data?.Irn:"--"}
               </p>
             </div>
             <div className="grid grid-cols-2 gap-[40px] mt-[30px]">
               <h3>Status:</h3>
-              <p>{data?.Status}</p>
+              <p>{data?.Status?data?.Status:"--"}</p>
             </div>
             <div className="grid grid-cols-2 gap-[40px] mt-[30px]">
               <h3>E-Way Bill No:</h3>

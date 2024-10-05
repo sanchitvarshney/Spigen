@@ -258,8 +258,8 @@ export default function CreateEwayBill() {
                 response?.payload?.message || "Data Submitted Successfully",
               className: "bg-green-600 text-white items-center",
             });
-            setInvoiceData(response?.payload?.data);
-            console.log(response.payload.data);
+            // setInvoiceData(response?.payload?.data);
+            // console.log(response.payload.data,typeof response.payload.data);
             setShowCreatedInvoiceModal(true);
           } else {
             toast({
@@ -276,7 +276,7 @@ export default function CreateEwayBill() {
                 response?.payload?.message || "Data Submitted Successfully",
               className: "bg-green-600 text-white items-center",
             });
-            setInvoiceData(response.payload.data);
+            // setInvoiceData(response.payload.data);
             setShowCreatedInvoiceModal(true);
           } else {
             toast({
@@ -294,7 +294,7 @@ export default function CreateEwayBill() {
               title: "Data Fetched Successfully",
               className: "bg-green-600 text-white items-center",
             });
-            setInvoiceData(response.payload.data);
+            // setInvoiceData(response.payload.data);
             setShowCreatedInvoiceModal(true);
           } else {
             toast({
@@ -311,7 +311,7 @@ export default function CreateEwayBill() {
               title: "Created Successfully",
               className: "bg-green-600 text-white items-center",
             });
-            setInvoiceData(response.payload.data);
+            // setInvoiceData(response.payload.data);
             setShowCreatedInvoiceModal(true);
           } else {
             toast({

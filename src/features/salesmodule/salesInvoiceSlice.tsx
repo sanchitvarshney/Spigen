@@ -27,6 +27,7 @@ interface SellShipmentState {
   challanDetails: [];
   dataNotes: [];
   ewayBillData: [];
+  invoiceData: [];
   loading: boolean;
   error: string | null;
 }
@@ -36,6 +37,7 @@ const initialState: SellShipmentState = {
   challanDetails: [],
   dataNotes: [],
   ewayBillData: [],
+  invoiceData: [],
   loading: false,
   error: null,
 };
@@ -448,8 +450,10 @@ const sellInvoiceSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(createCreditEinvoice.fulfilled, (state) => {
+      .addCase(createCreditEinvoice.fulfilled, (state,action) => {
+        console.log(action.payload.data,"llkk")
         state.loading = false;
+        state.invoiceData=action.payload.data
       })
       .addCase(createCreditEinvoice.rejected, (state, action) => {
         state.loading = false;
