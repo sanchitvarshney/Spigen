@@ -78,11 +78,6 @@ const ActionMenu: React.FC<any> = ({ row }) => {
               title: response?.message || "Cancelled successfully",
               className: "bg-green-600 text-white items-center",
             });
-          } else {
-            toast({
-              title: response?.error?.message || "Cancelled failed",
-              className: "bg-red-600 text-white items-center",
-            });
           }
         });
 
@@ -91,6 +86,7 @@ const ActionMenu: React.FC<any> = ({ row }) => {
       })
       .catch((errorInfo) => {
         console.error("Validation Failed:", errorInfo);
+        form.resetFields();
       });
   };
 

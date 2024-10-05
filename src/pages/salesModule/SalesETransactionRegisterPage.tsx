@@ -77,6 +77,7 @@ const FormSchema = z.object({
   wise: z.string(),
   invoice: z.string().optional(),
 });
+
 const SalesETransactionRegisterPage: React.FC = () => {
   const gridRef = useRef<AgGridReact<any>>(null);
   const [open, setOpen] = useState<boolean>(false);
@@ -84,12 +85,9 @@ const SalesETransactionRegisterPage: React.FC = () => {
   const [wise, setWise] = useState<any>("date");
   const [isSearchPerformed, setIsSearchPerformed] = useState<boolean>(false);
   const [type, setType] = useState<any>("e-invoice");
-  const { data: rowData, loading } = useSelector(
-    (state: RootState) => state.invoice
-  );
-  const { loading:loading2 } = useSelector(
-    (state: RootState) => state.sellInvoice
-  );
+  const [rowData, setRowData] = useState<any[]>([]); // Local state for row data
+  const { loading } = useSelector((state: RootState) => state.invoice);
+  const { loading: loading2 } = useSelector((state: RootState) => state.sellInvoice);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -103,6 +101,12 @@ const SalesETransactionRegisterPage: React.FC = () => {
     { label: "Debit Note", value: "debit" },
     { label: "Credit Note", value: "credit" },
   ] as const;
+
+  // Effect to reset rowData when type changes
+  useEffect(() => {
+    setRowData([]); // Reset row data
+    setIsSearchPerformed(false); // Reset search performed state
+  }, [type]);
 
   const getColumnDefs = (type: string) => {
     if (type === "e-waybill") {
@@ -130,26 +134,21 @@ const SalesETransactionRegisterPage: React.FC = () => {
       let resultAction;
       switch (type) {
         case "e-invoice":
-          resultAction = await dispatch(
-            fetchInvoiceList({ wise, data: dataString }) as any
-          ).unwrap();
+          resultAction = await dispatch(fetchInvoiceList({ wise, data: dataString }) as any).unwrap();
           break;
         case "e-waybill":
-          resultAction = await dispatch(
-            fetchEwayList({ wise, data: dataString }) as any
-          ).unwrap();
+          resultAction = await dispatch(fetchEwayList({ wise, data: dataString }) as any).unwrap();
           break;
         case "debit":
         case "credit":
-          resultAction = await dispatch(
-            fetchEInvoiceData({ wise, data: dataString, type }) as any
-          ).unwrap();
+          resultAction = await dispatch(fetchEInvoiceData({ wise, data: dataString, type }) as any).unwrap();
           break;
         default:
           throw new Error("Invalid type selected");
       }
 
       if (resultAction.success) {
+        setRowData(resultAction.data); // Assuming resultAction.data contains the row data
         setIsSearchPerformed(true);
         toast({
           title: "Data fetched successfully",
@@ -170,12 +169,6 @@ const SalesETransactionRegisterPage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    if (wise === "date") {
-      dispatch(fetchInvoiceList({ wise, data: "" }) as any);
-    }
-  }, [wise, dispatch]);
-
   const onBtExport = useCallback(() => {
     if (gridRef.current) {
       gridRef.current.api.exportDataAsCsv();
@@ -184,7 +177,7 @@ const SalesETransactionRegisterPage: React.FC = () => {
 
   return (
     <Wrapper className="h-[calc(100vh-100px)] grid grid-cols-[350px_1fr] ">
-      {(loading||loading2) && <FullPageLoading />}
+      {(loading || loading2) && <FullPageLoading />}
       <div className=" bg-[#fff]">
         <Card className="border-none rounded shadow-none">
           <CardHeader className="bg-hbg p-0 h-[49px] border-b border-slate-300 flex justify-center pl-[10px]">
@@ -209,10 +202,7 @@ const SalesETransactionRegisterPage: React.FC = () => {
               </Select>
             </div>
             <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-6 overflow-hidden p-[10px]"
-              >
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 overflow-hidden p-[10px]">
                 <FormField
                   control={form.control}
                   name="wise"
@@ -228,26 +218,17 @@ const SalesETransactionRegisterPage: React.FC = () => {
                                 " justify-between",
                                 !field.value && "text-muted-foreground"
                               )} text-slate-600 border-slate-400 ${
-                                field.value
-                                  ? "text-slate-600"
-                                  : "text-neutral-400 font-[350]"
+                                field.value ? "text-slate-600" : "text-neutral-400 font-[350]"
                               }`}
                             >
-                              {field.value
-                                ? wises.find(
-                                    (wise) => wise.value === field.value
-                                  )?.label
-                                : "Select"}
+                              {field.value ? wises.find((wise) => wise.value === field.value)?.label : "Select"}
                               <CaretSortIcon className="w-4 h-4 ml-2 opacity-50 shrink-0" />
                             </Button>
                           </FormControl>
                         </PopoverTrigger>
                         <PopoverContent className="p-0 ">
                           <Command>
-                            <CommandInput
-                              placeholder="Search framework..."
-                              className="h-9"
-                            />
+                            <CommandInput placeholder="Search framework..." className="h-9" />
                             <CommandList className="max-h-[400px]">
                               <CommandEmpty>No framework found.</CommandEmpty>
                               <CommandGroup>
@@ -279,21 +260,16 @@ const SalesETransactionRegisterPage: React.FC = () => {
                     control={form.control}
                     name="dateRange"
                     render={() => (
-                      <FormItem className="pl-[10px] w-fulls">
+                      <FormItem className="pl-[10px] w-full">
                         <FormControl>
                           <Space direction="vertical" size={12}>
                             <RangePicker
                               className=" border shadow-sm border-slate-400 py-[7px] hover:border-slate-300 w-[310px]"
                               onChange={(value) =>
-                                form.setValue(
-                                  "dateRange",
-                                  value
-                                    ? value.map((date) => date!.toDate())
-                                    : []
-                                )
+                                form.setValue("dateRange", value ? value.map((date) => date!.toDate()) : [])
                               }
                               format={dateFormat}
-                              disabledDate={(current) => current && current > moment().endOf('day')} 
+                              disabledDate={(current) => current && current > moment().endOf('day')}
                             />
                           </Space>
                         </FormControl>
@@ -316,7 +292,7 @@ const SalesETransactionRegisterPage: React.FC = () => {
                   />
                 )}
                 <div className="flex space-x-2 float-end pr-2">
-                  {isSearchPerformed && ( // Only show the download button if search is performed
+                  {isSearchPerformed && (
                     <Button
                       type="button"
                       onClick={onBtExport}
@@ -340,8 +316,9 @@ const SalesETransactionRegisterPage: React.FC = () => {
       <div className="ag-theme-quartz h-[calc(100vh-100px)]">
         <AgGridReact
           ref={gridRef}
+          loading={loading}
           modules={[CsvExportModule]}
-          rowData={rowData as any[]}
+          rowData={rowData} // Use local rowData state
           columnDefs={getColumnDefs(type)}
           pagination={true}
           paginationPageSize={10}
@@ -358,6 +335,8 @@ const SalesETransactionRegisterPage: React.FC = () => {
     </Wrapper>
   );
 };
+
+// Wrapper styled component remains the same
 const Wrapper = styled.div`
   .ag-theme-quartz .ag-cell {
     white-space: nowrap;
@@ -371,3 +350,4 @@ const Wrapper = styled.div`
 `;
 
 export default SalesETransactionRegisterPage;
+

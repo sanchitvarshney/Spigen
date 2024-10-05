@@ -278,12 +278,13 @@ export default function CreateEwayBill() {
             });
             // setInvoiceData(response.payload.data);
             setShowCreatedInvoiceModal(true);
-          } else {
-            toast({
-              title: response?.payload?.message || "Failed to Submit Data",
-              className: "bg-red-600 text-white items-center",
-            });
           }
+          //  else {
+          //   toast({
+          //     title: response?.payload?.message || "Failed to Submit Data",
+          //     className: "bg-red-600 text-white items-center",
+          //   });
+          // }
         });
       }
     } else {
@@ -2028,7 +2029,6 @@ export default function CreateEwayBill() {
               <ShowInvoiceModal
                 open={showCreatedInvoiceModal}
                 onClose={() => setShowCreatedInvoiceModal(false)}
-                data={()=>{}}
                 module={
                   isCnDn
                     ? isCrNote

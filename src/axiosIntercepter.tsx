@@ -1,5 +1,6 @@
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { toast } from "react-toastify";
+import { toast as toasts } from "@/components/ui/use-toast";
 
 const socketLink: string = import.meta.env.VITE_REACT_APP_SOCKET_BASE_URL;
 const imsLink: string = import.meta.env.VITE_REACT_APP_API_BASE_URL;
@@ -21,8 +22,12 @@ interface OtherData {
   session?: string;
 }
 
-const loggedInUser: LoggedInUser | null = JSON.parse(localStorage.getItem("loggedInUser") as string);
-const otherData: OtherData | null = JSON.parse(localStorage.getItem("otherData") as string);
+const loggedInUser: LoggedInUser | null = JSON.parse(
+  localStorage.getItem("loggedInUser") as string
+);
+const otherData: OtherData | null = JSON.parse(
+  localStorage.getItem("otherData") as string
+);
 
 const spigenAxios = axios.create({
   baseURL: imsLink,
@@ -49,9 +54,12 @@ spigenAxios.interceptors.response.use(
         return Promise.reject(error);
       }
 
-      if (errorData.success !== undefined) {
-      
-        toast.error(errorData.message || "Error occurred.");
+      if (errorData.success === false) {
+        toasts({
+          title: errorData?.message || "Data Submitted Successfully",
+          className: "bg-red-600 text-white items-center",
+        });
+        toast.error(errorData?.message || "Error occurred.");
         return Promise.reject(errorData);
       }
 
@@ -68,7 +76,6 @@ spigenAxios.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
 
 const branch: string = otherData?.company_branch ?? "BRMSC012";
 const session: string = otherData?.session ?? "24-25";

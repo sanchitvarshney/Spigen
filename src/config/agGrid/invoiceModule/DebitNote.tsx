@@ -180,6 +180,7 @@ const DebitNote: React.FC<DebitNoteProps> = ({
       } else if (module === "credit") {
         await dispatch(createCreditNote(payload)).unwrap();
       }
+      form.resetFields();
     } catch (error) {
       // Handle validation errors or submission errors
       console.error("Validation or submission error:", error);

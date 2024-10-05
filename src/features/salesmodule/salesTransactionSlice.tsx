@@ -29,13 +29,13 @@ interface eInvoice {
 
 
 interface eInvoiceState {
-  data: eInvoice[];
+  data: eInvoice[] | null;
   loading: boolean;
   error: string | null;
 }
 
 const initialState: eInvoiceState = {
-  data: [],
+  data: null,
   loading: false,
   error: null,
 };

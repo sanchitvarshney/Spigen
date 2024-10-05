@@ -6,8 +6,8 @@ import { AppDispatch, RootState } from "@/store";
 import { printSellInvoice } from "@/features/salesmodule/salesInvoiceSlice";
 import { downloadFunction } from "@/General";
 
-const DataDialog = ({ open, onClose, data,orderId,module }: any) => {
-  const { invoiceData } = useSelector(
+const DataDialog = ({ open, onClose,orderId,module }: any) => {
+  const { invoiceData:data } :{invoiceData:any}= useSelector(
     (state: RootState) => state.sellInvoice
   );
   const dispatch = useDispatch<AppDispatch>();
@@ -18,7 +18,7 @@ const DataDialog = ({ open, onClose, data,orderId,module }: any) => {
       }
     });
   };
-console.log(invoiceData);
+
   const handleBack = () => {
     onClose();
   };
@@ -62,14 +62,14 @@ console.log(invoiceData);
               <h3>E-Way Date:</h3>
               <p>{data?.EwbDt || "--"}</p>
             </div>
-            <div className="grid grid-cols-2 gap-[40px] mt-[30px]">
+             <div className="grid grid-cols-2 gap-[40px] mt-[30px]">
               <h3>E-Way Valid Till:</h3>
               <p>{data?.EwbValidTill || "--"}</p>
             </div>
-            <div className="grid grid-cols-2 gap-[40px] mt-[30px]">
+            {/* <div className="grid grid-cols-2 gap-[40px] mt-[30px]">
               <h3>Info Details:</h3>
-              <p>{data?.InfoDtls?.[0].Desc[0] || "--"}</p>
-            </div>
+              <p>{data?.InfoDtls?.[0] || "--"}</p>
+            </div> */}
             <div className="grid grid-cols-2 gap-[40px] mt-[30px]">
               <h3>Remarks:</h3>
               <p>{data?.Remarks || "--"}</p>

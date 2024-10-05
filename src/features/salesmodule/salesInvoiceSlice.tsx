@@ -428,8 +428,9 @@ const sellInvoiceSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(createEwayBill.fulfilled, (state) => {
+      .addCase(createEwayBill.fulfilled, (state,action) => {
         state.loading = false;
+        state.invoiceData=action.payload.data
       })
       .addCase(createEwayBill.rejected, (state, action) => {
         state.loading = false;
@@ -439,8 +440,9 @@ const sellInvoiceSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(createDebitEinvoice.fulfilled, (state) => {
+      .addCase(createDebitEinvoice.fulfilled, (state,action) => {
         state.loading = false;
+        state.invoiceData=action.payload.data
       })
       .addCase(createDebitEinvoice.rejected, (state, action) => {
         state.loading = false;
