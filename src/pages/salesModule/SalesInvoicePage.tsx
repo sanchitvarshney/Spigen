@@ -48,7 +48,7 @@ const { RangePicker } = DatePicker;
 const dateFormat = "DD-MM-YYYY";
 const wises = [
   { label: "Date Wise", value: "datewise" },
-  { label: "client", value: "clientwise" },
+  // { label: "client", value: "clientwise" },
   { label: "so id", value: "so_id_wise" },
 ] as const;
 

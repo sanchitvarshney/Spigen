@@ -123,7 +123,7 @@ interface SellRequest {
 }
 
 interface SellRequestState {
-  data: SellRequest[];
+  data: SellRequest[] | null;
   updateData: [];
   sellRequestDetails: [];
   dateRange: any;
@@ -132,7 +132,7 @@ interface SellRequestState {
 }
 
 const initialState: SellRequestState = {
-  data: [],
+  data: null,
   updateData: [],
   sellRequestDetails: [],
   dateRange: null,
@@ -355,7 +355,7 @@ const sellRequestSlice = createSlice({
         state.error = null;
       })
       .addCase(createSellRequest.fulfilled, (state, action) => {
-        state.data.push(action.payload.data);
+        state.data = (action.payload.data);
         state.loading = false;
       })
       .addCase(createSellRequest.rejected, (state, action) => {
@@ -368,7 +368,7 @@ const sellRequestSlice = createSlice({
         state.error = null;
       })
       .addCase(updateSellRequest.fulfilled, (state, action) => {
-        state.data.push(action.payload.data);
+        state.data = (action.payload.data);
         state.loading = false;
       })
       .addCase(updateSellRequest.rejected, (state, action) => {

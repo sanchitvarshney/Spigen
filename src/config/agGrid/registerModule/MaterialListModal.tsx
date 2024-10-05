@@ -16,7 +16,7 @@ interface MaterialListModalProps {
   visible: boolean;
   onClose: () => void;
   sellRequestDetails: any[];
-  row:{
+  row: {
     req_id: string;
   };
 }
@@ -31,7 +31,13 @@ const MaterialListModal: React.FC<MaterialListModalProps> = ({
 
   const columnDefs: ColDef[] = [
     { headerName: "#", valueGetter: "node.rowIndex + 1", maxWidth: 50 },
-    { headerName: "Item Type", field: "so_type" },
+    {
+      headerName: "Item Type",
+      field: "so_type",
+      cellRenderer: (params:any) => {
+        return params.value.charAt(0).toUpperCase() + params.value.slice(1);
+      },
+    },
     {
       headerName: "Item Name",
       field: "item_name",

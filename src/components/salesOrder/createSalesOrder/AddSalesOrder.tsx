@@ -38,7 +38,7 @@ const AddSalesOrder = ({
   form: any;
   rowData: any;
   setRowData: any;
-  derivedType:string
+  derivedType: string;
 }) => {
   const [excelModel, setExcelModel] = useState<boolean>(false);
   const [backModel, setBackModel] = useState<boolean>(false);
@@ -55,9 +55,7 @@ const AddSalesOrder = ({
     (state: RootState) => state.createSalesOrder
   );
 
-  const { loading } = useSelector(
-    (state: RootState) => state.sellRequest
-  );
+  const { loading } = useSelector((state: RootState) => state.sellRequest);
 
   const navigate = useNavigate();
   const gridRef = useRef<AgGridReact<RowData>>(null);
@@ -124,11 +122,12 @@ const AddSalesOrder = ({
   }, [rowData]);
 
   const handleSearch = (searchKey: string, type: any) => {
-    if (searchKey) { // Ensure there's a search key before dispatching
+    if (searchKey) {
+      // Ensure there's a search key before dispatching
       dispatch(fetchComponentDetail({ search: searchKey, type }));
     }
   };
-  
+
   const handleSubmit = () => {
     setShowConfirmation(true); // Open the confirmation modal
   };
@@ -184,7 +183,9 @@ const AddSalesOrder = ({
     so_type: rowData?.map((component: RowData) => component.type || ""),
     items: rowData?.map((component: RowData) =>
       typeof component.material === "object" && component.material !== null
-        ? (component.material as any).id || (component.material as any).value ||""
+        ? (component.material as any).id ||
+          (component.material as any).value ||
+          ""
         : component.material || ""
     ),
     qty: rowData?.map((component: RowData) =>
@@ -219,14 +220,18 @@ const AddSalesOrder = ({
         materials,
       };
       if (window.location.pathname.includes("update")) {
-        dispatch(updateSellRequest(payloadData2)).then((response:any) => {
+        dispatch(updateSellRequest(payloadData2)).then((response: any) => {
           if (response.payload.success) {
+            form.reset(); // Reset the form 
+            setRowData([]);
             navigate("/sales/order/register");
           }
         });
       } else {
-        dispatch(createSellRequest(payloadData2)).then((response:any) => {
+        dispatch(createSellRequest(payloadData2)).then((response: any) => {
           if (response.payload.success) {
+            form.reset(); // Reset the form
+            setRowData([]);
             navigate("/sales/order/register");
           }
         });
@@ -366,7 +371,7 @@ const AddSalesOrder = ({
           <div className="ag-theme-quartz h-[calc(100vh-210px)] w-full">
             <AgGridReact
               ref={gridRef}
-              rowData={rowData||[]}
+              rowData={rowData || []}
               columnDefs={columnDefs as (ColDef | ColGroupDef)[]}
               defaultColDef={defaultColDef}
               statusBar={statusBar}

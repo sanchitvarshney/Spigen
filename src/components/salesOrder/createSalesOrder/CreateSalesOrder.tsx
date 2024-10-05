@@ -779,7 +779,7 @@ const CreateSalesOrder: React.FC<Props> = ({
               <Card className="rounded shadow bg-[#fff]">
                 <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
                   <h3 className="text-[17px] font-[600] text-slate-600">
-                    Bill From Details
+                    Dispatch From Details
                   </h3>
                   <p className="text-slate-600 text-[13px]">
                     Provide Bill From information

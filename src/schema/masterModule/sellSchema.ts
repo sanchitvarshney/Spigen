@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
  export const headersSchema = z.object({
-    customer: z.string().min(1, { message: "Customer is required" }),
+    customer: z.string().min(1, { message: "Client is required" }),
     project: z.string().min(1, { message: "Project is required" }),
     cost_center: z.string().min(1, { message: "Cost Center is required" }),
     delivery_term: z.string().optional().nullable(),

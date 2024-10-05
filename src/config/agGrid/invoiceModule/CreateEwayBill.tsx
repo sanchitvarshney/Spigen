@@ -62,7 +62,7 @@ export default function CreateEwayBill() {
     ""
   );
   const [showCreatedInvoiceModal, setShowCreatedInvoiceModal] = useState(false);
-  const [invoiceData, setInvoiceData] = useState<any>({});
+  // const [invoiceData, setInvoiceData] = useState<any>({});
   const isEwayBill = window.location.href?.includes("e-way");
   const isCrNote = window.location.href?.includes("CRN");
   const isCnDn =
@@ -2028,7 +2028,7 @@ export default function CreateEwayBill() {
               <ShowInvoiceModal
                 open={showCreatedInvoiceModal}
                 onClose={() => setShowCreatedInvoiceModal(false)}
-                data={invoiceData}
+                data={()=>{}}
                 module={
                   isCnDn
                     ? isCrNote

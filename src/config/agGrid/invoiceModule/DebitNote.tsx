@@ -9,7 +9,8 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import columnDefs, {
+import {
+  debitNoteColumnDefs,
   RowData,
 } from "@/config/agGrid/SalseOrderCreateTableColumns";
 import DebitTextInputCellRenderer from "@/config/agGrid/invoiceModule/DebitTextInputCellRenderer";
@@ -184,7 +185,7 @@ const DebitNote: React.FC<DebitNoteProps> = ({
       console.error("Validation or submission error:", error);
     }
   };
-  const filteredColumnDefs = columnDefs.filter((col) => col.field !== "delete");
+  const filteredColumnDefs = debitNoteColumnDefs.filter((col) => col.field !== "delete");
 
   return (
     <Sheet open={visible} onOpenChange={onClose}>

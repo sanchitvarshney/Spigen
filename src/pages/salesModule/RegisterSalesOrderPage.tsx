@@ -116,7 +116,6 @@ const RegisterSalesOrderPage: React.FC = () => {
     }
   }, []);
 
-
   return (
     <Wrapper className="h-[calc(100vh-100px)] grid grid-cols-[350px_1fr]">
       {loading && <FullPageLoading />}
@@ -170,8 +169,9 @@ const RegisterSalesOrderPage: React.FC = () => {
                             )
                           }
                           format={dateFormat}
-                          
-                          disabledDate={(current) => current && current > moment().endOf('day')} 
+                          disabledDate={(current) =>
+                            current && current > moment().endOf("day")
+                          }
                         />
                       </Space>
                     </FormControl>
@@ -215,10 +215,11 @@ const RegisterSalesOrderPage: React.FC = () => {
       </div>
       <div className="ag-theme-quartz h-[calc(100vh-100px)]">
         <AgGridReact
+          loading={loading}
           ref={gridRef}
           modules={[CsvExportModule]}
           loadingCellRenderer={loadingCellRenderer}
-          rowData={rowData}
+          rowData={rowData ? rowData : []}
           columnDefs={columnDefs}
           defaultColDef={{ filter: true, sortable: true }}
           pagination={true}

@@ -165,12 +165,12 @@ export const columnDefs: ColDef<RowData>[] = [
     filter: "agTextColumnFilter",
     cellRenderer: CopyCellRenderer
   },
-  {
-    headerName: "Bill To Code",
-    field: "client_code",
-    filter: "agTextColumnFilter",
-    cellRenderer: CopyCellRenderer
-  },
+  // {
+  //   headerName: "Bill To Code",
+  //   field: "client_code",
+  //   filter: "agTextColumnFilter",
+  //   cellRenderer: CopyCellRenderer
+  // },
   {
     headerName: "Bill To",
     field: "shipToName",

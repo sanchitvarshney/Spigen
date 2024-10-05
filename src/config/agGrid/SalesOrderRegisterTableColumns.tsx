@@ -30,6 +30,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
   const [isInvoiceModalVisible, setIsInvoiceModalVisible] = useState(false);
   const [isMaterialListModalVisible, setIsMaterialListModalVisible] =
     useState(false);
+  const [date, setDate] = useState("");
   const [form] = Form.useForm();
   const [invoiceForm] = Form.useForm(); // Form instance for the invoice modal
   const { sellRequestDetails } = useSelector(
@@ -92,7 +93,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
           client_addr_id: row.client_addr_id,
           client_id: row.customer_code,
           invoice_no: values.invoice_no,
-          invoice_date: values.invoice_date,
+          invoice_date: date,
           nos_of_boxes: values.nos_of_boxes,
           remark: values.remark,
           shipment_id: [row?.req_id],
@@ -188,6 +189,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
         handleCancel={handleInvoiceModalCancel}
         row={{ req_id: row?.req_id }}
         form={invoiceForm}
+        setDate={setDate}
       />
       <MaterialListModal
         visible={isMaterialListModalVisible}
@@ -216,15 +218,15 @@ export const columnDefs: ColDef<RowData>[] = [
     cellRenderer: CopyCellRenderer,
   },
   { headerName: "Status", field: "status", filter: "agTextColumnFilter" },
-  {
-    headerName: "Customer Code",
-    field: "customer_code",
-    filter: "agTextColumnFilter",
-  },
+  // {
+  //   headerName: "Customer Code",
+  //   field: "customer_code",
+  //   filter: "agTextColumnFilter",
+  // },
   { headerName: "Channel", field: "channel", filter: "agTextColumnFilter" },
   {
-    headerName: "Customer Name",
-    field: "channel",
+    headerName: "Client Name",
+    field: "customer",
     filter: "agTextColumnFilter",
     cellRenderer: CopyCellRenderer,
   },

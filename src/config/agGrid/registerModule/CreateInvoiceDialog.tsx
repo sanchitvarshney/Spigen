@@ -7,6 +7,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog"; // Ensure this path is correct
+import moment from "moment";
 
 interface CreateInvoiceDialogProps {
   isDialogVisible: boolean;
@@ -16,6 +17,7 @@ interface CreateInvoiceDialogProps {
     req_id: string;
   };
   form: FormInstance;
+  setDate: any;
 }
 
 export function CreateInvoiceDialog({
@@ -24,6 +26,7 @@ export function CreateInvoiceDialog({
   handleCancel,
   row,
   form,
+  setDate,
 }: CreateInvoiceDialogProps) {
   return (
     <Dialog open={isDialogVisible} onOpenChange={handleCancel}>
@@ -60,15 +63,17 @@ export function CreateInvoiceDialog({
             name="invoice_date"
             label="Date"
             rules={[
-              { required: true, message: "Please enter the invoice Date!" },
+              { required: true, message: "Please enter the invoice date!" },
             ]}
           >
             <DatePicker
-              // className="border-0 border-b rounded-none shadow-none focus-visible:ring-0 border-neutral-700 py-[13px] w-[550px] hover:border-neutral-700"
               className="py-[13px] w-[550px]"
               format="DD-MM-YYYY"
               onChange={(date) => {
-                form.setFieldsValue({ invoice_date: date });
+                if (date) {
+                  const dateFormat = moment(date as any).format("DD-MM-YYYY");
+                setDate(dateFormat);
+                }
               }}
             />
           </Form.Item>
