@@ -46,14 +46,14 @@ const NoteMaterialListModal: React.FC<NoteMaterialListModalProps> = ({
   const columnDefs: ColDef[] = [
     { headerName: "#", valueGetter: "node.rowIndex + 1", maxWidth: 50 },
     {
-      headerName: "Component",
+      headerName: "Material",
       field: "item_name",
       filter: "agTextColumnFilter",
       width: 400,
       cellRenderer: "truncateCellRenderer",
     },
     {
-      headerName: "Component Number",
+      headerName: "SKU",
       field: "item_no",
       cellRenderer: "truncateCellRenderer",
     },
@@ -65,11 +65,20 @@ const NoteMaterialListModal: React.FC<NoteMaterialListModalProps> = ({
   ];
   const data = materialListData?.header;
 
-  function fnOpenNewWindow(link: string) {
+  function fnOpenNewWindow(link:string) {
+    // Define window dimensions
+    var width = 920;
+    var height = 500;
+
+    // Calculate the position to center the window on the screen
+    var left = (window.screen.width / 2) - (width / 2);
+    var top = (window.screen.height / 2) - (height / 2);
+
+    // Open the new window centered on the screen
     window.open(
         link,
         'Spigen',
-        'width=920,height=500,status=1,scrollbars=1,location=0,resizable=yes'
+        `width=${width},height=${height},top=${top},left=${left},status=1,scrollbars=1,location=0,resizable=yes`
     );
 }
 
@@ -117,7 +126,7 @@ const NoteMaterialListModal: React.FC<NoteMaterialListModalProps> = ({
             <Card className="rounded-sm shadow-sm shadow-slate-500">
               <CardHeader className="flex flex-row items-center justify-between p-4 bg-[#e0f2f1]">
                 <CardTitle className="font-[550] text-slate-600">
-                  Bill From
+                  Dispatch From
                 </CardTitle>
               </CardHeader>
               <CardContent className="mt-4 flex flex-col gap-4 text-slate-600">
@@ -131,7 +140,7 @@ const NoteMaterialListModal: React.FC<NoteMaterialListModalProps> = ({
                       <h3 className="font-[600]">PinCode</h3>
                     </div>
                     <div>
-                      <p className="text-[14px]">{data?.billFromPin}</p>
+                      <p className="text-[14px] pl-5">{data?.billFromPin}</p>
                     </div>
                   </li>
                   <li className="grid grid-cols-[1fr_150px] mt-4">
@@ -274,7 +283,7 @@ const NoteMaterialListModal: React.FC<NoteMaterialListModalProps> = ({
                 onClick={() => handleEwayClick("Invoice")}
                 variant={"outline"}
               >
-                Generate E-Invoice
+                Generate e-Invoice
               </Button>
             </div>
             <div className="ag-theme-quartz flex-1">

@@ -642,7 +642,7 @@ export default function CreateEwayBill() {
                           <Select
                             {...field}
                             styles={customStyles}
-                            placeholder="Sub Type"
+                            placeholder="Reverse Charge"
                             className="border-0 basic-single"
                             classNamePrefix="select border-0"
                             components={{ DropdownIndicator }}
@@ -676,7 +676,7 @@ export default function CreateEwayBill() {
                           <Select
                             {...field}
                             styles={customStyles}
-                            placeholder="Sub Type"
+                            placeholder="Igst on Intra"
                             className="border-0 basic-single"
                             classNamePrefix="select border-0"
                             components={{ DropdownIndicator }}

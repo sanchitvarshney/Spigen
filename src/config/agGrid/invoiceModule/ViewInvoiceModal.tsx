@@ -69,10 +69,9 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
   const columnDefs: ColDef[] = [
     { headerName: "#", valueGetter: "node.rowIndex + 1", maxWidth: 50 },
     { headerName: "Invoice Number", field: "so_id" },
-    { headerName: "Shipment Id", field: "shipment_id" },
-    { headerName: "Part Code", field: "item_part_no" },
+    { headerName: "SKU", field: "item_part_no" },
     {
-      headerName: "Component",
+      headerName: "Material",
       field: "item_name",
       width: 500,
       cellRenderer:"truncateCellRenderer"
@@ -177,7 +176,7 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
                       <h3 className="font-[600]">PinCode</h3>
                     </div>
                     <div>
-                      <p className="text-[14px]">{data?.billing_pin}</p>
+                      <p className="text-[14px] pl-5">{data?.billing_pin}</p>
                     </div>
                   </li>
                   <li className="grid grid-cols-[1fr_150px] mt-4">
@@ -318,14 +317,14 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
                 onClick={() => handleEwayClick("Invoice")}
                 variant={"outline"}
               >
-                Generate E-Invoice
+                Generate e-Invoice
               </Button>
               <Button
                 disabled={data?.isEwayBill === "Y"}
                 onClick={() => handleEwayClick("WayBill")}
                 variant={"outline"}
               >
-                Generate E-Way Bill
+                Generate e-Way Bill
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>

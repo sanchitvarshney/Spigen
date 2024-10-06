@@ -61,6 +61,29 @@ const type = [
   },
 ];
 
+const gstRateList = [
+  {
+    value: "0",
+    label: "0 %",
+  },
+  {
+    value: "5",
+    label: "5 %",
+  },
+  {
+    value: "12",
+    label: "12 %",
+  },
+  {
+    value: "18",
+    label: "18 %",
+  },
+  {
+    value: "28",
+    label: "28 %",
+  },
+];
+
 const gstType = [
   {
     value: "I",
@@ -338,6 +361,42 @@ const TextInputCellRenderer = (props: any) => {
                 <CommandEmpty>No {colDef.headerName} found.</CommandEmpty>
                 <CommandList className="max-h-[400px] overflow-y-auto">
                   {gstType.map((framework) => (
+                    <CommandItem
+                      key={framework.value}
+                      value={framework.value}
+                      className="data-[disabled]:opacity-100 aria-selected:bg-cyan-600 aria-selected:text-white data-[disabled]:pointer-events-auto flex items-center gap-[10px]"
+                      onSelect={(currentValue) => handleChange(currentValue)}
+                    >
+                      {framework.label}
+                    </CommandItem>
+                  ))}
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        );
+        case "gstRate":
+        return (
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={open}
+                className="w-[100%] justify-between  text-slate-600 items-center  border-slate-400 shadow-none"
+              >
+                {value
+                  ? gstRateList.find((option) => option.value === value)?.label
+                  : colDef.headerName}
+                <FaSortDown className="w-5 h-5 ml-2 mb-[5px] opacity-50 shrink-0" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[250px] p-0  ">
+              <Command>
+                <CommandInput placeholder="Search..." />
+                <CommandEmpty>No {colDef.headerName} found.</CommandEmpty>
+                <CommandList className="max-h-[400px] overflow-y-auto">
+                  {gstRateList.map((framework) => (
                     <CommandItem
                       key={framework.value}
                       value={framework.value}

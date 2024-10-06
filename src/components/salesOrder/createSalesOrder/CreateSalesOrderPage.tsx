@@ -144,14 +144,18 @@ const CreateSalesOrderPage = () => {
         shouldValidate: true,
         shouldDirty: true,
       });
+
       if (bill?.state?.value == ship?.state?.value) {
         setDerivedType("L");
       } else {
         setDerivedType("I");
       }
-
       if (client?.length > 0) {
         const clientData = client[0];
+        form.setValue("due_day", clientData?.soDueDate)
+        form.setValue("quotation_detail", clientData?.quotation_detail)
+        form.setValue("payment_term", clientData?.paymentterms)
+        form.setValue("terms_condition", clientData?.terms_condition)
         form.setValue("bill_name", clientData.clientname, {
           shouldValidate: true,
           shouldDirty: true,
@@ -277,7 +281,7 @@ const CreateSalesOrderPage = () => {
         type: material.so_type?.value || "product",
         items: material.item_code || "",
         material: material.selectedItem[0] || "",
-        materialDescription: material.item_deatils || "",
+        materialDescription: material.item_details || "",
         rate: parseFloat(material.rate) || 0,
         orderQty: material.orderqty || 1,
         currency: material.currency || "364907247",
@@ -289,8 +293,8 @@ const CreateSalesOrderPage = () => {
         igst: parseFloat(material.igst) || 0,
         dueDate: material.due_date || "",
         hsnCode: material.hsncode || "",
-        remark: material.remark || "",
-        gstRate: material?.gstrate || 0,
+        remark: material.item_remark || "",
+        gstRate: material?.gst_rate || 0,
         updateid: material?.updateid || 0,
         isNew: true,
       }));

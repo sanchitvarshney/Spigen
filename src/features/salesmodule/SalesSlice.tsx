@@ -127,6 +127,7 @@ interface SellRequestState {
   updateData: [];
   sellRequestDetails: [];
   dateRange: any;
+  wise: any;
   loading: boolean;
   error: string | null;
 }
@@ -136,6 +137,7 @@ const initialState: SellRequestState = {
   updateData: [],
   sellRequestDetails: [],
   dateRange: null,
+  wise: null,
   loading: false,
   error: null,
 };
@@ -347,6 +349,11 @@ const sellRequestSlice = createSlice({
     setDateRange(state, action: any) {
       state.dateRange = action.payload;
     },
+
+    setWise(state, action: any) {
+      console.log(action.payload)
+      state.wise=action.payload
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -481,5 +488,5 @@ const sellRequestSlice = createSlice({
   },
 });
 
-export const { setDateRange } = sellRequestSlice.actions;
+export const { setDateRange,setWise } = sellRequestSlice.actions;
 export default sellRequestSlice.reducer;

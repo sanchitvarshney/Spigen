@@ -5,10 +5,11 @@ import { Button, Dropdown, Form, Menu } from "antd";
 import { ConfirmCancellationDialog } from "@/config/agGrid/registerModule/ConfirmCancellationDialog";
 import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/store";
 import {
   cancelNotes,
+  fetchCreditDebitRegisterList,
   getNoteMaterialList,
   soNotePrint,
 } from "@/features/salesmodule/creditDebitRegisterSlice";
@@ -21,6 +22,12 @@ const ActionMenu: React.FC<any> = ({ row }) => {
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
   const [showMaterialList, setShowMaterialList] = useState(false);
   const [form] = Form.useForm();
+  const dateRange = useSelector(
+    (state: RootState) => state.sellRequest.dateRange
+  );
+  const wiseValue = useSelector(
+    (state: RootState) => state.sellRequest.wise
+  );
 
   const handlePrintInvoice = async (orderId: string) => {
     dispatch(soNotePrint({ note_no: orderId })).then((response: any) => {
@@ -48,6 +55,9 @@ const ActionMenu: React.FC<any> = ({ row }) => {
             title: response?.payload?.message || "Cancelled successfully",
             className: "bg-green-600 text-white items-center",
           });
+          dispatch(
+            fetchCreditDebitRegisterList({ wise: "date", data: dateRange, noteType: wiseValue }) as any
+          );
         }
       })
       .catch((error) => {
@@ -201,3 +211,5 @@ export const columnDefs: ColDef<RowData>[] = [
     cellRenderer: CopyCellRenderer,
   },
 ];
+
+

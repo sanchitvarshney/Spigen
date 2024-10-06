@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { z } from "zod";
@@ -36,6 +36,7 @@ import moment from "moment";
 import CopyCellRenderer from "@/components/shared/CopyCellRenderer";
 import { CsvExportModule } from "ag-grid-community";
 import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
+import { setDateRange, setWise } from "@/features/salesmodule/SalesSlice";
 
 const { RangePicker } = DatePicker;
 const dateFormat = "DD-MM-YYYY";
@@ -65,7 +66,7 @@ type FormSchemaType = z.infer<typeof FormSchema>;
 
 const AllocatedInvoicesPage: React.FC = () => {
   const gridRef = useRef<AgGridReact<any>>(null);
-  const [noteType, setNoteType] = useState<string>("debit");
+  const [noteType, setNoteType] = useState<any>("debit");
   const [wiseType, setWiseType] = useState<string>("date");
   const dispatch = useDispatch<AppDispatch>();
   const [isSearchPerformed, setIsSearchPerformed] = useState<boolean>(false);
@@ -91,6 +92,7 @@ const AllocatedInvoicesPage: React.FC = () => {
       const startDate = moment(dateRange[0]).format("DD-MM-YYYY");
       const endDate = moment(dateRange[1]).format("DD-MM-YYYY");
       dataString = `${startDate}-${endDate}`;
+      dispatch(setDateRange(dataString as any));
     } else {
       dataString = number || "";
     }
@@ -129,6 +131,12 @@ const AllocatedInvoicesPage: React.FC = () => {
       gridRef.current.api.exportDataAsCsv();
     }
   }, []);
+
+  useEffect(() => {
+    if (noteType) {
+      dispatch(setWise(noteType)); // Dispatch the action to set the state
+    }
+  }, [noteType, dispatch]); 
 
   return (
     <Wrapper className="h-[calc(100vh-100px)] grid grid-cols-[350px_1fr]">
@@ -196,7 +204,9 @@ const AllocatedInvoicesPage: React.FC = () => {
                             )
                           }
                           format={dateFormat}
-                          disabledDate={(current) => current && current > moment().endOf('day')} 
+                          disabledDate={(current) =>
+                            current && current > moment().endOf("day")
+                          }
                         />
                       </Space>
                     </FormControl>

@@ -32,15 +32,16 @@ const ExcelImportButton: React.FC<ExcelImportButtonProps> = ({ onImport }) => {
                     : JSON.stringify(resultAction?.payload?.message),
                 className: "bg-green-600 text-white items-center",
               });
-            } else {
-              toast({
-                title:
-                  typeof resultAction?.error?.message === "string"
-                    ? resultAction?.error?.message
-                    : JSON.stringify(resultAction?.error?.message),
-                className: "bg-red-600 text-white items-center",
-              });
             }
+            //  else {
+            //   toast({
+            //     title:
+            //       typeof resultAction?.error?.message === "string"
+            //         ? resultAction?.error?.message
+            //         : JSON.stringify(resultAction?.error?.message),
+            //     className: "bg-red-600 text-white items-center",
+            //   });
+            // }
             if (uploadExcel.fulfilled.match(resultAction)) {
               // handleFileRead(file);
               onImport(resultAction.payload); // Pass backend response here

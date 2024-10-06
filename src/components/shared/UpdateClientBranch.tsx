@@ -103,10 +103,10 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
   }, [data]);
 
   const copyAddressToShipment = () => {
-    const { addressLine1, addressLine2, state, country, pinCode, gst } =
+    const { addressLine1, addressLine2, state, country, pinCode, gst,label } =
       form.getValues();
 
-    form.setValue("shipmentAddress.label", addressLine1 ?? "");
+    form.setValue("shipmentAddress.label", label ?? "");
     form.setValue("shipmentAddress.country", country ?? "");
     form.setValue("shipmentAddress.state", state ?? "");
     form.setValue("shipmentAddress.pinCode", pinCode ?? "");

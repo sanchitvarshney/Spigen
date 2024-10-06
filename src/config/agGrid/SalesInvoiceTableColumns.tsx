@@ -53,12 +53,15 @@ const ActionMenu: React.FC<any> = ({ row }) => {
           remark: values.remark,
           invoice_no: row.so_ship_invoice_id,
         };
-        dispatch(cancelInvoice(payload));
+        dispatch(cancelInvoice(payload)).then((response: any) => {
+          if (response?.payload?.success) {
+            form.resetFields(); // Clear the form fields after submission
+            dispatch(
+              fetchSalesOrderInvoiceList({ wise: "datewise", data: dateRange }) as any
+            );
+          }
+        })
         setCancelModalVisible(false);
-        form.resetFields(); // Clear the form fields after submission
-        dispatch(
-          fetchSalesOrderInvoiceList({ wise: "datewise", data: dateRange }) as any
-        );
       })
       .catch((errorInfo) => {
         console.error("Validation Failed:", errorInfo);
@@ -168,12 +171,12 @@ export const columnDefs: ColDef<RowData>[] = [
     width: 400,
   },
   {
-    headerName: "EwayBill Created",
+    headerName: "e-wayBill Created",
     field: "isEwayBill",
     valueGetter: (params) => (params?.data?.isEwayBill === "N" ? "No" : "Yes"),
   },
   {
-    headerName: "EInvoice Created",
+    headerName: "e-Invoice Created",
     field: "isEInvoice",
     valueGetter: (params) => (params?.data?.isEInvoice === "N" ? "No" : "Yes"),
   },

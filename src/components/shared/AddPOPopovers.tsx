@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useNavigate } from "react-router-dom";
 
-const AddPOPopovers: React.FC<Props> = ({ uiState }) => {
+const AddPOPopovers: React.FC<Props> = ({ uiState,derivedState }) => {
   const {
     excelModel,
     setExcelModel,
@@ -35,9 +35,11 @@ const AddPOPopovers: React.FC<Props> = ({ uiState }) => {
       orderQty: Number(item.qty),
       rate: Number(item.rate),
       currency: item.currency,
-      gstRate: Number(item.gst_rate),
+      gstRate: item.gst_rate,
+      gstType:derivedState,
       dueDate: item.due_date,
       hsnCode: item.hsn,
+      remark: item.item_remark,
       isNew: true,
     }));
     // Set the response data in the table

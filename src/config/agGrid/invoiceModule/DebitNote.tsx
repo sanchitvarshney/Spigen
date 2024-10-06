@@ -81,7 +81,7 @@ const DebitNote: React.FC<DebitNoteProps> = ({
         type: material.so_type?.value || "product",
         items: material.item_code || "",
         material: material.selectedItem?.[0] || "",
-        materialDescription: material.item_deatils || "",
+        materialDescription: material.item_details || "",
         rate: parseFloat(material.rate) || 0,
         orderQty: material.orderqty || 1,
         currency: material.currency,

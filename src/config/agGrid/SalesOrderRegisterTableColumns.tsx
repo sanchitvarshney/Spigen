@@ -70,12 +70,15 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
           remark: values.remark,
           so: row?.req_id,
         };
-        dispatch(cancelSalesOrder(payload));
+        dispatch(cancelSalesOrder(payload)).then((response: any) => {
+          if (response?.payload?.success) {
+            form.resetFields(); // Clear the form fields after submission
+            dispatch(
+              fetchSellRequestList({ wise: "DATE", data: dateRange }) as any
+            );
+          }
+        });
         setIsModalVisible(false);
-        form.resetFields(); // Clear the form fields after submission
-        dispatch(
-          fetchSellRequestList({ wise: "DATE", data: dateRange }) as any
-        );
       })
       .catch((errorInfo) => {
         console.error("Validation Failed:", errorInfo);
