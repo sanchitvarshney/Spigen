@@ -46,7 +46,7 @@ import { transformUomData } from "@/helper/transform";
 import ReusableAsyncSelect from "@/components/shared/ReusableAsyncSelect";
 
 const productSchema = z.object({
-  product_name: z.string().optional(),
+  productname: z.string().optional(),
   uom: z.string().optional(),
   productcategory: z.string().optional(),
   category: z.string().optional(),
@@ -96,7 +96,7 @@ const ProductActionCellRender = (params: any) => {
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
     defaultValues: {
-      product_name: "",
+      productname: "",
       caption: "",
     },
   });
@@ -106,8 +106,8 @@ const ProductActionCellRender = (params: any) => {
       form.reset({
         // pKey: productData.pKey,
         // sku: productData.sku,
-        product_name: productData.productname,
-        uom: productData.uomname,
+        productname: productData.productname,
+        uom: productData.uomid,
         // uomid: productData.uomid,
         category: productData.productcategory,
         mrp: productData.mrp,
@@ -217,8 +217,9 @@ const ProductActionCellRender = (params: any) => {
       } else if (updateProduct.rejected.match(action)) {
         toast({
           title:
-            (action.payload as { message: string })?.message ||
-            "Failed to update product",
+            typeof action?.error?.message === "string"
+              ? action?.error?.message
+              : JSON.stringify(action?.error?.message),
           className: "bg-red-600 text-white items-center",
         });
       }
@@ -270,7 +271,7 @@ const ProductActionCellRender = (params: any) => {
                       <div className="grid grid-cols-3 gap-[30px] items-center ">
                         <FormField
                           control={form.control}
-                          name="product_name"
+                          name="productname"
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel className={LableStyle}>
@@ -1011,7 +1012,7 @@ const ProductActionCellRender = (params: any) => {
         </SheetTrigger>
         <SheetContent className="p-0">
           <SheetHeader className={modelFixHeaderStyle}>
-            <SheetTitle>Oakmist Plus</SheetTitle>
+            <SheetTitle>{productData?.productname}</SheetTitle>
           </SheetHeader>
           <div className="flex flex-col items-center justify-center h-full">
             <Image className="text-slate-300 h-[50px] w-[50px]" />
@@ -1025,7 +1026,7 @@ const ProductActionCellRender = (params: any) => {
         </SheetTrigger>
         <SheetContent className="p-0">
           <SheetHeader className={modelFixHeaderStyle}>
-            <SheetTitle className="text-slate-600">Oakmist Plus</SheetTitle>
+            <SheetTitle className="text-slate-600">{productData?.productname}</SheetTitle>
           </SheetHeader>
           <div>
             <div className="mt-[20px] flex flex-col gap-[20px] px-[20px]">

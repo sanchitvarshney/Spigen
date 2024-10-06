@@ -43,18 +43,10 @@ const schema = z.object({
   productName: z.string().min(2, {
     message: "Product Name is required",
   }),
-  p_asin: z.string().min(2, {
-    message: "asin is required",
-  }),
-  p_fnsku: z.string().min(2, {
-    message: "fnsku is required",
-  }),
-  p_item_code: z.string().min(2, {
-    message: "item code  is required",
-  }),
-  p_fsnid: z.string().min(2, {
-    message: "fsnid is required",
-  }),
+  p_asin: z.string().optional(),
+  p_fnsku: z.string().optional(),
+  p_item_code: z.string().optional(),
+  p_fsnid: z.string().optional(),
 });
 
 const languages = [
@@ -69,13 +61,6 @@ const MasterProductFgPage: React.FC = () => {
     resolver: zodResolver(schema),
     defaultValues: {
       productType: "good",
-      productSku: "",
-      productName: "",
-      uom: "",
-      p_asin: "",
-      p_fnsku: "",
-      p_item_code: "",
-      p_fsnid: "",
     },
   });
 
@@ -86,6 +71,7 @@ const MasterProductFgPage: React.FC = () => {
           endpoint: "/products/insertProduct",
           payload: {
             p_name: values.productName,
+            p_type: values.productType,
             p_sku: values.productSku,
             units_id: values.uom,
             p_asin: values.p_asin,
@@ -103,6 +89,7 @@ const MasterProductFgPage: React.FC = () => {
           title: "Product created successfully",
           className: "bg-green-600 text-white items-center",
         });
+        form.reset();
       } else {
         toast({
           title: resultAction.message || "Failed to Create Product",
@@ -349,7 +336,7 @@ const MasterProductFgPage: React.FC = () => {
                       <FormItem>
                         <FormLabel className={LableStyle}>
                           ASIN Number
-                          <span className="pl-1 text-red-500 font-bold">*</span>
+                          
                         </FormLabel>
                         <FormControl>
                           <Input

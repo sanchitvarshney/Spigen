@@ -1272,7 +1272,7 @@ export default function CreateEwayBill() {
                 </CardContent>
               </Card>
               {/* Ship From */}
-              {transactionType !== "1" && transactionType !== "3" && (
+              {transactionType !== "1" && transactionType !== "2"  && (
                 <Card className="rounded shadow bg-[#fff]">
                   <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
                     <h3 className="text-[17px] font-[600] text-slate-600">
@@ -1451,7 +1451,7 @@ export default function CreateEwayBill() {
               )}
 
               {/* Ship To */}
-              {transactionType !== "1" && transactionType !== "2" && (
+              {transactionType !== "1" && transactionType !== "3" && (
                 <Card className="rounded shadow bg-[#fff]">
                   <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
                     <h3 className="text-[17px] font-[600] text-slate-600">

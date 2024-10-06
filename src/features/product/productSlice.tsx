@@ -24,6 +24,7 @@ interface ProductPayload {
   width?: number;
   minstockrm?: number;
   producttype?: string;
+  p_type?: string;
   isenabled?: boolean;
   gsttype?: string;
   gstrate?: number;
