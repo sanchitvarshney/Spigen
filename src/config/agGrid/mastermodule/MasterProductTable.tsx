@@ -3,6 +3,7 @@ import { Copy } from "lucide-react";
 import { ColDef } from "@ag-grid-community/core";
 import ProductActionCellRender from "./ProductActionCellRender";
 import { Tooltip } from "antd";
+import { toast } from "@/components/ui/use-toast";
 
 export const TruncateCellRenderer = (props: any) => {
   const style = {
@@ -77,7 +78,11 @@ export const columnDefs: ColDef[] = [
 
 // Handle Copy Button
 const handleCopy = (value: any) => {
-  navigator.clipboard.writeText(value);
+  navigator.clipboard.writeText(value); 
+  toast({
+    title: "Copied to clipboard: " + value,
+    className: "bg-blue-600 text-white items-center",
+  });
 };
 
 // Open Modal Function

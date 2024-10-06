@@ -61,7 +61,7 @@ export const updateBranchAddressSchema = z.object({
   gst: z.string().optional(),
   email: z.string().optional(),
   status: z.boolean().optional(),
-  useAsShipmentAddress: z.boolean(),
+  useAsShipmentAddress: z.boolean().optional(),
   shipmentAddress: z.object({
     label: z.string({ required_error: "Label is required" }),
     country: z.string().min(1, "Country is required"),

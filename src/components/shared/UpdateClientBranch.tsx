@@ -113,7 +113,7 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
     form.setValue("shipmentAddress.gst", gst ?? "");
     form.setValue("shipmentAddress.addressLine1", addressLine1 ?? "");
     form.setValue("shipmentAddress.addressLine2", addressLine2 ?? "");
-    // form.setValue("useAsShipmentAddress", true);
+    form.setValue("useAsShipmentAddress", true);
   };
 
   useEffect(() => {
@@ -155,6 +155,7 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
       console.error("An error occurred:", error);
     }
   };
+  console.log(form.formState.errors);
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
