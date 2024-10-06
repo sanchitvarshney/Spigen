@@ -99,13 +99,23 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
   const totalCGST = itemCGSTs?.reduce((acc, value) => acc + value, 0);
   const totalSGST = itemSGSTs?.reduce((acc, value) => acc + value, 0);
   const totalIGST = itemIGSTs?.reduce((acc, value) => acc + value, 0);
-  function fnOpenNewWindow(link: string) {
+  function fnOpenNewWindow(link:string) {
+    // Define window dimensions
+    var width = 920;
+    var height = 500;
+
+    // Calculate the position to center the window on the screen
+    var left = (window.screen.width / 2) - (width / 2);
+    var top = (window.screen.height / 2) - (height / 2);
+
+    // Open the new window centered on the screen
     window.open(
         link,
         'Spigen',
-        'width=920,height=500,status=1,scrollbars=1,location=0,resizable=yes'
+        `width=${width},height=${height},top=${top},left=${left},status=1,scrollbars=1,location=0,resizable=yes`
     );
 }
+
   const handleEwayClick = (module: string) => {
     const shipmentId = sellRequestDetails?.items[0]?.shipment_id || "";
     const sanitizedShipmentId = shipmentId.replace(/\//g, "_");
