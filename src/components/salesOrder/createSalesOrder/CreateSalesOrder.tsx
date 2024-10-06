@@ -245,7 +245,7 @@ const CreateSalesOrder: React.FC<Props> = ({
       console.error("Data is null or undefined");
     }
   };
-
+console.log()
   return (
     <div className="h-[calc(100vh-150px)]">
       {data.loading && <FullPageLoading />}
@@ -787,7 +787,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                     Dispatch From Details
                   </h3>
                   <p className="text-slate-600 text-[13px]">
-                    Provide Bill From information
+                    Provide Dispatch From information
                   </p>
                 </CardHeader>
                 <CardContent className="mt-[10px]">
@@ -799,7 +799,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
-                              Billing Name
+                              Dispatch Label
                               <span className="pl-1 text-red-500 font-bold">
                                 *
                               </span>
@@ -807,7 +807,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                             <FormControl>
                               <Select
                                 styles={customStyles}
-                                placeholder="Bill From Address"
+                                placeholder="Dispatch Label"
                                 className="border-0 basic-single"
                                 classNamePrefix="select border-0"
                                 components={{ DropdownIndicator }}
@@ -847,7 +847,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className={LableStyle}>
-                              Pan No.
+                              Pan No
                               <span className="pl-1 text-red-500 font-bold">
                                 *
                               </span>

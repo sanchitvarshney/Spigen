@@ -56,7 +56,7 @@ spigenAxios.interceptors.response.use(
 
       if (errorData.success === false) {
         toasts({
-          title: errorData?.message || "Data Submitted Successfully",
+          title: errorData?.message ,
           className: "bg-red-600 text-white items-center",
         });
         toast.error(errorData?.message || "Error occurred.");

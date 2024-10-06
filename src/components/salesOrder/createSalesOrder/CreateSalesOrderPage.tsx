@@ -40,6 +40,43 @@ const CreateSalesOrderPage = () => {
     resolver: zodResolver(createSalesFormSchema),
     mode: "onBlur",
   });
+  const resetForm = () => {
+    form.reset({
+      bill_id: "",
+      billing_address1: "",
+      billing_address2: "",
+      bill_from_gst: "",
+      bill_pan: "",
+      customer_address1: "",
+      customer_address2: "",
+      customer: "",
+      customer_gstin: "",
+      isSameClientAdd: "",
+      customer_branch: "",
+      shipping_gstin: "",
+      shipping_pinCode: "",
+      shipping_id: "",
+      shipping_address1: "",
+      shipping_address2: "",
+      shipping_state: "",
+      shipping_pan: "",
+      place_of_supply: "",
+      bill_name: "",
+      bill_to_label: "",
+      terms_condition: "",
+      due_day: "",
+      quotation_detail: "",
+      payment_term: "",
+      comment: "",
+      cost_center: "",
+      project: "",
+      // Add any additional fields as necessary
+    });
+  };
+  useEffect(() => {
+    resetForm();
+  }, [channel]);
+  console.log(form.getValues());
 
   const handleClientChange = (e: any) => {
     dispatch(fetchClientAddressDetail({ addressID: e.value })).then(
@@ -98,7 +135,7 @@ const CreateSalesOrderPage = () => {
       }
     );
   };
-
+console.log(form.getValues())
   useEffect(() => {
     if (Object?.keys(updateData)?.length !== 0) {
       const { channel, client, bill, ship, materials }: any = updateData;
@@ -163,6 +200,7 @@ const CreateSalesOrderPage = () => {
         dispatch(fetchClientDetails(clientData?.clientcode?.value));
         // .then((response: any) => {
         //   if (response.meta.requestStatus!=="fulfilled") {
+        console.log(clientData.clientbranch)
         form.setValue("customer_branch", clientData.clientbranch?.value, {
           shouldValidate: true,
           shouldDirty: true,
@@ -289,7 +327,7 @@ const CreateSalesOrderPage = () => {
         igst: parseFloat(material.igst) || 0,
         dueDate: material.due_date || "",
         hsnCode: material.hsncode || "",
-        remark: material.item_remark || "",
+        remark: material.remark || "",
         gstRate: material?.gst_rate || 0,
         updateid: material?.updateid || 0,
         isNew: true,
