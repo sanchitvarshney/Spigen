@@ -95,7 +95,7 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
   return (
     <Sheet open={clientBranch} onOpenChange={setClientBranch}>
       <SheetContent
-        className="min-w-[60%]"
+        className="min-w-[60%] max-h-[100vh] overflow-y-auto flex flex-col"
         onInteractOutside={(e: any) => {
           e.preventDefault();
         }}

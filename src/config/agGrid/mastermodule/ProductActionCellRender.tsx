@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+// import { Label } from "@/components/ui/label";
 import {
   Sheet,
   SheetContent,
@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/sheet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Edit2, Eye, Image, Upload } from "lucide-react";
+import { Edit2} from "lucide-react";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -32,12 +32,12 @@ import {
   modelFixHeaderStyle,
 } from "@/constants/themeContants";
 import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
-  fetchImageProduct,
+  // fetchImageProduct,
   getProductForUpdate,
   updateProduct,
-  uploadProductImages,
+  // uploadProductImages,
 } from "@/features/product/productSlice";
 import { useDispatch } from "react-redux";
 import { RootState } from "@/store";
@@ -82,8 +82,8 @@ const productSchema = z.object({
 
 const ProductActionCellRender = (params: any) => {
   const { productKey } = params.params.data;
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  // const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  // const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const { toast } = useToast();
   const dispatch = useDispatch();
@@ -145,56 +145,56 @@ const ProductActionCellRender = (params: any) => {
     }
   }, [productData]);
   console.log(productData, "productData", form.getValues());
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      const files = Array.from(event.target.files);
-      setSelectedFiles(files);
+  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (event.target.files) {
+  //     const files = Array.from(event.target.files);
+  //     setSelectedFiles(files);
 
-      // Generate preview URLs
-      const previews = files.map((file) => URL.createObjectURL(file));
-      setImagePreviews(previews);
-    }
-  };
+  //     // Generate preview URLs
+  //     const previews = files.map((file) => URL.createObjectURL(file));
+  //     setImagePreviews(previews);
+  //   }
+  // };
 
-  const uploadImages = async () => {
-    if (selectedFiles.length > 0) {
-      const uploadPayload = {
-        files: selectedFiles,
-        product: productKey,
-        caption: form.getValues("caption") || "",
-      };
+  // const uploadImages = async () => {
+  //   if (selectedFiles.length > 0) {
+  //     const uploadPayload = {
+  //       files: selectedFiles,
+  //       product: productKey,
+  //       caption: form.getValues("caption") || "",
+  //     };
 
-      try {
-        const uploadAction = await dispatch(
-          uploadProductImages(uploadPayload) as any
-        );
+  //     try {
+  //       const uploadAction = await dispatch(
+  //         uploadProductImages(uploadPayload) as any
+  //       );
 
-        if (uploadProductImages.fulfilled.match(uploadAction)) {
-          toast({
-            title: "Images uploaded successfully",
-            className: "bg-green-600 text-white items-center",
-          });
-        } else if (uploadProductImages.rejected.match(uploadAction)) {
-          toast({
-            title:
-              (uploadAction.payload as { message: string })?.message ||
-              "Failed to upload images",
-            className: "bg-red-600 text-white items-center",
-          });
-        }
-      } catch (error) {
-        toast({
-          title: "An unexpected error occurred",
-          className: "bg-red-600 text-white items-center",
-        });
-      }
-    } else {
-      toast({
-        title: "No images selected",
-        className: "bg-yellow-600 text-white items-center",
-      });
-    }
-  };
+  //       if (uploadProductImages.fulfilled.match(uploadAction)) {
+  //         toast({
+  //           title: "Images uploaded successfully",
+  //           className: "bg-green-600 text-white items-center",
+  //         });
+  //       } else if (uploadProductImages.rejected.match(uploadAction)) {
+  //         toast({
+  //           title:
+  //             (uploadAction.payload as { message: string })?.message ||
+  //             "Failed to upload images",
+  //           className: "bg-red-600 text-white items-center",
+  //         });
+  //       }
+  //     } catch (error) {
+  //       toast({
+  //         title: "An unexpected error occurred",
+  //         className: "bg-red-600 text-white items-center",
+  //       });
+  //     }
+  //   } else {
+  //     toast({
+  //       title: "No images selected",
+  //       className: "bg-yellow-600 text-white items-center",
+  //     });
+  //   }
+  // };
 
   async function onSubmit(value: any) {
     const payload = {

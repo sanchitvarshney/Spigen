@@ -31,7 +31,6 @@ const MasterEditViewBranch: React.FC<Props> = ({ uiState }) => {
       editViewCellRenderer: (row: any) => {
         useEffect(() => {
           if (params.data.clientID) {
-            console.log("dispatch");
             dispatch(fetchClientDetails(params.data.clientID) as any);
           }
         }, [params]);
