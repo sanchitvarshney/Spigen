@@ -65,13 +65,23 @@ const NoteMaterialListModal: React.FC<NoteMaterialListModalProps> = ({
   ];
   const data = materialListData?.header;
 
+  function fnOpenNewWindow(link: string) {
+    window.open(
+        link,
+        'Spigen',
+        'width=920,height=500,status=1,scrollbars=1,location=0,resizable=yes'
+    );
+}
+
   const handleEwayClick = (module: string) => {
     const shipmentId = materialListData?.header?.note_id || "";
     const sanitizedShipmentId = shipmentId.replace(/\//g, "_");
     if (module === "Invoice") {
-      window.open(`/salesOrder/e-inv/${sanitizedShipmentId}`, "_blank");
+      // window.open(`/salesOrder/e-inv/${sanitizedShipmentId}`, "_blank");
+      fnOpenNewWindow(`/salesOrder/e-inv/${sanitizedShipmentId}`);
     } else {
-      window.open(`/salesOrder/e-way/${sanitizedShipmentId}`, "_blank");
+      // window.open(`/salesOrder/e-way/${sanitizedShipmentId}`, "_blank");
+      fnOpenNewWindow(`/salesOrder/e-way/${sanitizedShipmentId}`);
     }
   };
 

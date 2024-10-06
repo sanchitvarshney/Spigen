@@ -99,14 +99,22 @@ const ViewInvoiceModal: React.FC<ViewInvoiceModalProps> = ({
   const totalCGST = itemCGSTs?.reduce((acc, value) => acc + value, 0);
   const totalSGST = itemSGSTs?.reduce((acc, value) => acc + value, 0);
   const totalIGST = itemIGSTs?.reduce((acc, value) => acc + value, 0);
-
+  function fnOpenNewWindow(link: string) {
+    window.open(
+        link,
+        'Spigen',
+        'width=920,height=500,status=1,scrollbars=1,location=0,resizable=yes'
+    );
+}
   const handleEwayClick = (module: string) => {
     const shipmentId = sellRequestDetails?.items[0]?.shipment_id || "";
     const sanitizedShipmentId = shipmentId.replace(/\//g, "_");
     if (module === "Invoice") {
-      window.open(`/salesOrder/e-inv/${sanitizedShipmentId}`, "_blank");
+      // window.open(`/salesOrder/e-inv/${sanitizedShipmentId}`, "_blank");
+      fnOpenNewWindow(`/salesOrder/e-inv/${sanitizedShipmentId}`);
     } else {
-      window.open(`/salesOrder/e-way/${sanitizedShipmentId}`, "_blank");
+      // window.open(`/salesOrder/e-way/${sanitizedShipmentId}`, "_blank");
+      fnOpenNewWindow(`/salesOrder/e-way/${sanitizedShipmentId}`);
     }
   };
 

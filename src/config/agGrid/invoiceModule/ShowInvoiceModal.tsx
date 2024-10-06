@@ -97,7 +97,7 @@ const DataDialog = ({ open, onClose,orderId,module }: any) => {
                 onClick={handleBack}
                 className="bg-gray-200 text-gray-800 hover:bg-gray-300 transition"
               >
-                Back
+                Close Window
               </Button>
             </div>
           </CardContent>

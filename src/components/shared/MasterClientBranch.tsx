@@ -85,6 +85,7 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
               : JSON.stringify(resultAction.message),
           className: "bg-green-600 text-white items-center",
         });
+        form.reset();
         setClientBranch(false);
       }
     } catch (error) {

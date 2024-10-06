@@ -181,6 +181,8 @@ export default function CreateEwayBill() {
           isCrNote
             ? form.setValue("header.creditNo", data?.note_id)
             : form.setValue("header.debitNo", data?.note_id);
+
+          setOrderId(data?.note_id);
           form.setValue("billFrom.legalName", data?.billFrom?.legalName);
           form.setValue("billFrom.tradeName", data?.billFrom?.tradeName);
           form.setValue("billFrom.state", data?.billFrom?.state);
@@ -319,6 +321,7 @@ export default function CreateEwayBill() {
       form.handleSubmit(onSubmit)(); // Proceed with submission
     }
   };
+
 
   return (
     <div className="h-[calc(100vh-150px)] flex flex-col">
@@ -1981,9 +1984,9 @@ export default function CreateEwayBill() {
                 </div>
               </CardContent>
             </Card>
-            <div className="bg-white border-t shadow border-slate-300 h-[50px] flex items-center justify-end gap-[20px] px-[20px]">
+            <div className="h-[50px] flex items-center justify-center gap-[20px] px-[20px] pt-10">
               <Button
-                className="rounded-md shadow bg-green-700 hover:bg-green-600 shadow-slate-500 max-w-max px-[30px]"
+                className="rounded-md shadow bg-green-700 hover:bg-green-600 shadow-slate-500 max-w-max px-[30px] w-[148px] h-[50px] font-[600]"
                 // onClick={form.handleSubmit((data) => {
                 //   dispatch(createEwayBill(data));
                 //   // Handle form submission here
@@ -1995,7 +1998,7 @@ export default function CreateEwayBill() {
               </Button>
               <ShowInvoiceModal
                 open={showCreatedInvoiceModal}
-                onClose={() => setShowCreatedInvoiceModal(false)}
+                onClose={() => {setShowCreatedInvoiceModal(false);window.close();}}
                 module={
                   isCnDn
                     ? isCrNote
