@@ -212,7 +212,7 @@ export const columnDefs: ColDef<RowData>[] = [
     maxWidth: 100,
     cellRenderer: (params: any) => <ActionMenu row={params.data} />,
   },
-  { headerName: "#", valueGetter: "node.rowIndex + 1", maxWidth: 50 },
+  { headerName: "#", valueGetter: "node.rowIndex + 1", minWidth: 50 },
 
   {
     headerName: "SO ID",

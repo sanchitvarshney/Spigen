@@ -29,7 +29,7 @@ const dateFormat = "YYYY/MM/DD";
 const wises = [
   { label: "Date Wise", value: "datewise" },
   { label: "client", value: "clientwise" },
-  { label: "so id", value: "so_id_wise" },
+  // { label: "so id", value: "so_id_wise" },
 
 ] as const;
 

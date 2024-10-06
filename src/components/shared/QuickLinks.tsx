@@ -38,7 +38,7 @@ export const navLinks = [
   },
   {
     href: "/sales/order/e-transaction-register",
-    label: "E Transaction Register",
+    label: "e-Transaction Register",
     value: "e-transaction-register",
   },
   { href: "/master/product/sfg", label: "Products", value: "products" },

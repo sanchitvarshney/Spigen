@@ -197,7 +197,7 @@ export const columnDefs: ColDef<RowData>[] = [
     maxWidth: 100,
   },
   {
-    headerName: "SO Id",
+    headerName: "SO ID",
     field: "so_no",
     filter: "agDateColumnFilter",
     maxWidth: 150,

@@ -96,8 +96,8 @@ const SalesETransactionRegisterPage: React.FC = () => {
   });
 
   const types = [
-    { label: "E-Invoice", value: "e-invoice" },
-    { label: "E-way Bill", value: "e-waybill" },
+    { label: "e-Invoice", value: "e-invoice" },
+    { label: "e-way Bill", value: "e-waybill" },
     { label: "Debit Note", value: "debit" },
     { label: "Credit Note", value: "credit" },
   ] as const;

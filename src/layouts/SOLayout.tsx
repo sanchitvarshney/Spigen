@@ -29,7 +29,7 @@ const SOLayout = (props: { children: React.ReactNode }) => {
           </li>
           <li className="h-[50px]">
             <NavLink to={"/sales/order/e-transaction-register"} className={({ isActive }) => `${navLinkStyle} ${isActive && navlinkActiveStyle}`}>
-              E Transaction Register
+              e-Transaction Register
             </NavLink>
           </li>
         </ul>

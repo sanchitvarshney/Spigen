@@ -139,7 +139,7 @@ export const columnDefs: ColDef<RowData>[] = [
     cellRenderer: (params: any) => <ActionMenu row={params.data} />,
   },
 
-  { headerName: "S.No.", valueGetter: "node.rowIndex + 1", maxWidth: 50 },
+  { headerName: "S.No.", valueGetter: "node.rowIndex + 1", minWidth: 50 },
   { headerName: "SO ID", field: "so_id", filter: "agNumberColumnFilter" ,cellRenderer: CopyCellRenderer},
   {
     headerName: "Date",

@@ -229,7 +229,7 @@ const DebitNote: React.FC<DebitNoteProps> = ({
             <Card className="rounded-sm shadow-sm shadow-slate-600">
               <CardHeader className="flex flex-row items-center justify-between p-4 bg-[#e0f2f1]">
                 <CardTitle className="font-[550] text-slate-600">
-                  Bill From
+                  Dispatch From
                 </CardTitle>
               </CardHeader>
               <CardContent className="mt-4 flex flex-col gap-4 text-slate-500">
