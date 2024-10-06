@@ -42,15 +42,6 @@ const ActionMenu: React.FC<any> = ({ row }) => {
       if (response?.payload?.success) {
         printFunction(response?.payload?.data.buffer.data);
       }
-      else {
-          toast({
-            title:
-              typeof response?.error?.message === "string"
-                ? response?.error?.message
-                : JSON.stringify(response?.error?.message),
-            className: "bg-red-600 text-white items-center",
-          });
-        }
     });
   };
 

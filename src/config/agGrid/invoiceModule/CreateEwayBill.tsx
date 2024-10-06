@@ -157,14 +157,6 @@ export default function CreateEwayBill() {
           form.setValue("shipTo.pincode", data?.shipTo?.pincode);
           form.setValue("shipTo.addressLine1", data?.shipTo?.addressLine1);
           form.setValue("shipTo.addressLine2", data?.shipTo?.addressLine2);
-        } else {
-          toast({
-            title:
-              typeof res?.error?.message === "string"
-                ? res?.error?.message
-                : JSON.stringify(res?.error?.message),
-            className: "bg-red-600 text-white items-center",
-          });
         }
       });
     }
@@ -234,14 +226,6 @@ export default function CreateEwayBill() {
           form.setValue("shipTo.pincode", data?.shipTo?.pin);
           form.setValue("shipTo.addressLine1", data?.shipTo?.shipToAddress1);
           form.setValue("shipTo.addressLine2", data?.shipTo?.shipToAddress2);
-        } else {
-          toast({
-            title:
-              typeof res?.error?.message === "string"
-                ? res?.error?.message
-                : JSON.stringify(res?.error?.message),
-            className: "bg-red-600 text-white items-center",
-          });
         }
       });
     }
@@ -261,12 +245,7 @@ export default function CreateEwayBill() {
             // setInvoiceData(response?.payload?.data);
             // console.log(response.payload.data,typeof response.payload.data);
             setShowCreatedInvoiceModal(true);
-          } else {
-            toast({
-              title: response?.payload?.message || "Failed to Submit Data",
-              className: "bg-red-600 text-white items-center",
-            });
-          }
+          } 
         });
       } else {
         dispatch(createDebitEinvoice(payload)).then((response) => {
@@ -279,12 +258,6 @@ export default function CreateEwayBill() {
             // setInvoiceData(response.payload.data);
             setShowCreatedInvoiceModal(true);
           }
-          //  else {
-          //   toast({
-          //     title: response?.payload?.message || "Failed to Submit Data",
-          //     className: "bg-red-600 text-white items-center",
-          //   });
-          // }
         });
       }
     } else {
@@ -297,11 +270,6 @@ export default function CreateEwayBill() {
             });
             // setInvoiceData(response.payload.data);
             setShowCreatedInvoiceModal(true);
-          } else {
-            toast({
-              title: "Failed to Fetch Data",
-              className: "bg-red-600 text-white items-center",
-            });
           }
         });
       } else {
@@ -314,11 +282,6 @@ export default function CreateEwayBill() {
             });
             // setInvoiceData(response.payload.data);
             setShowCreatedInvoiceModal(true);
-          } else {
-            toast({
-              title: "Failed to Create",
-              className: "bg-red-600 text-white items-center",
-            });
           }
         });
       }

@@ -184,7 +184,8 @@ const ewaybillDetailsForInvoice = z.object({
     transporterName: z.string({ required_error: "Transporter Name is required" }),
     transMode: z.string({ required_error: "Transport Mode is required" }),
     transporterDocNo: z.string().optional(),
-    transporterDate: z.string({ required_error: "Transporter Date is required" }),
+    // transporterDate: z.string({ required_error: "Transporter Date is required" }),
+    transporterDate:z.string().optional(),
     vehicleNo: z.string({ required_error: "Vehicle Number is required" }),
     vehicleType: z.string({ required_error: "Vehicle Type is required" }),
     transDistance: z.string({ required_error: "Trans Distance is required" }), // Mandatory in both

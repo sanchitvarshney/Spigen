@@ -48,19 +48,10 @@ const ActionMenu: React.FC<any> = ({ row }) => {
             title: response?.payload?.message || "Cancelled successfully",
             className: "bg-green-600 text-white items-center",
           });
-        } else {
-          toast({
-            title: response?.payload?.message || "Cancelled failed",
-            className: "bg-red-600 text-white items-center",
-          });
         }
       })
       .catch((error) => {
         console.error("Dispatch failed:", error);
-        toast({
-          title: "An error occurred while cancelling.",
-          className: "bg-red-600 text-white items-center",
-        });
       });
     setCancelModalVisible(false);
     form.resetFields();

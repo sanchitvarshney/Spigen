@@ -86,14 +86,6 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
           className: "bg-green-600 text-white items-center",
         });
         setClientBranch(false);
-      } else {
-        toast({
-          title:
-            typeof resultAction.message === "string"
-              ? resultAction.message
-              : JSON.stringify(resultAction.message),
-          className: "bg-red-600 text-white items-center",
-        });
       }
     } catch (error) {
       console.error("An error occurred:", error);

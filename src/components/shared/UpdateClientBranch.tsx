@@ -151,14 +151,6 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
               : JSON.stringify(resultAction.message),
           className: "bg-green-600 text-white items-center",
         });
-      } else {
-        toast({
-          title:
-            typeof resultAction.message === "string"
-              ? resultAction.message
-              : JSON.stringify(resultAction.message),
-          className: "bg-red-600 text-white items-center",
-        });
       }
       onClose(false);
     } catch (error) {
