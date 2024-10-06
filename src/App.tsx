@@ -276,7 +276,7 @@ const router = createBrowserRouter([
         </MainLayout>
       </Protected>
     ),
-    path: "/master/customer",
+    path: "/master/client",
   },
   {
     element: (

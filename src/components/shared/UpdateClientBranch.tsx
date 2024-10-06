@@ -100,7 +100,7 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
       );
       form.setValue("shipmentAddress.gst", data?.shipmentAddress?.Gstin);
     }
-  }, [data]);
+  }, [data,dispatch]);
 
   const copyAddressToShipment = () => {
     const { addressLine1, addressLine2, state, country, pinCode, gst,label } =
@@ -120,6 +120,7 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
     dispatch(fetchCountries());
     dispatch(fetchStates());
   }, []);
+  
 
   const onSubmit = async (
     values: z.infer<typeof updateBranchAddressSchema>

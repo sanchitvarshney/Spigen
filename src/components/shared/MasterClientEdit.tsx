@@ -82,7 +82,7 @@ const MasterClientEdit: React.FC<Props> = ({
       });
     }
   }, [clientData, clientId, form]);
-
+console.log(uiState)
   const onSubmit = (value: any) => {
     const payload = {
       ...value,
@@ -90,6 +90,7 @@ const MasterClientEdit: React.FC<Props> = ({
       status: value.active ? "active" : "inactive",
     };
     dispatch(updateClient({ endpoint: `/client/update`, payload }) as any);
+    uiState.setClientBranch(false);
     toast({
       title: "Client updated successfully",
       className: "bg-green-600 text-white items-center",
@@ -121,7 +122,7 @@ const MasterClientEdit: React.FC<Props> = ({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className={LableStyle}>
-                          Vendor Name
+                          Client Name
                         </FormLabel>
                         <FormControl>
                           <Input

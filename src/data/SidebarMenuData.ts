@@ -136,7 +136,7 @@ export const materialmenu = [
       // { name: "Vender / Suppliar", subMenu: [{ name: "Add / Rectify", path: "/not-permission" }] },
       {
         name: "Customer / Client",
-        path: "/master/customer" 
+        path: "/master/client", 
       },
     ],
   },

@@ -14,7 +14,7 @@ import { Button } from "../ui/button";
 import { Edit2 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
-import { fetchClientDetails } from "@/features/salesmodule/createSalesOrderSlice";
+import { fetchClientDetails} from "@/features/salesmodule/createSalesOrderSlice";
 import UpdateClientBranch from "@/components/shared/UpdateClientBranch";
 
 const MasterEditViewBranch: React.FC<Props> = ({ uiState }) => {
@@ -59,7 +59,7 @@ const MasterEditViewBranch: React.FC<Props> = ({ uiState }) => {
     }
   }, [rowId, clientDetails]);
 
-  console.log(clientDetails, rowId, "++++", clientData);
+
   return (
     <Sheet open={editView} onOpenChange={setEditView}>
       <SheetContent
