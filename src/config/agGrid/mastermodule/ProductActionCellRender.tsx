@@ -231,7 +231,7 @@ const ProductActionCellRender = (params: any) => {
       });
     }
   }
-console.log(productData,"productData")
+
   return (
     <div className="flex items-center gap-[10px]">
       <Sheet>
@@ -999,7 +999,7 @@ console.log(productData,"productData")
           </div>
         </SheetContent>
       </Sheet>
-      <Sheet>
+      {/* <Sheet>
         <SheetTrigger>
           <Eye
             className="text-cyan-700 h-[20px] w-[20px]"
@@ -1008,6 +1008,7 @@ console.log(productData,"productData")
                 dispatch(fetchImageProduct(productKey) as any);
               }
             }}
+            aria-disabled={true}
           />
         </SheetTrigger>
         <SheetContent className="p-0">
@@ -1074,7 +1075,7 @@ console.log(productData,"productData")
             </div>
           </div>
         </SheetContent>
-      </Sheet>
+      </Sheet> */}
     </div>
   );
 };

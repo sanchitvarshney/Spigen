@@ -104,7 +104,7 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
           <SheetTitle className="text-slate-600">
             {module === "create"
               ? `${params?.name} (${params?.code})`
-              : `${params?.data?.name} (${clientId})`}
+              : `${params?.data?.name} (${clientId})`} 
           </SheetTitle>
         </SheetHeader>
         <div className="my-[20px]">

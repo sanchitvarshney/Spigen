@@ -13,8 +13,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { updateBranchAddressSchema } from "@/schema/masterModule/customerSchema";
-import ReusableAsyncSelect from "./ReusableAsyncSelect";
-import { transformPlaceData } from "@/helper/transform";
 import {
   Sheet,
   SheetContent,
@@ -161,7 +159,7 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
   return (
     <Sheet open={open} onOpenChange={onClose}>
       <SheetContent
-        className="min-w-[60%]"
+        className="min-w-[60%] max-h-[100vh] overflow-y-auto flex flex-col"
         onInteractOutside={(e: any) => {
           e.preventDefault();
         }}
@@ -219,7 +217,10 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
                             </SelectTrigger>
                             <SelectContent className="border-0 focus:outline-none focus:ring-0">
                               {countries?.map((item: any) => (
-                                <SelectItem key={item.code} value={item.code}>
+                                <SelectItem
+                                  key={item.code}
+                                  value={item.code + ""}
+                                >
                                   {item.name}
                                 </SelectItem>
                               ))}
@@ -485,22 +486,36 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
                 <FormField
                   control={form.control}
                   name="shipmentAddress.country"
-                  render={() => (
-                    <FormItem>
+                  render={({ field }) => (
+                    <FormItem className="border-b border-black">
                       <FormLabel className={LableStyle}>
-                        Country{" "}
+                        Country
                         <span className="pl-1 text-red-500 font-bold">*</span>
                       </FormLabel>
                       <FormControl>
-                        <ReusableAsyncSelect
-                          placeholder="Country"
-                          endpoint="tally/backend/countries"
-                          transform={transformPlaceData}
-                          fetchOptionWith="query"
-                          onChange={(e: any) =>
-                            form.setValue("shipmentAddress.country", e.value)
-                          }
-                        />
+                        <div className="border-0 focus:outline-none focus:ring-0">
+                          <Select
+                            value={field.value}
+                            onValueChange={(value) => {
+                              form.setValue("shipmentAddress.country", value);
+                              field.onChange(value);
+                            }}
+                          >
+                            <SelectTrigger className="border-0 focus:outline-none focus:ring-0">
+                              <SelectValue placeholder="Select a filter type" />
+                            </SelectTrigger>
+                            <SelectContent className="border-0 focus:outline-none focus:ring-0">
+                              {countries?.map((item: any) => (
+                                <SelectItem
+                                  key={item.code}
+                                  value={item.code + ""}
+                                >
+                                  {item.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -509,22 +524,32 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
                 <FormField
                   control={form.control}
                   name="shipmentAddress.state"
-                  render={() => (
-                    <FormItem>
+                  render={({ field }) => (
+                    <FormItem className="border-b border-black">
                       <FormLabel className={LableStyle}>
-                        State{" "}
+                        State
                         <span className="pl-1 text-red-500 font-bold">*</span>
                       </FormLabel>
                       <FormControl>
-                        <ReusableAsyncSelect
-                          placeholder="State"
-                          endpoint="tally/backend/states"
-                          transform={transformPlaceData}
-                          fetchOptionWith="query"
-                          onChange={(e: any) =>
-                            form.setValue("shipmentAddress.state", e.value)
-                          }
-                        />
+                        <div className="border-0 focus:outline-none focus:ring-0 box-shadow-none">
+                          <Select
+                            value={field.value}
+                            onValueChange={(value) => {
+                              form.setValue("shipmentAddress.state", value);
+                            }}
+                          >
+                            <SelectTrigger className="border-0 focus:outline-none focus:ring-0 box-shadow-none">
+                              <SelectValue placeholder="Select a filter type" />
+                            </SelectTrigger>
+                            <SelectContent className="border-0 focus:outline-none focus:ring-0 box-shadow-none">
+                              {states?.map((item: any) => (
+                                <SelectItem key={item.code} value={item.code}>
+                                  {item.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
