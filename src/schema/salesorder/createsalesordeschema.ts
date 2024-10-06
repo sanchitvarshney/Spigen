@@ -52,24 +52,29 @@ import { z } from "zod";
 
 const baseSchema = z.object({
   channel: z.string({ required_error: "Please select a channel name" }),
-  bill_id: z.string({ required_error: "Please select Billing Address" }),
+  bill_id: z.string({ required_error: "Please select  Address" }),
   billing_address1: z.string().min(10, {
-    message:  "Please add your Billing Address (Description must be between 10 and 100 characters)",
+    message:  "Please add your Address (Description must be between 10 and 100 characters)",
   }),
   billing_address2: z.string().min(10, {
-    message:  "Please add your Billing Address (Description must be between 10 and 100 characters)",
+    message:  "Please add your Address (Description must be between 10 and 100 characters)",
   }),
   bill_from_gst: z.string().min(15,{
-    message: "Please enter Billing GSTIN Number",
+    message: "Please enter GSTIN Number",
   }),
-  bill_pan: z.string().min(10,{ message: "Plenter Billing PAN Number" }),
+  bill_pan: z.string()
+  .length(10, { message: "PAN Number must be exactly 10 characters" })
+  .regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, {
+    message: "Please enter a valid PAN Number (format: ABCDE1234F)",
+  }),
+
   customer_address1: z.string().min(10, {
     message:
-      "Please add your Billing Address (Description must be between 10 and 100 characters)",
+      "Please add your Address (Description must be between 10 and 100 characters)",
   }),
   customer_address2: z.string().min(10, {
     message:
-      "Please add your Billing Address (Description must be between 10 and 100 characters)",
+      "Please add your Address (Description must be between 10 and 100 characters)",
   }),
   customer_gstin: z.string().min(15,{ message: "Please provide GST" }),
   isSameClientAdd: z.string().optional(),
@@ -81,9 +86,14 @@ const baseSchema = z.object({
   shipping_gstin: z.string().min(15, {
     message: "Please enter Shipping GSTIN Number",
   }),
-  shipping_pinCode: z.string().min(6, {
+  shipping_pinCode: z.string()
+  .min(6, {
     message: "Please enter Shipping Pincode",
+  })
+  .max(6, {
+    message: "Shipping Pincode must be exactly 6 characters",
   }),
+
   shipping_id: z.string().min(1, { message: "Please select Shipping Address" }),
   shipping_address1: z.string().min(10, {
     message:
@@ -94,8 +104,10 @@ const baseSchema = z.object({
       "Please add your Shipping Address (Description must be between 10 and 100 characters)",
   }),
   shipping_state: z.string({ required_error: "Please select Shipping State" }),
-  shipping_pan: z.string().min(6, {
-    message: "Please enter Shipping PAN Number",
+  shipping_pan: z.string()
+  .length(10, { message: "PAN Number must be exactly 10 characters" })
+  .regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, {
+    message: "Please enter a valid PAN Number (format: ABCDE1234F)",
   }),
   place_of_supply: z.string().min(1, {
     message: "Please provide place of supply",

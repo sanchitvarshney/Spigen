@@ -29,7 +29,12 @@ export const branchAddressSchema = z.object({
   country: z.string({ required_error: "Country is required" }),
   state: z.string().min(1, "State is required"),
   city: z.string().min(1, "City is required"),
-  pinCode: z.string().min(1, "Pin Code is required"),
+  pinCode: z.string().min(6, {
+    message: "Please enter Pincode",
+  })
+  .max(6, {
+    message: "Pincode must be exactly 6 characters",
+  }),
   addressLine1: z.string().min(1, "Address is required"),
   addressLine2: z.string().min(1, "Address is required"),
   phoneNo: z.string().min(1, "Phone Number is required"),
@@ -41,8 +46,17 @@ export const branchAddressSchema = z.object({
     country: z.string().min(1, "Country is required"),
     company: z.string().min(1, "Company is required"),
     state: z.string().min(1, "State is required"),
-    pinCode: z.string().min(1, "Pin Code is required"),
-    pan: z.string().min(1, "PAN Number is required"),
+    pinCode: z.string().min(6, {
+      message: "Please enter Pincode",
+    })
+    .max(6, {
+      message: "Pincode must be exactly 6 characters",
+    }),
+    pan:  z.string()
+    .length(10, { message: "PAN Number must be exactly 10 characters" })
+    .regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, {
+      message: "Please enter a valid PAN Number (format: ABCDE1234F)",
+    }),
     addressLine1: z.string().min(1, "Address is required"),
     addressLine2: z.string().min(1, "Address is required"),
     gst: z.string().min(1, "GST Number is required"),
@@ -54,7 +68,12 @@ export const updateBranchAddressSchema = z.object({
   country: z.string().optional(),
   state: z.string().optional(),
   city: z.string().optional(),
-  pinCode: z.string().optional(),
+  pinCode: z.string().min(6, {
+    message: "Please enter Pincode",
+  })
+  .max(6, {
+    message: "Pincode must be exactly 6 characters",
+  }).optional(),
   addressLine1: z.string().optional(),
   addressLine2: z.string().optional(),
   phoneNo: z.string().optional(),
@@ -67,8 +86,17 @@ export const updateBranchAddressSchema = z.object({
     country: z.string().min(1, "Country is required"),
     company: z.string().min(1, "Company is required"),
     state: z.string().min(1, "State is required"),
-    pinCode: z.string().min(1, "Pin Code is required"),
-    pan: z.string().min(1, "PAN Number is required"),
+    pinCode: z.string().min(6, {
+      message: "Please enter Pincode",
+    })
+    .max(6, {
+      message: "Pincode must be exactly 6 characters",
+    }),
+    pan:  z.string()
+    .length(10, { message: "PAN Number must be exactly 10 characters" })
+    .regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, {
+      message: "Please enter a valid PAN Number (format: ABCDE1234F)",
+    }),
     addressLine1: z.string().min(1, "Address is required"),
     addressLine2: z.string().min(1, "Address is required"),
     gst: z.string().min(1, "GST Number is required"),

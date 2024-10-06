@@ -30,8 +30,10 @@ const schema = z.object({
   company: z.string().min(2, {
     message: "Company is required",
   }),
-  pan: z.string().min(2, {
-    message: "Pan is required",
+  pan: z.string()
+  .length(10, { message: "PAN Number must be exactly 10 characters" })
+  .regex(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, {
+    message: "Please enter a valid PAN Number (format: ABCDE1234F)",
   }),
   state: z.string().min(2, {
     message: "State is required",
