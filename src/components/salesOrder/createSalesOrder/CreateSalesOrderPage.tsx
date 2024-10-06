@@ -42,10 +42,6 @@ const CreateSalesOrderPage = () => {
   });
 
   const handleClientChange = (e: any) => {
-    form.setValue("customer", e.value, {
-      shouldValidate: true,
-      shouldDirty: true,
-    });
     dispatch(fetchClientAddressDetail({ addressID: e.value })).then(
       (response: any) => {
         if (response.meta.requestStatus === "fulfilled") {

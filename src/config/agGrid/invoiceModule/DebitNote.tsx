@@ -94,7 +94,7 @@ const DebitNote: React.FC<DebitNoteProps> = ({
         dueDate: material.due_date || "",
         hsnCode: material.hsncode || "",
         remark: material.remark || "",
-        gstRate: material?.gstrate || 0,
+        gstRate: material?.gst_rate || 0,
         updateid: material?.updateid || 0,
         isNew: true,
       })
@@ -186,7 +186,7 @@ const DebitNote: React.FC<DebitNoteProps> = ({
       console.error("Validation or submission error:", error);
     }
   };
-  const filteredColumnDefs = debitNoteColumnDefs.filter((col) => col.field !== "delete");
+  const filteredColumnDefs = debitNoteColumnDefs;
 
   return (
     <Sheet open={visible} onOpenChange={onClose}>

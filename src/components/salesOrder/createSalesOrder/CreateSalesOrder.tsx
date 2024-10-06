@@ -600,7 +600,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                             <Badge
                               className="p-0 text-[13px] bg-transparent border-none shadow-none font-[400] max-h-max text-cyan-600 py-[3px] px-[10px] cursor-pointer hover:bg-blue-100 hover:shadow shadow-slate-500 rounded-full"
                               onClick={() => {
-                                form.getValues("customer")
+                                form.getValues("customer_branch")
                                   ? setClientBranch(true)
                                   : toast({
                                       title: "Please Select a client First",
