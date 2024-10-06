@@ -32,25 +32,25 @@ const MaterialListModal: React.FC<MaterialListModalProps> = ({
   const columnDefs: ColDef[] = [
     { headerName: "#", valueGetter: "node.rowIndex + 1", maxWidth: 50 },
     {
-      headerName: "Item Type",
+      headerName: "Item",
       field: "so_type",
       cellRenderer: (params:any) => {
         return params.value.charAt(0).toUpperCase() + params.value.slice(1);
       },
     },
     {
-      headerName: "Item Name",
+      headerName: "Material",
       field: "item_name",
       width: 500,
       cellRenderer: TruncateCellRenderer,
     },
-    { headerName: "Item Details", field: "item_details" },
+    { headerName: "Material Description", field: "item_details" },
     { headerName: "SKU Code", field: "item_code" },
     { headerName: "Qty", field: "qty" },
     { headerName: "UoM", field: "unit" },
     { headerName: "GST Rate", field: "gst_rate" },
     { headerName: "Price", field: "price" },
-    { headerName: "HSN SAC", field: "hsn_sac" },
+    { headerName: "HSN/SAC", field: "hsn_sac" },
     { headerName: "Remark", field: "remark" },
   ];
 
