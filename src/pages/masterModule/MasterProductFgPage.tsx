@@ -1,6 +1,6 @@
-import React, { useMemo } from "react";
-import { useDispatch } from "react-redux";
-import type { AppDispatch } from "@/store"; // Import the type for your AppDispatch
+import React, { useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "@/store"; // Import the type for your AppDispatch
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   columnDefs,
@@ -22,13 +22,14 @@ import { Input } from "@/components/ui/input";
 import Select from "react-select";
 import DropdownIndicator from "@/config/reactSelect/DropdownIndicator";
 import { customStyles } from "@/config/reactSelect/SelectColorConfig";
-import ReusableTable from "@/components/shared/ReusableTable";
-import { transformProductTable } from "@/helper/TableTransformation";
 import { createProduct } from "@/features/product/productSlice";
 import { useToast } from "@/components/ui/use-toast";
 import { LableStyle } from "@/constants/themeContants";
 import ReusableAsyncSelect from "@/components/shared/ReusableAsyncSelect";
 import { transformUomData } from "@/helper/transform";
+import { AgGridReact } from "ag-grid-react";
+import { fetchProductList } from "@/features/client/clientSlice";
+import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
 
 const schema = z.object({
   productType: z.enum(["good", "service"]),
@@ -57,6 +58,7 @@ const languages = [
 const MasterProductFgPage: React.FC = () => {
   const { toast } = useToast();
   const dispatch = useDispatch<AppDispatch>();
+  const { productList } = useSelector((state: RootState) => state.client);
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -89,7 +91,19 @@ const MasterProductFgPage: React.FC = () => {
           title: "Product created successfully",
           className: "bg-green-600 text-white items-center",
         });
-        form.reset();
+        form.reset({
+          productType: "good",
+          productSku: "",
+          hsncode: "",
+          uom: "",
+          productName: "",
+          p_asin: "",
+          p_fnsku: "",
+          p_item_code: "",
+          p_fsnid: "",
+          p_croma_code: "",
+        });
+        dispatch(fetchProductList());
       } else {
         toast({
           title: resultAction.message || "Failed to Create Product",
@@ -107,6 +121,10 @@ const MasterProductFgPage: React.FC = () => {
     }),
     []
   );
+
+  useEffect(() => {
+    dispatch(fetchProductList());
+  }, []);
 
   return (
     <div className="h-[calc(100vh-100px)] bg-[#fff] grid grid-cols-[450px_1fr]">
@@ -336,7 +354,6 @@ const MasterProductFgPage: React.FC = () => {
                       <FormItem>
                         <FormLabel className={LableStyle}>
                           ASIN Number
-                          
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -364,14 +381,15 @@ const MasterProductFgPage: React.FC = () => {
           </CardContent>
         </Card>
       </div>
-      <div className="h-[calc(100vh-100px)]">
-        <ReusableTable
-          heigth="h-[calc(100vh-100px)]"
-          endpoint="products"
+      <div className="ag-theme-quartz h-[calc(100vh-100px)] w-full">
+        <AgGridReact
+          rowData={productList}
+          columnDefs={columnDefs as any}
           components={components}
-          columns={columnDefs}
-          transform={transformProductTable}
-          method="get"
+          animateRows={true}
+          suppressCellFocus={true}
+          suppressRowClickSelection={false}
+          overlayNoRowsTemplate={OverlayNoRowsTemplate}
         />
       </div>
     </div>
