@@ -43,7 +43,7 @@ export const navLinks = [
   },
   { href: "/master/product/sfg", label: "Products", value: "products" },
   {
-    href: "/master/billing-address",
+    href: "/master/dispatch-address",
     label: "Billing Address",
     value: "billing-address",
   },

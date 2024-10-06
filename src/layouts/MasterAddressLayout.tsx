@@ -8,15 +8,15 @@ const MasterAddressLayout = (props: { children: React.ReactNode }) => {
       <div className="w-full bg-white tab h-[50px] shadow z-10 border-b border-slate-300">
         <ul className="group flex items-center  h-[50px] ">
           <li className="h-[50px]">
-            <NavLink to={"/master/billing-address"} className={({ isActive }) => `${navLinkStyle} ${isActive && navlinkActiveStyle}`}>
-              Billing Address
+            <NavLink to={"/master/dispatch-address"} className={({ isActive }) => `${navLinkStyle} ${isActive && navlinkActiveStyle}`}>
+              Dispatch Address
             </NavLink>
           </li>
-          <li className="h-[50px]">
+          {/* <li className="h-[50px]">
             <NavLink to={"/master/shipping-address"} className={({ isActive }) => `${navLinkStyle} ${isActive && navlinkActiveStyle}  `}>
               Shipping Address
             </NavLink>
-          </li>
+          </li> */}
         </ul>
       </div>
       <div className="h-[calc(100vh-100px)] bg-transparent overflow-y-auto ">{props.children}</div>

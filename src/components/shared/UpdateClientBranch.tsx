@@ -375,6 +375,7 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
                       </FormLabel>
                       <FormControl>
                         <Textarea
+                        maxLength={100}
                           className={InputStyle}
                           placeholder="Address Line 1"
                           {...field}
@@ -395,6 +396,7 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
                       </FormLabel>
                       <FormControl>
                         <Textarea
+                        maxLength={100}
                           className={InputStyle}
                           placeholder="Address Line 2"
                           {...field}
@@ -630,6 +632,7 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
                       </FormLabel>
                       <FormControl>
                         <Textarea
+                        maxLength={100}
                           className={InputStyle}
                           placeholder="Address Line 1"
                           {...field}
@@ -650,6 +653,7 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
                       </FormLabel>
                       <FormControl>
                         <Textarea
+                        maxLength={100}
                           className={InputStyle}
                           placeholder="Address Line 2"
                           {...field}

@@ -963,6 +963,7 @@ export default function CreateEwayBill() {
                           </FormLabel>
                           <FormControl>
                             <Textarea
+                            maxLength={100}
                               className={InputStyle}
                               placeholder="Address line 1"
                               {...field}
@@ -987,6 +988,7 @@ export default function CreateEwayBill() {
                           </FormLabel>
                           <FormControl>
                             <Textarea
+                            maxLength={100}
                               className={InputStyle}
                               placeholder="Address line 2"
                               {...field}
@@ -1202,6 +1204,7 @@ export default function CreateEwayBill() {
                           </FormLabel>
                           <FormControl>
                             <Textarea
+                            maxLength={100}
                               className={InputStyle}
                               placeholder="Address line 1"
                               {...field}
@@ -1226,6 +1229,7 @@ export default function CreateEwayBill() {
                           </FormLabel>
                           <FormControl>
                             <Textarea
+                            maxLength={100}
                               className={InputStyle}
                               placeholder="Address line 2"
                               {...field}
@@ -1379,6 +1383,7 @@ export default function CreateEwayBill() {
                             </FormLabel>
                             <FormControl>
                               <Textarea
+                              maxLength={100}
                                 className={InputStyle}
                                 placeholder="Address Line 1"
                                 {...field}
@@ -1403,6 +1408,7 @@ export default function CreateEwayBill() {
                             </FormLabel>
                             <FormControl>
                               <Textarea
+                              maxLength={100}
                                 className={InputStyle}
                                 placeholder="Address Line 2"
                                 {...field}
@@ -1583,6 +1589,7 @@ export default function CreateEwayBill() {
                             </FormLabel>
                             <FormControl>
                               <Textarea
+                              maxLength={100}
                                 className={InputStyle}
                                 placeholder="Address line 1"
                                 {...field}
@@ -1607,6 +1614,7 @@ export default function CreateEwayBill() {
                             </FormLabel>
                             <FormControl>
                               <Textarea
+                              maxLength={100}
                                 className={InputStyle}
                                 placeholder="Address line 2"
                                 {...field}

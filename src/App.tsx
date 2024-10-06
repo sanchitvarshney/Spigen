@@ -254,7 +254,7 @@ const router = createBrowserRouter([
         </MainLayout>
       </Protected>
     ),
-    path: "/master/billing-address",
+    path: "/master/dispatch-address",
   },
   {
     element: (

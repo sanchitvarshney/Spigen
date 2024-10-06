@@ -104,7 +104,7 @@ const CreateSalesOrderPage = () => {
   };
 
   useEffect(() => {
-    if (Object.keys(updateData).length !== 0) {
+    if (Object?.keys(updateData)?.length !== 0) {
       const { channel, client, bill, ship, materials }: any = updateData;
       // Set channel value
       setChannel({

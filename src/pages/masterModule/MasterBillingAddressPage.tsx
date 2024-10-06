@@ -125,7 +125,7 @@ const MasterBillingAddressPage: React.FC = () => {
               }}
             >
               <SheetHeader className={modelFixHeaderStyle}>
-                <SheetTitle className="text-slate-600">Add Billing Address</SheetTitle>
+                <SheetTitle className="text-slate-600">Add Dispatch Address</SheetTitle>
               </SheetHeader>
               <div>
                 <Form {...form}>
@@ -218,7 +218,7 @@ const MasterBillingAddressPage: React.FC = () => {
                             <FormItem>
                               <FormLabel className={LableStyle}>Address</FormLabel>
                               <FormControl>
-                                <Input className={InputStyle} placeholder="Enter Address" {...field} />
+                                <Input className={InputStyle} placeholder="Enter Address" {...field} maxLength={100}/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -231,7 +231,7 @@ const MasterBillingAddressPage: React.FC = () => {
                             <FormItem>
                               <FormLabel className={LableStyle}>Address Line 1</FormLabel>
                               <FormControl>
-                                <Input className={InputStyle} placeholder="Enter Address" {...field} />
+                                <Input className={InputStyle} placeholder="Enter Address" {...field} maxLength={100}/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -245,7 +245,7 @@ const MasterBillingAddressPage: React.FC = () => {
                           <FormItem>
                             <FormLabel className={LableStyle}>Address Line 2</FormLabel>
                             <FormControl>
-                              <Textarea className={InputStyle} placeholder="Enter Address " {...field} />
+                              <Textarea className={InputStyle} placeholder="Enter Address " {...field} maxLength={100}/>
                             </FormControl>
                             <FormMessage />
                           </FormItem>

@@ -40,7 +40,7 @@ export const columnDefs= [
   { headerName: "SGST", field: "sgst", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
   { headerName: "IGST", field: "igst", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
   { headerName: "Due Date", field: "dueDate", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
-  { headerName: "HSN Code", field: "hsnCode", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
+  { headerName: "HSN / SAC", field: "hsnCode", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
   { headerName: "Remark", field: "remark", editable: true, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
 ];
 

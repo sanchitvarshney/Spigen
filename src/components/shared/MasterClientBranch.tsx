@@ -210,14 +210,14 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className={LableStyle}>
-                        ZIP Code{" "}
+                        PIN Code{" "}
                         <span className="pl-1 text-red-500 font-bold">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
                           className={InputStyle}
                           type="number"
-                          placeholder="ZIP Code"
+                          placeholder="PIN Code"
                           {...field}
                         />
                       </FormControl>
@@ -443,14 +443,14 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className={LableStyle}>
-                        ZIP Code{" "}
+                        PIN Code{" "}
                         <span className="pl-1 text-red-500 font-bold">*</span>
                       </FormLabel>
                       <FormControl>
                         <Input
                           className={InputStyle}
                           type="number"
-                          placeholder="ZIP Code"
+                          placeholder="PIN Code"
                           {...field}
                         />
                       </FormControl>

@@ -130,6 +130,7 @@ const channelSchemas = z.discriminatedUnion("channel", [
     amz_fba_ship_id: z.string().min(1,{ message: "Please enter FBA Shipment" }),
     amz_fba_app: z.string().min(1,{ message: "Please enter FBA Appointment" }),
     customer: z.string().min(1,{ message: "Please select client Name" }),
+    amz_hawb: z.string().min(1,{ message: "Please enter HAWB number" }),
   }),
   z.object({
     channel: z.literal("FLK"),

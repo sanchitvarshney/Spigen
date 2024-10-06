@@ -20,8 +20,8 @@ export const sidebarMenulinklist: SidebarMenuLinkType[] = [
           { name: "HSN map", path: "/not-permission" },
           { name: "Groups", path: "/not-permission" },
           { name: "Locations", path: "/not-permission" },
-          { name: "Billing address", path: "/not-permission" },
-          { name: "Shipping address", path: "/not-permission" },
+          { name: "Dispatch address", path: "/not-permission" },
+          // { name: "Shipping address", path: "/not-permission" },
           {
             name: "Bill Of Material",
             subMenu: [
@@ -124,8 +124,8 @@ export const materialmenu = [
       // { name: "HSN map", path: "/not-permission" },
       // { name: "Groups", path: "/not-permission" },
       // { name: "Locations", path: "/not-permission" },
-      { name: "Billing address", path: "/master/billing-address" },
-      { name: "Shipping address", path: "/master/shipping-address" },
+      { name: "Dispatch address", path: "/master/dispatch-address" },
+      // { name: "Shipping address", path: "/master/shipping-address" },
       // {
       //   name: "Bill Of Material",
       //   subMenu: [

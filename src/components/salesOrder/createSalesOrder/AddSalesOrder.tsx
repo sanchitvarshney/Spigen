@@ -222,7 +222,7 @@ const AddSalesOrder = ({
       if (window.location.pathname.includes("update")) {
         dispatch(updateSellRequest(payloadData2)).then((response: any) => {
           if (response.payload.success) {
-            form.reset(); // Reset the form 
+            form.reset(); // Reset the form
             setRowData([]);
             navigate("/sales/order/register");
           }
@@ -292,52 +292,55 @@ const AddSalesOrder = ({
                     <div>
                       <h3 className="font-[600]">
                         Sub-Total value before Taxes :
+                        <span className="font-normal">{`(+) ${
+                          roundedTotalSum ?? 0.0
+                        }`}</span>
                       </h3>
                     </div>
+                  </li>
+                  <li className="grid grid-cols-[1fr_70px] mt-[20px]">
                     <div>
-                      <p className="text-[14px]">{roundedTotalSum ?? 0.0}</p>
+                      <h3 className="font-[600]">
+                        CGST :{" "}
+                        <span className="font-normal">{`(+) ${cgstTotal?.toFixed(
+                          2
+                        )}`}</span>
+                      </h3>
                     </div>
                   </li>
                   <li className="grid grid-cols-[1fr_70px] mt-[20px]">
                     <div>
-                      <h3 className="font-[600]">CGST :</h3>
-                    </div>
-                    <div>
-                      <p className="text-[14px]">(+){cgstTotal?.toFixed(2)}</p>
-                    </div>
-                  </li>
-                  <li className="grid grid-cols-[1fr_70px] mt-[20px]">
-                    <div>
-                      <h3 className="font-[600]">SGST :</h3>
-                    </div>
-                    <div>
-                      <p className="text-[14px]">(+){sgstTotal?.toFixed(2)}</p>
+                      <h3 className="font-[600]">
+                        SGST :{" "}
+                        <span className="font-normal">{`(+) ${sgstTotal?.toFixed(
+                          2
+                        )}`}</span>
+                      </h3>
                     </div>
                   </li>
                   <li className="grid grid-cols-[1fr_70px] mt-[20px]">
                     <div>
-                      <h3 className="font-[600]">ISGST :</h3>
-                    </div>
-                    <div>
-                      <p className="text-[14px]">(+){igstTotal?.toFixed(2)}</p>
+                      <h3 className="font-[600]">
+                        ISGST :{" "}
+                        <span className="font-normal">{`(+) ${igstTotal?.toFixed(
+                          2
+                        )}`}</span>
+                      </h3>
                     </div>
                   </li>
                   <li className="grid grid-cols-[1fr_70px] mt-[20px]">
                     <div>
                       <h3 className="font-[600] text-cyan-600">
                         Sub-Total values after Taxes :
-                      </h3>
-                    </div>
-                    <div>
-                      <p className="text-[14px]">
-                        {(
-                          roundedTotalSum +
+                        <span className="font-normal text-cyan-950">{`(+) ${roundedTotalSum +
                           cgstTotal +
                           sgstTotal +
-                          igstTotal
-                        )?.toFixed(2)}
-                      </p>
+                          igstTotal?.toFixed(
+                          2
+                        )}`}</span>
+                      </h3>
                     </div>
+                   
                   </li>
                 </ul>
               </div>

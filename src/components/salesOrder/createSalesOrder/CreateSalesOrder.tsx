@@ -353,6 +353,9 @@ const CreateSalesOrder: React.FC<Props> = ({
                               <FormItem>
                                 <FormLabel className={LableStyle}>
                                   HAWB Number
+                                  {channel?.value === "AMZ_IMP" &&<span className="pl-1 text-red-500 font-bold">
+                                  *
+                                </span>}
                                 </FormLabel>
                                 <FormControl>
                                   <Input
@@ -735,6 +738,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                           </FormLabel>
                           <FormControl>
                             <Textarea
+                            maxLength={100}
                               className={InputStyle}
                               placeholder="Address Line 1"
                               {...field}
@@ -761,6 +765,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                           </FormLabel>
                           <FormControl>
                             <Textarea
+                            maxLength={100}
                               className={InputStyle}
                               placeholder="Address Line 2"
                               {...field}
@@ -898,6 +903,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                           </FormLabel>
                           <FormControl>
                             <Textarea
+                            maxLength={100}
                               className={InputStyle}
                               placeholder="Address Line 1"
                               {...field}
@@ -922,6 +928,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                           </FormLabel>
                           <FormControl>
                             <Textarea
+                            maxLength={100}
                               className={InputStyle}
                               placeholder="Address Line 2"
                               {...field}
@@ -1117,6 +1124,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                           </FormLabel>
                           <FormControl>
                             <Textarea
+                            maxLength={100}
                               className={InputStyle}
                               placeholder="Address line 1"
                               {...field}
@@ -1141,6 +1149,7 @@ const CreateSalesOrder: React.FC<Props> = ({
                           </FormLabel>
                           <FormControl>
                             <Textarea
+                            maxLength={100}
                               className={InputStyle}
                               placeholder="Address line 2"
                               {...field}
