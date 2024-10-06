@@ -25,23 +25,87 @@ const AddPOPopovers: React.FC<Props> = ({ uiState,derivedState }) => {
   } = uiState;
   const navigate = useNavigate();
 
+  // const handleImport = (data: any) => {
+  //   //map data from excel
+  //   const mappedData = data.data.map((item: any) => ({
+
+      
+  //     type: item.item_type,
+  //     material: item.item,
+  //     materialDescription: item.item_desc,
+  //     asinNumber: item.asin === "." ? undefined : item.asin,
+  //     orderQty: Number(item.qty),
+  //     rate: Number(item.rate),
+  //     currency: item.currency,
+  //     gstRate: item.gst_rate,
+  //     gstType:derivedState,
+  //     dueDate: item.due_date,
+  //     hsnCode: item.hsn,
+  //     remark: item.item_remark,
+  //     localValue: item?.rate* item?.qty,
+  //     isNew: true,
+  //   }));
+  //   // Set the response data in the table
+  //   setRowData((prevRowData) => {
+  //     if (prevRowData.length === 1 && prevRowData[0].material === "") {
+  //       return mappedData;
+  //     } else {
+  //       return [...prevRowData, ...mappedData];
+  //     }
+  //   });
+
+  //   setExcelModel(false);
+  // };
+
   const handleImport = (data: any) => {
-    //map data from excel
-    const mappedData = data.data.map((item: any) => ({
-      type: item.item_type,
-      material: item.item,
-      materialDescription: item.item_desc,
-      asinNumber: item.asin === "." ? undefined : item.asin,
-      orderQty: Number(item.qty),
-      rate: Number(item.rate),
-      currency: item.currency,
-      gstRate: item.gst_rate,
-      gstType:derivedState,
-      dueDate: item.due_date,
-      hsnCode: item.hsn,
-      remark: item.item_remark,
-      isNew: true,
-    }));
+    // Map data from excel
+    const mappedData = data.data.map((item: any) => {
+      // Calculate localValue
+      const localValue = Number(item.rate) * Number(item.qty);
+      
+      // Calculate GST values based on derivedState
+      let cgst = 0;
+      let sgst = 0;
+      let igst = 0;
+      const gstRate = Number(item.gst_rate);
+      const calculation = (localValue * gstRate) / 100;
+  
+      // Determine GST type
+      const gstType = derivedState; // Assuming derivedState is available in your scope
+  
+      if (gstType === "L") {
+        // Intra-State
+        cgst = calculation / 2;
+        sgst = calculation / 2; // Same as CGST
+        igst = 0;
+      } else if (gstType === "I") {
+        // Inter-State
+        igst = calculation;
+        cgst = 0;
+        sgst = 0;
+      }
+  
+      return {
+        type: item.item_type,
+        material: item.item,
+        materialDescription: item.item_desc,
+        asinNumber: item.asin === "." ? undefined : item.asin,
+        orderQty: Number(item.qty),
+        rate: Number(item.rate),
+        currency: item.currency,
+        gstRate: item.gst_rate,
+        gstType: derivedState, // Use derivedState here
+        dueDate: item.due_date,
+        hsnCode: item.hsn,
+        remark: item.item_remark,
+        localValue: localValue,
+        cgst: cgst.toFixed(2), // Include calculated values
+        sgst: sgst.toFixed(2),
+        igst: igst.toFixed(2),
+        isNew: true,
+      };
+    });
+  
     // Set the response data in the table
     setRowData((prevRowData) => {
       if (prevRowData.length === 1 && prevRowData[0].material === "") {
@@ -50,9 +114,10 @@ const AddPOPopovers: React.FC<Props> = ({ uiState,derivedState }) => {
         return [...prevRowData, ...mappedData];
       }
     });
-
+  
     setExcelModel(false);
   };
+  
 
   return (
     <div>
