@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaLightbulb } from "react-icons/fa";
 import { FaCircleUser } from "react-icons/fa6";
 import { FaStar } from "react-icons/fa6";
@@ -26,6 +26,7 @@ function MainLayout(props: { children: React.ReactNode }) {
   const [helpModel, setHelpModel] = useState<boolean>(false);
   const [notificationSheet, setNotificationSheet] = useState<boolean>(false);
   const [favoriteLinkList, setFavoriteLinkList] = useState<FavoriteMenuLinkListType[]>([]);
+  const [selectedSession, setSelectedSession] = useState<string |any>("");
   const modalRef = useRef<HTMLDivElement>(null);
   const sidebaref = useRef<HTMLDivElement>(null);
   const favoriteref = useRef<HTMLDivElement>(null);
@@ -50,6 +51,25 @@ function MainLayout(props: { children: React.ReactNode }) {
     setHelpModel,
   };
 
+  useEffect(() => {
+    // Retrieve loggedInUser from local storage
+    const loggedInUser = localStorage.getItem("loggedInUser");
+    if (loggedInUser) {
+      const user = JSON.parse(loggedInUser);
+      setSelectedSession(user.session); // Set the session from the parsed object
+    }
+  }, []);
+
+  const handleSessionChange = (value: string) => {
+    setSelectedSession(value);
+    const loggedInUser = localStorage.getItem("loggedInUser");
+    if (loggedInUser) {
+      const user = JSON.parse(loggedInUser);
+      user.session = value; // Update the session in the user object
+      localStorage.setItem("loggedInUser", JSON.stringify(user)); // Save back to local storage
+    }
+  };
+
   return (
     <Wrapper className="">
       <HelpAndSupportModel uiState={uiState}/>
@@ -67,18 +87,18 @@ function MainLayout(props: { children: React.ReactNode }) {
           <div className="flex gap-[20px] items-center">
             <div className="text-slate-700 font-[600] logo">Spigen</div>
             <div className="date">
-              <Select>
+            <Select value={selectedSession} onValueChange={handleSessionChange}>
                 <SelectTrigger className="w-[180px] bg-white border-0 text-slate-700">
                   <SelectValue placeholder="Session" />
                 </SelectTrigger>
                 <SelectContent className="bg-white ">
-                  <SelectItem value="2024-2025" className="text-slate-700 focus:text-white focus:bg-cyan-600">
+                  <SelectItem value="24-25" className="text-slate-700 focus:text-white focus:bg-cyan-600">
                     2024-2025
                   </SelectItem>
-                  <SelectItem value="2023-2024" className="text-slate-700 focus:text-white focus:bg-cyan-600">
+                  <SelectItem value="23-24" className="text-slate-700 focus:text-white focus:bg-cyan-600">
                     2023-2024
                   </SelectItem>
-                  <SelectItem value="2022-2023" className="text-slate-700 focus:text-white focus:bg-cyan-600">
+                  <SelectItem value="22-23" className="text-slate-700 focus:text-white focus:bg-cyan-600">
                     2022-2023
                   </SelectItem>
                 </SelectContent>
