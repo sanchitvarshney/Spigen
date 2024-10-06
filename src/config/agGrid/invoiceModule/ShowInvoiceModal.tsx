@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
 import { printSellInvoice } from "@/features/salesmodule/salesInvoiceSlice";
-import { downloadFunction } from "@/General";
 
 const DataDialog = ({ open, onClose,orderId,module }: any) => {
   const { invoiceData:data } :{invoiceData:any}= useSelector(
@@ -12,11 +11,7 @@ const DataDialog = ({ open, onClose,orderId,module }: any) => {
   );
   const dispatch = useDispatch<AppDispatch>();
   const handleDownload = () => {
-    dispatch(printSellInvoice({ so_invoice: orderId , printInvType:"Original"})).then((response: any) => {
-      if (response?.payload?.success) {
-        downloadFunction(response?.payload?.data.buffer.data,response?.payload?.data?.filename);
-      }
-    });
+    dispatch(printSellInvoice({ so_invoice: orderId , printInvType:"Original"}));
   };
 
   const handleBack = () => {

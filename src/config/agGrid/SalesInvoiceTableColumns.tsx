@@ -7,7 +7,6 @@ import { cancelInvoice, fetchDataNotes, fetchSalesOrderInvoiceList, getchallanDe
 import { AppDispatch, RootState } from "@/store";
 import { useState } from "react";
 import ViewInvoiceModal from "@/config/agGrid/invoiceModule/ViewInvoiceModal";
-import { printFunction } from "@/General";
 import { ConfirmCancellationDialog } from "@/config/agGrid/registerModule/ConfirmCancellationDialog";
 import DebitNote from "@/config/agGrid/invoiceModule/DebitNote";
 import CopyCellRenderer from "@/components/shared/CopyCellRenderer";
@@ -37,11 +36,7 @@ const ActionMenu: React.FC<any> = ({ row }) => {
   };
 
   const handlePrintInvoice = async (orderId: string,printInvType:string) => {
-    dispatch(printSellInvoice({ so_invoice: orderId , printInvType:printInvType})).then((response: any) => {
-      if (response?.payload?.success) {
-        printFunction(response?.payload?.data.buffer.data);
-      }
-    });
+    dispatch(printSellInvoice({ so_invoice: orderId, printInvType: printInvType }));
   };
 
 

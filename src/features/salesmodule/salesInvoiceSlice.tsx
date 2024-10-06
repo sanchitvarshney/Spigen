@@ -98,16 +98,15 @@ export const printSellInvoice = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await spigenAxios.post<any>(
-        "/so_challan_shipment/printSellInvoice",
-        { so_invoice: so_invoice, printInvType: printInvType }
-      );
+      // Replace / with _ in so_invoice
+      const modifiedInvoice = so_invoice.replace(/\//g, "_");
 
-      if (!response.data) {
-        throw new Error("No data received");
-      }
-      // Return the entire response as expected by the fulfilled case
-      return response.data;
+      // Construct the URL with query parameters
+      const url = `https://spigenapitest.mscorpres.net/so_challan_shipment/printSellInvoice?so_invoice=${encodeURIComponent(modifiedInvoice)}&printInvType=${encodeURIComponent(printInvType)}`;
+      
+      // Make the GET request
+      window.open(url, "_blank");
+      return;
     } catch (error) {
       if (error instanceof Error) {
         // Handle error using rejectWithValue

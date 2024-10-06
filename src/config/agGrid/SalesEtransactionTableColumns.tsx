@@ -13,7 +13,6 @@ import {
 import { AppDispatch } from "@/store";
 import { useDispatch } from "react-redux";
 import { toast } from "@/components/ui/use-toast";
-import { printFunction } from "@/General";
 import { printSellInvoice } from "@/features/salesmodule/salesInvoiceSlice";
 import CopyCellRenderer from "@/components/shared/CopyCellRenderer";
 
@@ -49,11 +48,7 @@ const ActionMenu: React.FC<any> = ({ row }) => {
     } else {
       dispatch(
         printSellInvoice({ so_invoice: orderId, printInvType: "Original" })
-      ).then((response: any) => {
-        if (response?.payload?.success) {
-          printFunction(response?.payload?.data.buffer.data);
-        }
-      });
+      )
     }
   };
 

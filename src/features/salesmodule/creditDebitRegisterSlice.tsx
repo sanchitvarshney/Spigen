@@ -87,26 +87,24 @@ export const cancelNotes = createAsyncThunk(
     }
   }
 );
-
 export const soNotePrint = createAsyncThunk<
   ApiResponse<any>,
-  { note_no: string } // The argument type passed to the thunk
+  { note_no: string }
 >("client/fetchClient", async ({ note_no }, { rejectWithValue }) => {
   try {
-    const response = await spigenAxios.post<ApiResponse<any>>(
-      "soEnotes/soNotePrint",
-      { note_no: note_no }
-    );
+    const modifiedInvoice = note_no.replace(/\//g, "_");
 
-    if (!response.data) {
-      throw new Error("No data received");
-    }
+    // Construct the URL with query parameters
+    const url = `https://spigenapitest.mscorpres.net/soEnotes/soNotePrint?note_no=${encodeURIComponent(modifiedInvoice)}`;
+    
+    // Open the URL in a new tab/window
+    window.open(url, "_blank");
 
-    // Return the entire response as expected by the fulfilled case
-    return response.data;
+    // Return a dummy response or a valid response structure that matches ApiResponse<any>
+    return { success: true } as ApiResponse<any>; // Replace this with actual response if available
+
   } catch (error) {
     if (error instanceof Error) {
-      // Handle error using rejectWithValue
       return rejectWithValue(error.message);
     }
     return rejectWithValue("An unknown error occurred");
@@ -189,17 +187,17 @@ const creditDebitRegister = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-      .addCase(soNotePrint.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(soNotePrint.fulfilled, (state) => {
-        state.loading = false;
-      })
-      .addCase(soNotePrint.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      });
+      // .addCase(soNotePrint.pending, (state) => {
+      //   state.loading = true;
+      //   state.error = null;
+      // })
+      // .addCase(soNotePrint.fulfilled, (state) => {
+      //   state.loading = false;
+      // })
+      // .addCase(soNotePrint.rejected, (state, action) => {
+      //   state.loading = false;
+      //   state.error = action.payload as string;
+      // });
   },
 });
 
