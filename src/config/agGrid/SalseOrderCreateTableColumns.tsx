@@ -47,7 +47,9 @@ export const columnDefs= [
 export const debitNoteColumnDefs= [
   { headerName: "", valueGetter: "node.rowIndex + 1",cellRenderer: "textInputCellRenderer",maxWidth: 100,field:"delete" },
   { headerName: "#", valueGetter: "node.rowIndex + 1",maxWidth: 100 },
-  { headerName: "Type", field: "type", cellEditor: "selectEditor", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },
+  { headerName: "Type", field: "type", cellEditor: "selectEditor", editable: false, flex: 1, minWidth: 200 ,cellRenderer: (params:any) => {
+    return params.value.charAt(0).toUpperCase() + params.value.slice(1);
+  },},
   { headerName: "Material", field: "material", editable: false, flex: 4, cellRenderer: "textInputCellRenderer", minWidth: 500 },
   { headerName: "Material Description	", field: "materialDescription", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 300 },
   // { headerName: "ASIN Number", field: "asinNumber", editable: false, flex: 1, cellRenderer: "textInputCellRenderer", minWidth: 200 },

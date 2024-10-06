@@ -53,6 +53,7 @@ import { fetchStates } from "@/features/salesmodule/createSalesOrderSlice";
 import ShowInvoiceModal from "@/config/agGrid/invoiceModule/ShowInvoiceModal";
 import { OverlayNoRowsTemplate } from "@/components/shared/OverlayNoRowsTemplate";
 import ConfirmationModal from "@/components/shared/ConfirmationModal";
+import { TruncateCellRenderer } from "@/config/agGrid/SalesOrderAllocatedTableColumns";
 
 export default function CreateEwayBill() {
   const dispatch = useDispatch<AppDispatch>();
@@ -1973,6 +1974,9 @@ export default function CreateEwayBill() {
                     suppressCellFocus={true}
                     paginationPageSize={10}
                     overlayNoRowsTemplate={OverlayNoRowsTemplate}
+                    components={{
+                      truncateCellRenderer: TruncateCellRenderer,
+                    }}
                   />
                 </div>
               </CardContent>

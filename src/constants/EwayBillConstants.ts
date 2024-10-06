@@ -1,8 +1,9 @@
 import { ColDef } from "ag-grid-community";
 import { z } from "zod";
 
+
 const columnDefs: ColDef[] = [
-    { headerName: "Item Name", field: "item_name", width: 500 },
+    { headerName: "Item Name", field: "item_name", width: 500,cellRenderer: "truncateCellRenderer", },
     { headerName: "Part No", field: "item_part_no" },
     { headerName: "HSN", field: "item_hsncode" },
     { headerName: "Qty", field: "item_qty" },

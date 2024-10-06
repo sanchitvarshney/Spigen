@@ -17,7 +17,7 @@ import { CommandList } from "cmdk";
 import { useState } from "react";
 import { FaSortDown, FaTrash } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
-import { Select } from "antd";
+import { DatePicker, Select } from "antd";
 import { transformCurrencyData, transformOptionData } from "@/helper/transform";
 import CurrencyRateDialog from "@/components/ui/CurrencyRateDialog";
 import {
@@ -26,6 +26,7 @@ import {
 } from "@/features/salesmodule/SalesSlice";
 import { useParams } from "react-router-dom";
 import { CommonModal } from "@/config/agGrid/registerModule/CommonModal";
+import moment from "moment";
 const frameworks = [
   {
     value: "/",
@@ -224,6 +225,12 @@ const TextInputCellRenderer = (props: any) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
   
+  const handleDateChange = (date: moment.Moment | null) => {
+    data.dueDate = date ? date.format("DD-MM-YYYY") : ""; // Format the date for storage
+    updateData(data); // Update the data
+  };
+  
+  
   const renderContent = () => {
     switch (colDef.field) {
       case "delete":
@@ -412,13 +419,12 @@ const TextInputCellRenderer = (props: any) => {
         );
       case "dueDate":
         return (
-          <Input
-            onChange={handleInputChange}
-            value={value}
-            type="text"
-            placeholder={colDef.headerName}
-            className="w-[100%]  text-slate-600  border-slate-400 shadow-none mt-[2px]"
-          />
+          <DatePicker
+          format="DD-MM-YYYY" // Set the format to dd-mm-yyyy
+          onChange={handleDateChange}
+          value={value ? moment(value, "DD-MM-YYYY") : null}  // Convert string to moment object
+          className="w-[100%] border-slate-400 shadow-none mt-[2px]"
+        />
         );
       case "hsnCode":
       case "remark":

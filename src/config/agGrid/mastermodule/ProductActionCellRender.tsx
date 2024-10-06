@@ -231,7 +231,7 @@ const ProductActionCellRender = (params: any) => {
       });
     }
   }
-
+console.log(productData,"productData")
   return (
     <div className="flex items-center gap-[10px]">
       <Sheet>
@@ -419,8 +419,8 @@ const ProductActionCellRender = (params: any) => {
                                     form.setValue("producttype", value!.value)
                                   }
                                   defaultValue={{
-                                    label: "Good",
-                                    value: "good",
+                                    label: "Fg",
+                                    value: "fg",
                                   }}
                                 />
                               </FormControl>
@@ -448,10 +448,10 @@ const ProductActionCellRender = (params: any) => {
                                   isClearable={true}
                                   isSearchable={true}
                                   name="enablestatus_name"
-                                  // options={[
-                                  //   { label: "Yes", value: "Y" },
-                                  //   { label: "No", value: "N" },
-                                  // ]}
+                                  options={[
+                                    { label: "Yes", value: "Y" },
+                                    { label: "No", value: "N" },
+                                  ]}
                                   onChange={(value: any) =>
                                     form.setValue("isenabled", value.value)
                                   }
@@ -638,8 +638,8 @@ const ProductActionCellRender = (params: any) => {
                                   isSearchable={true}
                                   name="color"
                                   options={[
-                                    { label: "Good", value: "good" },
-                                    { label: "Service", value: "service" },
+                                    { label: "Exempted", value: "0" },
+                                    { label: "Regular", value: "1" },
                                   ]}
                                   onChange={(value: any) =>
                                     form.setValue("gsttype", value!.value)

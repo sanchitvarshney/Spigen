@@ -465,8 +465,9 @@ const sellInvoiceSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(generateEInvoice.fulfilled, (state) => {
+      .addCase(generateEInvoice.fulfilled, (state,action) => {
         state.loading = false;
+        state.invoiceData=action.payload.data
       })
       .addCase(generateEInvoice.rejected, (state, action) => {
         state.loading = false;
