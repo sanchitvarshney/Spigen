@@ -40,43 +40,43 @@ const CreateSalesOrderPage = () => {
     resolver: zodResolver(createSalesFormSchema),
     mode: "onBlur",
   });
-  const resetForm = () => {
-    form.reset({
-      bill_id: "",
-      billing_address1: "",
-      billing_address2: "",
-      bill_from_gst: "",
-      bill_pan: "",
-      customer_address1: "",
-      customer_address2: "",
-      customer: "",
-      customer_gstin: "",
-      isSameClientAdd: "",
-      customer_branch: "",
-      shipping_gstin: "",
-      shipping_pinCode: "",
-      shipping_id: "",
-      shipping_address1: "",
-      shipping_address2: "",
-      shipping_state: "",
-      shipping_pan: "",
-      place_of_supply: "",
-      bill_name: "",
-      bill_to_label: "",
-      terms_condition: "",
-      due_day: "",
-      quotation_detail: "",
-      payment_term: "",
-      comment: "",
-      cost_center: "",
-      project: "",
-      // Add any additional fields as necessary
-    });
-  };
-  useEffect(() => {
-    resetForm();
-  }, [channel]);
-  console.log(form.getValues());
+  // const resetForm = () => {
+  //   form.reset({
+  //     bill_id: "",
+  //     billing_address1: "",
+  //     billing_address2: "",
+  //     bill_from_gst: "",
+  //     bill_pan: "",
+  //     customer_address1: "",
+  //     customer_address2: "",
+  //     customer: "",
+  //     customer_gstin: "",
+  //     isSameClientAdd: "",
+  //     customer_branch: "",
+  //     shipping_gstin: "",
+  //     shipping_pinCode: "",
+  //     shipping_id: "",
+  //     shipping_address1: "",
+  //     shipping_address2: "",
+  //     shipping_state: "",
+  //     shipping_pan: "",
+  //     place_of_supply: "",
+  //     bill_name: "",
+  //     bill_to_label: "",
+  //     terms_condition: "",
+  //     due_day: "",
+  //     quotation_detail: "",
+  //     payment_term: "",
+  //     comment: "",
+  //     cost_center: "",
+  //     project: "",
+  //     // Add any additional fields as necessary
+  //   });
+  // };
+  // useEffect(() => {
+  //   resetForm();
+  // }, [channel]);
+  // console.log(form.getValues());
 
   const handleClientChange = (e: any) => {
     dispatch(fetchClientAddressDetail({ addressID: e.value })).then(
