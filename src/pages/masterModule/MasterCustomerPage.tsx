@@ -31,12 +31,14 @@ import {
 } from "@/components/ui/select";
 import { InputStyle, LableStyle } from "@/constants/themeContants";
 import { Tooltip } from "antd";
+import FullPageLoading from "@/components/shared/FullPageLoading";
+import { fetchCountries, fetchStates } from "@/features/salesmodule/createSalesOrderSlice";
 
 
 const MasterCustomerPage: React.FC<any> = (props: any) => {
   const { toast } = useToast();
   const dispatch = useDispatch<AppDispatch>();
-  const { channelList } = useSelector((state: RootState) => state.client);
+  const { channelList,loading } = useSelector((state: RootState) => state.client);
   const form = useForm<z.infer<typeof clientFormSchema>>({
     resolver: zodResolver(clientFormSchema),
     defaultValues: {
@@ -121,10 +123,13 @@ const MasterCustomerPage: React.FC<any> = (props: any) => {
   useEffect(() => {
     dispatch(fetchchannelList());
     dispatch(fetchClientList());
+    dispatch(fetchCountries());
+    dispatch(fetchStates());
   }, []);
 
   return (
     <div className="h-[calc(100vh-50px)] grid grid-cols-[450px_1fr]">
+      {loading && <FullPageLoading />}
       <div className="h-[calc(100vh-50px)] overflow-y-auto bg-white">
         {props?.module === "salesorder" && (
           <h3 className="text-[17px] text-slate-600 font-[600]">

@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { branchAddressSchema } from "@/schema/masterModule/customerSchema";
-import ReusableAsyncSelect from "./ReusableAsyncSelect";
 import { transformPlaceData } from "@/helper/transform";
 import { Props } from "@/types/masterModule/masterCustomerTypes";
 import {
@@ -23,16 +22,24 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Textarea } from "../ui/textarea";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useToast } from "@/components/ui/use-toast";
-import { AppDispatch } from "@/store";
+import { AppDispatch, RootState } from "@/store";
 import { createBranch } from "@/features/client/branchSlice";
 import { InputStyle, LableStyle } from "@/constants/themeContants";
 import styled from "styled-components";
+import Select from "react-select";
+import DropdownIndicator from "@/config/reactSelect/DropdownIndicator";
+import { customStyles } from "@/config/reactSelect/SelectColorConfig";
+
 
 const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
   const { clientBranch, setClientBranch, params, module } = uiState;
   const clientId = params?.data?.clientID;
+
+  const { countries, states } = useSelector(
+    (state: RootState) => state.createSalesOrder
+  );
 
   const { toast } = useToast();
   const dispatch = useDispatch<AppDispatch>();
@@ -52,10 +59,10 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
   });
 
   const copyAddressToShipment = () => {
-    const { addressLine1, addressLine2, state, country, pinCode, gst } =
+    const { addressLine1, addressLine2, state, country, pinCode, gst, label } =
       form.getValues();
 
-    form.setValue("shipmentAddress.label", addressLine1);
+    form.setValue("shipmentAddress.label", label);
     form.setValue("shipmentAddress.country", country);
     form.setValue("shipmentAddress.state", state);
     form.setValue("shipmentAddress.pinCode", pinCode);
@@ -105,7 +112,7 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
           <SheetTitle className="text-slate-600">
             {module === "create"
               ? `${params?.name} (${params?.code})`
-              : `${params?.data?.name} (${clientId})`} 
+              : `${params?.data?.name} (${clientId})`}
           </SheetTitle>
         </SheetHeader>
         <div className="my-[20px]">
@@ -138,52 +145,104 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="country"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel className={LableStyle}>
-                        Country{" "}
-                        <span className="pl-1 text-red-500 font-bold">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <ReusableAsyncSelect
-                          placeholder="Country"
-                          endpoint="tally/backend/countries"
-                          transform={transformPlaceData}
-                          fetchOptionWith="query"
-                          onChange={(e: any) =>
-                            form.setValue("country", e.value)
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="state"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel className={LableStyle}>
-                        State{" "}
-                        <span className="pl-1 text-red-500 font-bold">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <ReusableAsyncSelect
-                          placeholder="State"
-                          endpoint="tally/backend/states"
-                          transform={transformPlaceData}
-                          fetchOptionWith="query"
-                          onChange={(e: any) => form.setValue("state", e.value)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div>
+                  <FormField
+                    control={form.control}
+                    name="country"
+                    render={() => (
+                      <FormItem>
+                        <FormLabel className={LableStyle}>
+                        Country
+                          <span className="pl-1 text-red-500 font-bold">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Select
+                            styles={customStyles}
+                            placeholder="Country"
+                            className="border-0 basic-single"
+                            classNamePrefix="select border-0"
+                            components={{ DropdownIndicator }}
+                            isDisabled={false}
+                            isLoading={false}
+                            isClearable={true}
+                            isSearchable={true}
+                            name="shipping_state"
+                            options={
+                              Array.isArray(countries)
+                                ? transformPlaceData(countries)
+                                : []
+                            } // Ensure states is an array
+                            onChange={(e: any) => {
+                              form.setValue("country", e.value);
+                            }}
+                            value={
+                              Array.isArray(countries)
+                                ? transformPlaceData(countries)?.find(
+                                    (state: any) => {
+                                      const currentValue = form.getValues(
+                                        "country"
+                                      );
+                                      return state.value === currentValue;
+                                    }
+                                  )
+                                : null // Set to null if states is not an array
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div>
+                  <FormField
+                    control={form.control}
+                    name="state"
+                    render={() => (
+                      <FormItem>
+                        <FormLabel className={LableStyle}>
+                          State
+                          <span className="pl-1 text-red-500 font-bold">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Select
+                            styles={customStyles}
+                            placeholder="State"
+                            className="border-0 basic-single"
+                            classNamePrefix="select border-0"
+                            components={{ DropdownIndicator }}
+                            isDisabled={false}
+                            isLoading={false}
+                            isClearable={true}
+                            isSearchable={true}
+                            name="state"
+                            options={
+                              Array.isArray(states)
+                                ? transformPlaceData(states)
+                                : []
+                            } // Ensure states is an array
+                            onChange={(e: any) => {
+                              form.setValue("state", e.value);
+                            }}
+                            value={
+                              Array.isArray(states)
+                                ? transformPlaceData(states)?.find(
+                                    (state: any) => {
+                                      const currentValue = form.getValues(
+                                        "state"
+                                      );
+                                      return state.value === currentValue;
+                                    }
+                                  )
+                                : null // Set to null if states is not an array
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <FormField
                   control={form.control}
                   name="city"
@@ -389,54 +448,104 @@ const MasterClientBranch: React.FC<Props> = ({ uiState }) => {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="shipmentAddress.country"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel className={LableStyle}>
-                        Country{" "}
-                        <span className="pl-1 text-red-500 font-bold">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <ReusableAsyncSelect
-                          placeholder="Country"
-                          endpoint="tally/backend/countries"
-                          transform={transformPlaceData}
-                          fetchOptionWith="query"
-                          onChange={(e: any) =>
-                            form.setValue("shipmentAddress.country", e.value)
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="shipmentAddress.state"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel className={LableStyle}>
-                        State{" "}
-                        <span className="pl-1 text-red-500 font-bold">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <ReusableAsyncSelect
-                          placeholder="State"
-                          endpoint="tally/backend/states"
-                          transform={transformPlaceData}
-                          fetchOptionWith="query"
-                          onChange={(e: any) =>
-                            form.setValue("shipmentAddress.state", e.value)
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div>
+                  <FormField
+                    control={form.control}
+                    name="shipmentAddress.country"
+                    render={() => (
+                      <FormItem>
+                        <FormLabel className={LableStyle}>
+                        Country
+                          <span className="pl-1 text-red-500 font-bold">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Select
+                            styles={customStyles}
+                            placeholder="Country"
+                            className="border-0 basic-single"
+                            classNamePrefix="select border-0"
+                            components={{ DropdownIndicator }}
+                            isDisabled={false}
+                            isLoading={false}
+                            isClearable={true}
+                            isSearchable={true}
+                            name="shipping_state"
+                            options={
+                              Array.isArray(countries)
+                                ? transformPlaceData(countries)
+                                : []
+                            } // Ensure states is an array
+                            onChange={(e: any) => {
+                              form.setValue("shipmentAddress.country", e.value);
+                            }}
+                            value={
+                              Array.isArray(countries)
+                                ? transformPlaceData(countries)?.find(
+                                    (state: any) => {
+                                      const currentValue = form.getValues(
+                                        "shipmentAddress.country"
+                                      );
+                                      return state.value === currentValue;
+                                    }
+                                  )
+                                : null // Set to null if states is not an array
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div>
+                  <FormField
+                    control={form.control}
+                    name="shipmentAddress.state"
+                    render={() => (
+                      <FormItem>
+                        <FormLabel className={LableStyle}>
+                          State
+                          <span className="pl-1 text-red-500 font-bold">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Select
+                            styles={customStyles}
+                            placeholder="State"
+                            className="border-0 basic-single"
+                            classNamePrefix="select border-0"
+                            components={{ DropdownIndicator }}
+                            isDisabled={false}
+                            isLoading={false}
+                            isClearable={true}
+                            isSearchable={true}
+                            name="shipmentAddress.state"
+                            options={
+                              Array.isArray(states)
+                                ? transformPlaceData(states)
+                                : []
+                            } // Ensure states is an array
+                            onChange={(e: any) => {
+                              form.setValue("shipmentAddress.state", e.value);
+                            }}
+                            value={
+                              Array.isArray(states)
+                                ? transformPlaceData(states)?.find(
+                                    (state: any) => {
+                                      const currentValue = form.getValues(
+                                        "shipmentAddress.state"
+                                      );
+                                      return state.value === currentValue;
+                                    }
+                                  )
+                                : null // Set to null if states is not an array
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <FormField
                   control={form.control}
                   name="shipmentAddress.pinCode"
