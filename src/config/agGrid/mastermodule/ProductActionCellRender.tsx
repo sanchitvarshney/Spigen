@@ -32,7 +32,7 @@ import {
   modelFixHeaderStyle,
 } from "@/constants/themeContants";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   // fetchImageProduct,
   getProductForUpdate,
@@ -40,7 +40,7 @@ import {
   // uploadProductImages,
 } from "@/features/product/productSlice";
 import { useDispatch } from "react-redux";
-import { RootState } from "@/store";
+import { AppDispatch, RootState } from "@/store";
 import { useToast } from "@/components/ui/use-toast";
 import { transformUomData } from "@/helper/transform";
 import ReusableAsyncSelect from "@/components/shared/ReusableAsyncSelect";
@@ -86,12 +86,15 @@ const ProductActionCellRender = (params: any) => {
   // const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const { toast } = useToast();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const productData = useSelector(
     (state: RootState) =>
       state.prod.data.find((prod: any) => prod?.pKey === product_key) || {}
   );
+
+  // const uom:any = useSelector((state: RootState) => state.prod.uom.data);
 
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
@@ -144,7 +147,7 @@ const ProductActionCellRender = (params: any) => {
       });
     }
   }, [productData]);
-  console.log(productData, "productData", form.getValues());
+
   // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
   //   if (event.target.files) {
   //     const files = Array.from(event.target.files);
@@ -210,6 +213,7 @@ const ProductActionCellRender = (params: any) => {
       );
 
       if (updateProduct.fulfilled.match(action)) {
+        setIsSheetOpen(false);
         toast({
           title: "Product updated successfully",
           className: "bg-green-600 text-white items-center",
@@ -234,7 +238,7 @@ const ProductActionCellRender = (params: any) => {
 
   return (
     <div className="flex items-center gap-[10px]">
-      <Sheet>
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetTrigger>
           <Edit2
             onClick={() => {
@@ -242,6 +246,7 @@ const ProductActionCellRender = (params: any) => {
                 dispatch(
                   getProductForUpdate({ product_key: product_key }) as any
                 );
+                setIsSheetOpen(true);
               }
             }}
             className="text-cyan-700 h-[20px] w-[20px]"
@@ -288,6 +293,7 @@ const ProductActionCellRender = (params: any) => {
                             </FormItem>
                           )}
                         />
+                        
                         <FormField
                           control={form.control}
                           name="uom"

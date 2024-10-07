@@ -177,12 +177,12 @@ export default function CreateEwayBill() {
           setRowData(materials);
           const data = res.payload?.data?.header;
           form.setValue("header.documentNo", data?.invoice_no);
+          setOrderId(data?.invoice_no);
           form.setValue("header.other_ref", data?.other_ref);
           isCrNote
             ? form.setValue("header.creditNo", data?.note_id)
             : form.setValue("header.debitNo", data?.note_id);
 
-          setOrderId(data?.note_id);
           form.setValue("billFrom.legalName", data?.billFrom?.legalName);
           form.setValue("billFrom.tradeName", data?.billFrom?.tradeName);
           form.setValue("billFrom.state", data?.billFrom?.state);

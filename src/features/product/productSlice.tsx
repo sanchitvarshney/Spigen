@@ -89,6 +89,14 @@ export const fetchUom = createAsyncThunk<
 });
 
 
+export const fetchuom = createAsyncThunk<
+  ApiResponse<any>
+>("/products/uom", async () => {
+  const response = await spigenAxios.get("/uom");
+  return response.data;
+});
+
+
 export const createProduct = createAsyncThunk<
   ApiResponse<any>,
   { endpoint: string; payload: ProductPayload }
@@ -129,6 +137,7 @@ interface UploadImageResponse {
 
 interface ProductState {
   data: any[];
+  uom: any[];
   loading: boolean;
   error: string | null;
   productForUpdate: any;
@@ -142,6 +151,7 @@ interface ProductState {
 
 const initialState: ProductState = {
   data: [],
+  uom:[],
   loading: false,
   error: null,
   productForUpdate: null,
@@ -199,6 +209,18 @@ const productSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to fetch products";
+      })
+      .addCase(fetchuom.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchuom.fulfilled, (state, action) => {
+        state.uom = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(fetchuom.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "Failed to fetch products";
       })

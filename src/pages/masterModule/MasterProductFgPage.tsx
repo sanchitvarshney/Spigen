@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input";
 import Select from "react-select";
 import DropdownIndicator from "@/config/reactSelect/DropdownIndicator";
 import { customStyles } from "@/config/reactSelect/SelectColorConfig";
-import { createProduct } from "@/features/product/productSlice";
+import { createProduct, fetchuom } from "@/features/product/productSlice";
 import { useToast } from "@/components/ui/use-toast";
 import { LableStyle } from "@/constants/themeContants";
 import ReusableAsyncSelect from "@/components/shared/ReusableAsyncSelect";
@@ -124,6 +124,7 @@ const MasterProductFgPage: React.FC = () => {
 
   useEffect(() => {
     dispatch(fetchProductList());
+    dispatch(fetchuom());
   }, []);
 
   return (

@@ -135,6 +135,7 @@ const MasterClientBranch: React.FC<Props> = (props: Props) => {
               ...values.shipmentAddress,
               clientCode: data?.clientCode,
             },
+            same_shipping_address: values.useAsShipmentAddress,
             status: "active",
             addressID: data?.addressID,
             clientCode: data?.clientCode,
