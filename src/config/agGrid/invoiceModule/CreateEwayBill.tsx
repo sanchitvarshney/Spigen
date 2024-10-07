@@ -1823,7 +1823,6 @@ export default function CreateEwayBill() {
                                 value={transportationMode?.find(
                                   (option) => option.value === field.value
                                 )}
-                                defaultValue={transportationMode[0]}
                               />
                             </FormControl>
                             <FormMessage />
@@ -1865,7 +1864,6 @@ export default function CreateEwayBill() {
                                 value={vehicleTypeOptions?.find(
                                   (option) => option.value === field.value
                                 )}
-                                defaultValue={vehicleTypeOptions[0]}
                               />
                             </FormControl>
                             <FormMessage />
