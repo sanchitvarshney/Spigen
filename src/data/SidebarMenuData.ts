@@ -3,7 +3,7 @@ import { SidebarMenuLinkType } from "@/types/MainLayout";
 export const sidebarMenulinklist: SidebarMenuLinkType[] = [
   { name: "Dashboard", path: "/" },
   {
-    name: "Material Management",
+    name: "Order Management",
     subMenu: [
       {
         name: "Master",

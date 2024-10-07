@@ -17,9 +17,9 @@ import { useNavigate } from "react-router-dom";
 
 export const navLinks = [
   { href: "/", label: "Home", value: "home" },
-  { href: "/create-po", label: "Create PO", value: "create-po" },
-  { href: "/manage-po", label: "Manage PO", value: "manage-po" },
-  { href: "/add-po", label: "Add PO", value: "add-po" },
+  // { href: "/create-po", label: "Create PO", value: "create-po" },
+  // { href: "/manage-po", label: "Manage PO", value: "manage-po" },
+  // { href: "/add-po", label: "Add PO", value: "add-po" },
   {
     href: "/sales/order/create",
     label: "Create Sales Order",

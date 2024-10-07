@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/sheet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Edit2} from "lucide-react";
+import { Edit2 } from "lucide-react";
 import { z } from "zod";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -44,6 +44,7 @@ import { AppDispatch, RootState } from "@/store";
 import { useToast } from "@/components/ui/use-toast";
 import { transformUomData } from "@/helper/transform";
 import ReusableAsyncSelect from "@/components/shared/ReusableAsyncSelect";
+import FullPageLoading from "@/components/shared/FullPageLoading";
 
 const productSchema = z.object({
   productname: z.string().optional(),
@@ -95,6 +96,7 @@ const ProductActionCellRender = (params: any) => {
   );
 
   // const uom:any = useSelector((state: RootState) => state.prod.uom.data);
+  const { loading, uom } = useSelector((state: RootState) => state.prod);
 
   const form = useForm<z.infer<typeof productSchema>>({
     resolver: zodResolver(productSchema),
@@ -253,6 +255,7 @@ const ProductActionCellRender = (params: any) => {
           />
         </SheetTrigger>
         <SheetContent className="min-w-[60%] p-0">
+          {loading && <FullPageLoading />}
           <SheetHeader
             className={modelFixHeaderStyle}
             style={{ padding: "40px" }}
@@ -293,7 +296,58 @@ const ProductActionCellRender = (params: any) => {
                             </FormItem>
                           )}
                         />
-                        
+                        <div>
+                          <FormField
+                            control={form.control}
+                            name="uom"
+                            render={() => (
+                              <FormItem>
+                                <FormLabel className={LableStyle}>
+                                  Uom
+                                  <span className="pl-1 text-red-500 font-bold">
+                                    *
+                                  </span>
+                                </FormLabel>
+                                <FormControl>
+                                  <Select
+                                    styles={customStyles}
+                                    placeholder="Uom"
+                                    className="border-0 basic-single"
+                                    classNamePrefix="select border-0"
+                                    components={{ DropdownIndicator }}
+                                    isDisabled={false}
+                                    isLoading={false}
+                                    isClearable={true}
+                                    isSearchable={true}
+                                    name="uom"
+                                    options={
+                                      Array.isArray(uom)
+                                        ? transformUomData(uom)
+                                        : []
+                                    }
+                                    onChange={(e: any) => {
+                                      form.setValue("uom", e.value);
+                                    }}
+                                    value={
+                                      Array.isArray(uom)
+                                        ? transformUomData(uom)?.find(
+                                            (state: any) => {
+                                              const currentValue =
+                                                form.getValues("uom");
+                                              return (
+                                                state.value === currentValue
+                                              );
+                                            }
+                                          )
+                                        : null // Set to null if states is not an array
+                                    }
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
                         <FormField
                           control={form.control}
                           name="uom"

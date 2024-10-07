@@ -68,7 +68,7 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
           <div className={"flex justify-between items-center py-[10px] hover:bg-cyan-800 p-[10px] group-hover:bg-cyan-800 rounded-md cursor-pointer"}>
             <span className="flex gap-[10px] items-center cursor-pointer">
               <IoGrid className="h-[20px] w-[20px]" />
-              Material Management
+              Order Management
             </span>
             <ChevronRight />
           </div>
@@ -77,7 +77,7 @@ const SidebarMenues: React.FC<Props> = ({ uiState }) => {
               <div className="p-[10px] h-[130px]">
                 <span className="flex gap-[10px] items-center cursor-pointer text-[18px] opacity-0 group-hover:opacity-100 transition-all duration-500">
                   <IoGrid className="h-[20px] w-[20px]" />
-                  Material Management
+                  Order Management
                 </span>
                 <p className="font-[350] text-[13px] mt-[10px]">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus, inventore!</p>
                 <a href="#" className="font-[350] text-[13px] mt-[10px] text-blue-200">
