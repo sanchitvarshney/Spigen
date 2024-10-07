@@ -81,7 +81,7 @@ const productSchema = z.object({
 });
 
 const ProductActionCellRender = (params: any) => {
-  const { productKey } = params.params.data;
+  const { product_key } = params.params.data;
   // const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   // const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
@@ -90,7 +90,7 @@ const ProductActionCellRender = (params: any) => {
 
   const productData = useSelector(
     (state: RootState) =>
-      state.prod.data.find((prod: any) => prod?.pKey === productKey) || {}
+      state.prod.data.find((prod: any) => prod?.pKey === product_key) || {}
   );
 
   const form = useForm<z.infer<typeof productSchema>>({
@@ -102,7 +102,7 @@ const ProductActionCellRender = (params: any) => {
   });
 
   useEffect(() => {
-    if (productData && productData.pKey === productKey) {
+    if (productData && productData.pKey === product_key) {
       form.reset({
         // pKey: productData.pKey,
         // sku: productData.sku,
@@ -200,7 +200,7 @@ const ProductActionCellRender = (params: any) => {
     const payload = {
       ...value,
 
-      producttKey: productKey,
+      producttKey: product_key,
       status: value.active ? "active" : "inactive",
     };
 
@@ -238,9 +238,9 @@ const ProductActionCellRender = (params: any) => {
         <SheetTrigger>
           <Edit2
             onClick={() => {
-              if (productKey) {
+              if (product_key) {
                 dispatch(
-                  getProductForUpdate({ product_key: productKey }) as any
+                  getProductForUpdate({ product_key: product_key }) as any
                 );
               }
             }}
@@ -355,14 +355,14 @@ const ProductActionCellRender = (params: any) => {
                                   isSearchable={true}
                                   name="color"
                                   options={[
-                                    { label: "Good", value: "good" },
-                                    { label: "Service", value: "service" },
+                                    { label: "Goods", value: "good" },
+                                    { label: "Services", value: "service" },
                                   ]}
                                   onChange={(value: any) =>
                                     form.setValue("category", value!.value)
                                   }
                                   defaultValue={{
-                                    label: "Good",
+                                    label: "Goods",
                                     value: "good",
                                   }}
                                 />

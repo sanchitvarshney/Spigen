@@ -104,6 +104,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
         };
         dispatch(createInvoice(payload)).then((resultAction: any) => {
           if (resultAction.payload?.success) {
+            setIsInvoiceModalVisible(false);
             toast({
               title:
                 typeof resultAction?.payload?.message === "string"
@@ -121,7 +122,6 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ row }) => {
             });
           }
         });
-        setIsInvoiceModalVisible(false);
         dispatch(
           fetchSellRequestList({ wise: "DATE", data: dateRange }) as any
         );

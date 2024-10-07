@@ -35,7 +35,7 @@ const schema = z.object({
   }),
 });
 const languages = [
-  { label: "Good", value: "good" },
+  { label: "Goods", value: "good" },
   { label: "Service", value: "service" },
 ] as const;
 const MasterProductSfgPage: React.FC = () => {
@@ -116,11 +116,11 @@ const MasterProductSfgPage: React.FC = () => {
                             isSearchable={true}
                             name="color"
                             options={[
-                              { label: "Good", value: "good" },
+                              { label: "Goods", value: "good" },
                               { label: "Service", value: "service" },
                             ]}
                             onChange={(value: any) => form.setValue("productType", value!.value)}
-                            defaultValue={{ label: "Good", value: "good" }}
+                            defaultValue={{ label: "Goods", value: "good" }}
                           />
                         </FormControl>
                         <FormMessage />

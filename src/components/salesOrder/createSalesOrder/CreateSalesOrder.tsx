@@ -167,11 +167,11 @@ const CreateSalesOrder: React.FC<Props> = ({
   };
 
   const handleClientSelected = (e: any) => {
-    form.setValue("bill_name", e.label, {
+    form.setValue("bill_name", e?.label||"", {
       shouldValidate: true,
       shouldDirty: true,
     });
-    const bill_to_name = e.value;
+    const bill_to_name = e?.value||"";
     form.setValue("customer", bill_to_name, {
       shouldValidate: true,
       shouldDirty: true,
