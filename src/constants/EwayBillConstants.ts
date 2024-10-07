@@ -140,7 +140,8 @@ const billTo = z.object({
     message: "State is required",
   }),
   pincode: z.string({ required_error: "Pincode is required" }),
-  email: z.union([z.string().email().optional(), z.null()]),
+  // email: z.string({ required_error: "Email is required" }),
+  // email: z.string().optional(),
   phone: z.union([z.string().optional(), z.null()]),
 });
 

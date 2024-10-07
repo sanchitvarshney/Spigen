@@ -21,6 +21,7 @@ import { RowData } from "@/config/agGrid/SalseOrderCreateTableColumns";
 import { ChannelType } from "@/types/createSalesOrderTypes";
 import { useParams } from "react-router-dom";
 import { fetchDataForUpdate } from "@/features/salesmodule/SalesSlice";
+import { fetchchannelList } from "@/features/client/clientSlice";
 
 const CreateSalesOrderPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -40,53 +41,16 @@ const CreateSalesOrderPage = () => {
     resolver: zodResolver(createSalesFormSchema),
     mode: "onBlur",
   });
-  // const resetForm = () => {
-  //   form.reset({
-  //     bill_id: "",
-  //     billing_address1: "",
-  //     billing_address2: "",
-  //     bill_from_gst: "",
-  //     bill_pan: "",
-  //     customer_address1: "",
-  //     customer_address2: "",
-  //     customer: "",
-  //     customer_gstin: "",
-  //     isSameClientAdd: "",
-  //     customer_branch: "",
-  //     shipping_gstin: "",
-  //     shipping_pinCode: "",
-  //     shipping_id: "",
-  //     shipping_address1: "",
-  //     shipping_address2: "",
-  //     shipping_state: "",
-  //     shipping_pan: "",
-  //     place_of_supply: "",
-  //     bill_name: "",
-  //     bill_to_label: "",
-  //     terms_condition: "",
-  //     due_day: "",
-  //     quotation_detail: "",
-  //     payment_term: "",
-  //     comment: "",
-  //     cost_center: "",
-  //     project: "",
-  //     // Add any additional fields as necessary
-  //   });
-  // };
-  // useEffect(() => {
-  //   resetForm();
-  // }, [channel]);
-  // console.log(form.getValues());
-
+console.log(updateData,"updateData")
   const handleClientChange = (e: any) => {
+    form.setValue("customer_branch", e.value, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
     dispatch(fetchClientAddressDetail({ addressID: e.value })).then(
       (response: any) => {
         if (response.meta.requestStatus === "fulfilled") {
           const data = response.payload;
-          form.setValue("customer_branch", data.label, {
-            shouldValidate: true,
-            shouldDirty: true,
-          });
           form.setValue("customer_gstin", data.gst, {
             shouldValidate: true,
             shouldDirty: true,
@@ -359,6 +323,7 @@ console.log(form.getValues())
     dispatch(fetchCountries());
     dispatch(fetchStates());
     dispatch(fetchcurrency());
+    dispatch(fetchchannelList());
   }, []);
 
   return (
@@ -374,6 +339,7 @@ console.log(form.getValues())
             form={form}
             handleClientChange={handleClientChange}
             setDerivedType={setDerivedType}
+            setRowData={setRowData}
           />
         </TabsContent>
         <TabsContent value="add" className="p-0 m-0">

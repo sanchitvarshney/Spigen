@@ -349,6 +349,9 @@ const sellRequestSlice = createSlice({
     setDateRange(state, action: any) {
       state.dateRange = action.payload;
     },
+    clearUpdatedData(state) {
+      state.updateData = [];
+    },
 
     setWise(state, action: any) {
       console.log(action.payload)
@@ -488,5 +491,5 @@ const sellRequestSlice = createSlice({
   },
 });
 
-export const { setDateRange,setWise } = sellRequestSlice.actions;
+export const { setDateRange,setWise,clearUpdatedData } = sellRequestSlice.actions;
 export default sellRequestSlice.reducer;

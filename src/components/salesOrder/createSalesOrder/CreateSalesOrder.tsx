@@ -9,8 +9,8 @@ import DropdownIndicator from "@/config/reactSelect/DropdownIndicator";
 import { Badge } from "@/components/ui/badge";
 import styled from "styled-components";
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/store";
 import {
   fetchBillingAddress,
   fetchClientDetails,
@@ -56,6 +56,7 @@ interface Props {
   form: any;
   handleClientChange: any;
   setDerivedType: Dispatch<SetStateAction<string>>;
+  setRowData: any;
 }
 type CreateSalesOrderForm = z.infer<typeof createSalesFormSchema>;
 const CreateSalesOrder: React.FC<Props> = ({
@@ -67,10 +68,13 @@ const CreateSalesOrder: React.FC<Props> = ({
   form,
   handleClientChange,
   setDerivedType,
+  setRowData,
 }: any) => {
   const dispatch = useDispatch<AppDispatch>();
   const [clientBranch, setClientBranch] = useState<boolean>(false);
   const [addBillToDetails, setEditBillToDetails] = useState<boolean>(false);
+  const { channelList } = useSelector((state: RootState) => state.client);
+
   const uiState: MasterCustomer = {
     clientEdit: false,
     setClientEdit: () => {},
@@ -245,7 +249,42 @@ const CreateSalesOrder: React.FC<Props> = ({
       console.error("Data is null or undefined");
     }
   };
-console.log()
+  const resetForm = () => {
+    form.reset({
+      bill_id: "",
+      billing_address1: "",
+      billing_address2: "",
+      bill_from_gst: "",
+      bill_pan: "",
+      customer_address1: "",
+      customer_address2: "",
+      customer: "",
+      customer_gstin: "",
+      isSameClientAdd: "",
+      customer_branch: "",
+      shipping_gstin: "",
+      shipping_pinCode: "",
+      shipping_id: "",
+      shipping_address1: "",
+      shipping_address2: "",
+      shipping_state: "",
+      shipping_pan: "",
+      place_of_supply: "",
+      bill_name: "",
+      bill_to_label: "",
+      terms_condition: "",
+      due_day: "",
+      quotation_detail: "",
+      payment_term: "",
+      amz_fba_ship_id: "",
+      amz_fba_app: "",
+      amz_hawb: "",
+      comment: "",
+      cost_center: "",
+      project: "",
+    });
+    setRowData([]);
+  };
   return (
     <div className="h-[calc(100vh-150px)]">
       {data.loading && <FullPageLoading />}
@@ -278,11 +317,62 @@ console.log()
                               </span>
                             </FormLabel>
                             <FormControl>
+                              <Select
+                                styles={customStyles}
+                                placeholder="Channel"
+                                className="border-0 basic-single"
+                                classNamePrefix="select border-0"
+                                components={{ DropdownIndicator }}
+                                isDisabled={false}
+                                isLoading={false}
+                                isClearable={true}
+                                isSearchable={true}
+                                name="channel"
+                                options={
+                                  channelList
+                                    ? transformPlaceData(channelList)
+                                    : []
+                                }
+                                onChange={(e: any) => {
+                                  setChannel(e);
+                                  resetForm();
+                                }}
+                                value={transformPlaceData(channelList)?.find(
+                                  (state: any) => {
+                                    const currentValue =
+                                      form.getValues("channel");
+                                    return state.value === currentValue;
+                                  }
+                                )}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    {/* <div>
+                      <FormField
+                        control={form.control}
+                        name="channel"
+                        render={() => (
+                          <FormItem>
+                            <FormLabel className={LableStyle}>
+                              Channel
+                              <span className="pl-1 text-red-500 font-bold">
+                                *
+                              </span>
+                            </FormLabel>
+                            <FormControl>
                               <ReusableAsyncSelect
                                 placeholder="Channel Name"
                                 endpoint="channel/getChannel"
                                 transform={transformCustomerData}
-                                onChange={setChannel}
+                                onChange={(value) => {
+                                  console.log(value);
+                                  setChannel(value);
+                                  resetForm();
+                                }}
                                 value={channel}
                                 fetchOptionWith="query"
                               />
@@ -291,7 +381,7 @@ console.log()
                           </FormItem>
                         )}
                       />
-                    </div>
+                    </div> */}
                     {channel?.value === "AMZ" ||
                     channel === "AMZ" ||
                     channel === "AMZ_IMP" ||
@@ -353,9 +443,11 @@ console.log()
                               <FormItem>
                                 <FormLabel className={LableStyle}>
                                   HAWB Number
-                                  {channel?.value === "AMZ_IMP" &&<span className="pl-1 text-red-500 font-bold">
-                                  *
-                                </span>}
+                                  {channel?.value === "AMZ_IMP" && (
+                                    <span className="pl-1 text-red-500 font-bold">
+                                      *
+                                    </span>
+                                  )}
                                 </FormLabel>
                                 <FormControl>
                                   <Input
@@ -738,7 +830,7 @@ console.log()
                           </FormLabel>
                           <FormControl>
                             <Textarea
-                            maxLength={100}
+                              maxLength={100}
                               className={InputStyle}
                               placeholder="Address Line 1"
                               {...field}
@@ -765,7 +857,7 @@ console.log()
                           </FormLabel>
                           <FormControl>
                             <Textarea
-                            maxLength={100}
+                              maxLength={100}
                               className={InputStyle}
                               placeholder="Address Line 2"
                               {...field}
@@ -903,7 +995,7 @@ console.log()
                           </FormLabel>
                           <FormControl>
                             <Textarea
-                            maxLength={100}
+                              maxLength={100}
                               className={InputStyle}
                               placeholder="Address Line 1"
                               {...field}
@@ -928,7 +1020,7 @@ console.log()
                           </FormLabel>
                           <FormControl>
                             <Textarea
-                            maxLength={100}
+                              maxLength={100}
                               className={InputStyle}
                               placeholder="Address Line 2"
                               {...field}
@@ -1124,7 +1216,7 @@ console.log()
                           </FormLabel>
                           <FormControl>
                             <Textarea
-                            maxLength={100}
+                              maxLength={100}
                               className={InputStyle}
                               placeholder="Address line 1"
                               {...field}
@@ -1149,7 +1241,7 @@ console.log()
                           </FormLabel>
                           <FormControl>
                             <Textarea
-                            maxLength={100}
+                              maxLength={100}
                               className={InputStyle}
                               placeholder="Address line 2"
                               {...field}

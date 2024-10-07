@@ -248,7 +248,7 @@ export default function CreateEwayBill() {
             // setInvoiceData(response?.payload?.data);
             // console.log(response.payload.data,typeof response.payload.data);
             setShowCreatedInvoiceModal(true);
-          } 
+          }
         });
       } else {
         dispatch(createDebitEinvoice(payload)).then((response) => {
@@ -321,7 +321,6 @@ export default function CreateEwayBill() {
       form.handleSubmit(onSubmit)(); // Proceed with submission
     }
   };
-
 
   return (
     <div className="h-[calc(100vh-150px)] flex flex-col">
@@ -963,7 +962,7 @@ export default function CreateEwayBill() {
                           </FormLabel>
                           <FormControl>
                             <Textarea
-                            maxLength={100}
+                              maxLength={100}
                               className={InputStyle}
                               placeholder="Address line 1"
                               {...field}
@@ -988,7 +987,7 @@ export default function CreateEwayBill() {
                           </FormLabel>
                           <FormControl>
                             <Textarea
-                            maxLength={100}
+                              maxLength={100}
                               className={InputStyle}
                               placeholder="Address line 2"
                               {...field}
@@ -1155,7 +1154,9 @@ export default function CreateEwayBill() {
                         name="billTo.email"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className={LableStyle}>Email</FormLabel>
+                            <FormLabel className={LableStyle}>
+                              Email
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 className={InputStyle}
@@ -1204,7 +1205,7 @@ export default function CreateEwayBill() {
                           </FormLabel>
                           <FormControl>
                             <Textarea
-                            maxLength={100}
+                              maxLength={100}
                               className={InputStyle}
                               placeholder="Address line 1"
                               {...field}
@@ -1229,7 +1230,7 @@ export default function CreateEwayBill() {
                           </FormLabel>
                           <FormControl>
                             <Textarea
-                            maxLength={100}
+                              maxLength={100}
                               className={InputStyle}
                               placeholder="Address line 2"
                               {...field}
@@ -1243,7 +1244,7 @@ export default function CreateEwayBill() {
                 </CardContent>
               </Card>
               {/* Ship From */}
-              {transactionType !== "1" && transactionType !== "2"  && (
+              {transactionType !== "1" && transactionType !== "2" && (
                 <Card className="rounded shadow bg-[#fff]">
                   <CardHeader className=" bg-[#e0f2f1] p-0 flex justify-center px-[10px] py-[5px]">
                     <h3 className="text-[17px] font-[600] text-slate-600">
@@ -1383,7 +1384,7 @@ export default function CreateEwayBill() {
                             </FormLabel>
                             <FormControl>
                               <Textarea
-                              maxLength={100}
+                                maxLength={100}
                                 className={InputStyle}
                                 placeholder="Address Line 1"
                                 {...field}
@@ -1408,7 +1409,7 @@ export default function CreateEwayBill() {
                             </FormLabel>
                             <FormControl>
                               <Textarea
-                              maxLength={100}
+                                maxLength={100}
                                 className={InputStyle}
                                 placeholder="Address Line 2"
                                 {...field}
@@ -1589,7 +1590,7 @@ export default function CreateEwayBill() {
                             </FormLabel>
                             <FormControl>
                               <Textarea
-                              maxLength={100}
+                                maxLength={100}
                                 className={InputStyle}
                                 placeholder="Address line 1"
                                 {...field}
@@ -1614,7 +1615,7 @@ export default function CreateEwayBill() {
                             </FormLabel>
                             <FormControl>
                               <Textarea
-                              maxLength={100}
+                                maxLength={100}
                                 className={InputStyle}
                                 placeholder="Address line 2"
                                 {...field}
@@ -2004,7 +2005,10 @@ export default function CreateEwayBill() {
               </Button>
               <ShowInvoiceModal
                 open={showCreatedInvoiceModal}
-                onClose={() => {setShowCreatedInvoiceModal(false);window.close();}}
+                onClose={() => {
+                  setShowCreatedInvoiceModal(false);
+                  window.close();
+                }}
                 module={
                   isCnDn
                     ? isCrNote
