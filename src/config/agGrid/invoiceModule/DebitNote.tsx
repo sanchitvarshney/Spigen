@@ -181,6 +181,7 @@ const DebitNote: React.FC<DebitNoteProps> = ({
         await dispatch(createCreditNote(payload)).unwrap();
       }
       form.resetFields();
+      onClose();
     } catch (error) {
       // Handle validation errors or submission errors
       console.error("Validation or submission error:", error);
