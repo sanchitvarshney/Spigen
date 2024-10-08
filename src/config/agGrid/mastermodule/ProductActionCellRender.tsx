@@ -43,7 +43,6 @@ import { useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
 import { useToast } from "@/components/ui/use-toast";
 import { transformUomData } from "@/helper/transform";
-import ReusableAsyncSelect from "@/components/shared/ReusableAsyncSelect";
 import FullPageLoading from "@/components/shared/FullPageLoading";
 
 const productSchema = z.object({
@@ -303,7 +302,7 @@ const ProductActionCellRender = (params: any) => {
                             render={() => (
                               <FormItem>
                                 <FormLabel className={LableStyle}>
-                                  Uom
+                                  UOM
                                   <span className="pl-1 text-red-500 font-bold">
                                     *
                                   </span>
@@ -311,7 +310,7 @@ const ProductActionCellRender = (params: any) => {
                                 <FormControl>
                                   <Select
                                     styles={customStyles}
-                                    placeholder="Uom"
+                                    placeholder="UOM"
                                     className="border-0 basic-single"
                                     classNamePrefix="select border-0"
                                     components={{ DropdownIndicator }}
@@ -350,33 +349,6 @@ const ProductActionCellRender = (params: any) => {
                         </div>
                         <FormField
                           control={form.control}
-                          name="uom"
-                          render={() => (
-                            <FormItem>
-                              <FormLabel className={LableStyle}>
-                                UOM{" "}
-                                <span className="pl-1 text-red-500 font-bold">
-                                  *
-                                </span>
-                              </FormLabel>
-                              <FormControl>
-                                <ReusableAsyncSelect
-                                  placeholder="UOM"
-                                  endpoint="/uom"
-                                  transform={transformUomData}
-                                  fetchOptionWith="query"
-                                  onChange={(e: any) =>
-                                    form.setValue("uom", e.value)
-                                  }
-                                  value={productData?.uomid}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
                           name="productcategory"
                           render={({ field }) => (
                             <FormItem>
@@ -385,7 +357,7 @@ const ProductActionCellRender = (params: any) => {
                               </FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="Product category"
+                                  placeholder="Product Category"
                                   {...field}
                                   className={InputStyle}
                                 />
@@ -410,7 +382,7 @@ const ProductActionCellRender = (params: any) => {
                                   classNamePrefix="select border-0"
                                   components={{ DropdownIndicator }}
                                   isDisabled={false}
-                                  isLoading={true}
+                                  isLoading={false}
                                   isClearable={true}
                                   isSearchable={true}
                                   name="color"
@@ -441,7 +413,7 @@ const ProductActionCellRender = (params: any) => {
                               </FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="Mrp"
+                                  placeholder="MRP"
                                   {...field}
                                   className={InputStyle}
                                   readOnly
@@ -467,7 +439,7 @@ const ProductActionCellRender = (params: any) => {
                                   classNamePrefix="select border-0"
                                   components={{ DropdownIndicator }}
                                   isDisabled={false}
-                                  isLoading={true}
+                                  isLoading={false}
                                   isClearable={true}
                                   isSearchable={true}
                                   name="color"
@@ -479,7 +451,7 @@ const ProductActionCellRender = (params: any) => {
                                     form.setValue("producttype", value!.value)
                                   }
                                   defaultValue={{
-                                    label: "Fg",
+                                    label: "FG",
                                     value: "fg",
                                   }}
                                 />
@@ -688,7 +660,7 @@ const ProductActionCellRender = (params: any) => {
                               <FormControl>
                                 <Select
                                   styles={customStyles}
-                                  placeholder="Product Type"
+                                  placeholder="Tax Type"
                                   className="border-0 basic-single"
                                   classNamePrefix="select border-0"
                                   components={{ DropdownIndicator }}
@@ -724,7 +696,7 @@ const ProductActionCellRender = (params: any) => {
                               </FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="Gst Rate"
+                                  placeholder="GST Rate"
                                   {...field}
                                   className={InputStyle}
                                 />
@@ -743,7 +715,7 @@ const ProductActionCellRender = (params: any) => {
                               </FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="Hsn code"
+                                  placeholder="HSN code"
                                   {...field}
                                   className={InputStyle}
                                 />
@@ -792,7 +764,7 @@ const ProductActionCellRender = (params: any) => {
                               </FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="Ean"
+                                  placeholder="EAN"
                                   {...field}
                                   className={InputStyle}
                                 />
@@ -830,7 +802,7 @@ const ProductActionCellRender = (params: any) => {
                               </FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="vweight"
+                                  placeholder="Volumetric weight"
                                   {...field}
                                   className={InputStyle}
                                 />
@@ -849,7 +821,7 @@ const ProductActionCellRender = (params: any) => {
                               </FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="vweight"
+                                  placeholder="Height"
                                   {...field}
                                   className={InputStyle}
                                 />
@@ -868,7 +840,7 @@ const ProductActionCellRender = (params: any) => {
                               </FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="width"
+                                  placeholder="Width"
                                   {...field}
                                   className={InputStyle}
                                 />
@@ -898,7 +870,7 @@ const ProductActionCellRender = (params: any) => {
                               </FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="min stock"
+                                  placeholder="Min Stock"
                                   {...field}
                                   className={InputStyle}
                                 />
@@ -917,7 +889,7 @@ const ProductActionCellRender = (params: any) => {
                               </FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="min stock rm"
+                                  placeholder="Min Stock"
                                   {...field}
                                   className={InputStyle}
                                 />
@@ -936,7 +908,7 @@ const ProductActionCellRender = (params: any) => {
                               </FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="mfg batch size"
+                                  placeholder="MFG Batch Size"
                                   {...field}
                                   className={InputStyle}
                                 />
@@ -974,7 +946,7 @@ const ProductActionCellRender = (params: any) => {
                               </FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="labour cost"
+                                  placeholder="Labour Cost"
                                   {...field}
                                   className={InputStyle}
                                 />
@@ -1033,7 +1005,7 @@ const ProductActionCellRender = (params: any) => {
                               </FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="other cost"
+                                  placeholder="Other Cost"
                                   {...field}
                                   className={InputStyle}
                                 />
